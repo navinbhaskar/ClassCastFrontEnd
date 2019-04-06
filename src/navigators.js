@@ -81,6 +81,7 @@ export const Playground = createStackNavigator({
   test: { screen: PlaygroundTest },
   gym: { screen: PlaygroundGym },
   challenge: { screen: PlaygroundChallenge },
+  ongoingChallenge: { screen: ongoingChallenge },
   Item: { screen: Item },
 }, {
   initialRouteName: 'ItemList',

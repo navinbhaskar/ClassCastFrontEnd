@@ -406,7 +406,7 @@ class loadingTest extends Component {
                 )}
               />
                
-              </View>
+          </View>
            
           <View style={styles.questionHeader}>
             <Text>Question</Text>

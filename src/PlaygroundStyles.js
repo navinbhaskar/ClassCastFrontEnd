@@ -197,7 +197,7 @@ const styles = StyleSheet.create({
     borderRadius: 10 * vw,
   },
   userNameLoading: {
-    fontSize: 4.5 * vw,
+    fontSize: 4 * vw,
     color: 'black',
     marginTop: 1.5 * vh,
   },
