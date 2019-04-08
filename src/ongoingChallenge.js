@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import {Dimensions, Image, Text, TouchableWithoutFeedback, Platform, View, ScrollView, TouchableNativeFeedback, BackHandler, StyleSheet, FlatList} from 'react-native'
+import {Dimensions, Image, Text, TouchableWithoutFeedback, Platform, View, ScrollView, TouchableNativeFeedback, BackHandler, StyleSheet, FlatList, Alert} from 'react-native'
 import SnapCarousel from 'react-native-snap-carousel';
 import axios from "axios/index";
 const screen = Dimensions.get('window');
@@ -166,6 +166,20 @@ class ongoingChallenge extends Component {
           }
         }, 1000);
 
+    if(this.props.navigation.state.params.is_sender) {
+      axios.post('https://classcast-198812.appspot.com/challenge/updateChallengeRequest', {
+                            "challenge_id": this.props.navigation.state.params.challenge_id,
+                            "started_by_sender": true
+                          })
+                      }
+    else {
+      axios.post('https://classcast-198812.appspot.com/challenge/updateChallengeRequest', {
+                            "challenge_id": this.props.navigation.state.params.challenge_id,
+                            "started_by_receiver": true
+                          })
+    }
+    
+
      await firebase.firestore()
      .collection("challenge_questions").where("challenge_id", "==", this.props.navigation.state.params.challenge_id)
      .onSnapshot(
@@ -177,7 +191,9 @@ class ongoingChallenge extends Component {
             if (change.type === 'modified') {
               console.log("eSkjGAAA: "+data.receiver_answers.length);
               console.log("XXXXXXXXKKK: "+JSON.stringify(data.receiver_answers));
-              if(is_sender){
+              console.log("XXXXXXXXKKK: "+this.props.navigation.state.params.is_sender);
+              if(this.props.navigation.state.params.is_sender){
+                console.log("XXXXXXXXKKKTT");
                 this.setState({opponent_answer: data.receiver_answers});
                 this.setState({ActiveSlide1: data.receiver_answers.length});
               }
@@ -194,7 +210,8 @@ class ongoingChallenge extends Component {
   }
 
    render() {
-    console.log("eSkjG: "+this.state.opponent_answer);
+    console.log("eSkjGJ: "+this.state.opponent_answer);
+    console.log("eSkjGJ: "+this.state.opponent_answer.length);
     console.log("eSkjGALLLL: "+this.state.answer);
     return (
       <View style={styles.container}>
@@ -215,13 +232,29 @@ class ongoingChallenge extends Component {
                   style: 'cancel',
                 },
                 {text: 'Submit', onPress: () =>{
+                  if(this.props.navigation.state.params.is_sender) {
+                    axios.post('https://classcast-198812.appspot.com/challenge/updateChallengeRequest', {
+                                          "challenge_id": this.props.navigation.state.params.challenge_id,
+                                          "completed_by_sender": true
+                                        })
+                                    }
+                  else {
+                    axios.post('https://classcast-198812.appspot.com/challenge/updateChallengeRequest', {
+                                          "challenge_id": this.props.navigation.state.params.challenge_id,
+                                          "completed_by_receiver": true
+                                        })
+                  }
+                  
+
+
                   const navigateAction = NavigationActions.navigate({
-                  routeName: 'gymPerformance',
+                  routeName: 'challengePerformance',
                   params: {
-                    totalQuestions: this.state.totalQuestions,
-                    questionAttempted: this.state.questionAttempted,
-                    correctlyAttempted: this.state.correctlyAttempted,
-                    timer: this.state.timer
+                    opponent_username: this.props.navigation.state.params.username,
+                    opponent_name: this.props.navigation.state.params.name,
+                    timer: this.state.timer,
+                    answer: this.state.answer,
+                    opponent_answer: this.state.opponent_answer
                   },
                 });
                 this.props.navigation.dispatch(navigateAction); 
@@ -252,6 +285,7 @@ class ongoingChallenge extends Component {
                     
                 renderItem={({item}) => (
                   <View>
+                  {console.log("bsxxabaxj: "+item+" || "+this.state.opponent_answer.length)}
                   { item == this.state.opponent_answer.length &&
                     <View style={styles.activeQuestion}>
                       <Text style={styles.activeSnapText}>

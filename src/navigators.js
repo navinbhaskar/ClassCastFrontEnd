@@ -27,6 +27,8 @@ import subject from './challengeSubject'
 import chapter from './challengeChapter'
 import startChallenge from './startChallenge'
 import ongoingChallenge from './ongoingChallenge'
+import notifications from './notifications'
+import challengePerformance from './challengePerformance'
 // TabNavigator screens
 import TabA from './TabA'
 import TabB from './TabB'
@@ -71,7 +73,8 @@ export const PlaygroundChallenge = createStackNavigator({
   subject: { screen: subject },
   chapter: { screen: chapter },
   start: { screen: startChallenge },
-  ongoingChallenge: { screen: ongoingChallenge }
+  ongoingChallenge: { screen: ongoingChallenge },
+  challengePerformance: { screen: challengePerformance }
 }, {
   initialRouteName: 'test1',
 })
@@ -157,7 +160,8 @@ export const HomeStack = createStackNavigator({
                 }), },
   CourseHome: {screen: CourseHome},
   video: {screen: video},
-  addTeachers: { screen: addTeachers}
+  addTeachers: { screen: addTeachers},
+  notification: { screen: notifications }
 }, {
   initialRouteName: 'Home',
   transitionConfig: () => fromRight(),

@@ -147,7 +147,8 @@ class startChallenge extends Component {
                          chapter: this.props.navigation.state.params.chapter,
                           subject: this.props.navigation.state.params.subject,
                           username: this.props.navigation.state.params.username,
-                          name: this.props.navigation.state.params.name
+                          name: this.props.navigation.state.params.name,
+                          is_sender: true
                         },
                       });
                       this.props.navigation.dispatch(navigateAction);
