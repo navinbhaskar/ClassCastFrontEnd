@@ -25,8 +25,36 @@ class challengePerformance extends Component {
   componentDidMount() {
     console.log("jdbsjbdsj: "+this.props.navigation.state.params.answer + ' || '+ this.props.navigation.state.params.answer.reduce(function(acc, val) { return acc + val; }, 0));
     this.setState({your_total: this.props.navigation.state.params.answer.reduce(function(acc, val) { return acc + val; }, 0)});
-    this.setState({opponents_total: this.props.navigation.state.params.opponent_answer.reduce(function(acc, val) { return acc + val; }, 0)});
-    console.log("jdbsjbdsj: "+this.props.navigation.state.params.opponent_answer);
+
+    axios.get('https://classcast-198812.appspot.com/challenge/getchallengedata/'+this.props.navigation.state.params.challenge_id)
+      .then(function (response){
+        if(this.props.navigation.state.params.is_sender) {
+          this.setState({opponents_total: response.data.receiver_marks})
+        }
+        else {
+          this.setState({opponents_total: response.data.sender_marks})
+        }
+        console.log("gkdgzkgdkf"+ JSON.stringify(response))
+      }.bind(this))
+      .catch(function (error) {
+        console.log("gkdgzkgdkf: "+error);
+      });
+
+    if(this.props.navigation.state.params.is_sender) {
+      axios.post('https://classcast-198812.appspot.com/challenge/updateChallengeRequest', {
+                            "completed_by_sender": true,
+                            "challenge_id": this.props.navigation.state.params.challenge_id,
+                            "sender_marks": this.props.navigation.state.params.answer.reduce(function(acc, val) { return acc + val; }, 0)
+                          })
+                      }
+    else {
+      axios.post('https://classcast-198812.appspot.com/challenge/updateChallengeRequest', {
+                            "completed_by_receiver": true,
+                            "challenge_id": this.props.navigation.state.params.challenge_id,
+                            "receiver_marks": this.props.navigation.state.params.answer.reduce(function(acc, val) { return acc + val; }, 0)
+                          })
+    }
+
   }
 
   render() {

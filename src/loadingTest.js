@@ -155,11 +155,11 @@ class loadingTest extends Component {
     console.log("NNKJDA: " +this.props.navigation.state.params.goal);
     await axios.get(`https://classcast-198812.appspot.com/test/test/?goal=`+this.props.navigation.state.params.goal+`&n_questions=15&chapter=`+this.props.navigation.state.params.topic)
                 .then(function (response){
-                
+                  console.log("suasddbas: "+response.data);
                   this.setState({blocks: response.data  });
-                  console.log("OOOOIIJJ0: "+this.state.blocks[0].question);
-                  console.log("OOOOIIJJ1: "+this.state.blocks[1].question);
-                  console.log("OOOOIIJJ2: "+this.state.blocks[2].question);
+                  //console.log("OOOOIIJJ0: "+this.state.blocks[0].question);
+                  //console.log("OOOOIIJJ1: "+this.state.blocks[1].question);
+                  //console.log("OOOOIIJJ2: "+this.state.blocks[2].question);
                   this.setState({n_questions: this.state.blocks.length});
                   this.updateQuestions();
                 
@@ -179,19 +179,19 @@ class loadingTest extends Component {
   updateQuestions() { 
       //question = this.state.blocks[this.state.questionIndex].question;
       //console.log("ADNDSKD: |"+question+"|")
-    this.setState({question: this.state.blocks[this.state.questionIndex].question});
-    this.setState({option1: this.state.blocks[this.state.questionIndex].option1});
-    this.setState({option2: this.state.blocks[this.state.questionIndex].option2});
-    this.setState({option3: this.state.blocks[this.state.questionIndex].option3});
-    this.setState({option4: this.state.blocks[this.state.questionIndex].option4});
+    this.setState({question: this.state.blocks[this.state.questionIndex]['fields'].question});
+    this.setState({option1: this.state.blocks[this.state.questionIndex]['fields'].option1});
+    this.setState({option2: this.state.blocks[this.state.questionIndex]['fields'].option2});
+    this.setState({option3: this.state.blocks[this.state.questionIndex]['fields'].option3});
+    this.setState({option4: this.state.blocks[this.state.questionIndex]['fields'].option4});
     console.log("oooiijj: "+this.state.questionIndex+"||"+this.state.question);
-    if(this.state.blocks[this.state.questionIndex].option1_iscorrect==1) {
+    if(this.state.blocks[this.state.questionIndex]['fields'].option1_iscorrect==1) {
         this.setState({correctAnswer: 1})
       }
-      else if(this.state.blocks[this.state.questionIndex].option2_iscorrect==1) {
+      else if(this.state.blocks[this.state.questionIndex]['fields'].option2_iscorrect==1) {
         this.setState({correctAnswer: 2})
       }
-      else if(this.state.blocks[this.state.questionIndex].option3_iscorrect==1) {
+      else if(this.state.blocks[this.state.questionIndex]['fields'].option3_iscorrect==1) {
         this.setState({correctAnswer: 3})
       }
       else {
@@ -205,22 +205,22 @@ class loadingTest extends Component {
     await this.setState({attempted: true});
     //await this.setState({question: this.state.blocks[this.state.questionIndex+1].question});
     //console.log("PPP: "+this.state.question);
-    this.setState({question: this.state.blocks[this.state.questionIndex-1].question});
-    this.setState({option1: this.state.blocks[this.state.questionIndex-1].option1});
-    this.setState({option2: this.state.blocks[this.state.questionIndex-1].option2});
-    this.setState({option3: this.state.blocks[this.state.questionIndex-1].option3});
-    this.setState({option4: this.state.blocks[this.state.questionIndex-1].option4});
-    this.setState({option1_iscorrect: this.state.blocks[this.state.questionIndex-1].option1_iscorrect});
-    this.setState({option2_iscorrect: this.state.blocks[this.state.questionIndex-1].option2_iscorrect});
-    this.setState({option3_iscorrect: this.state.blocks[this.state.questionIndex-1].option3_iscorrect});
-    this.setState({option4_iscorrect: this.state.blocks[this.state.questionIndex-1].option4_iscorrect});
-    if(this.state.blocks[this.state.questionIndex-1].option1_iscorrect==1) {
+    this.setState({question: this.state.blocks[this.state.questionIndex-1]['fields'].question});
+    this.setState({option1: this.state.blocks[this.state.questionIndex-1]['fields'].option1});
+    this.setState({option2: this.state.blocks[this.state.questionIndex-1]['fields'].option2});
+    this.setState({option3: this.state.blocks[this.state.questionIndex-1]['fields'].option3});
+    this.setState({option4: this.state.blocks[this.state.questionIndex-1]['fields'].option4});
+    this.setState({option1_iscorrect: this.state.blocks[this.state.questionIndex-1]['fields'].option1_iscorrect});
+    this.setState({option2_iscorrect: this.state.blocks[this.state.questionIndex-1]['fields'].option2_iscorrect});
+    this.setState({option3_iscorrect: this.state.blocks[this.state.questionIndex-1]['fields'].option3_iscorrect});
+    this.setState({option4_iscorrect: this.state.blocks[this.state.questionIndex-1]['fields'].option4_iscorrect});
+    if(this.state.blocks[this.state.questionIndex-1]['fields'].option1_iscorrect==1) {
         this.setState({correctAnswer: 1})
       }
-      else if(this.state.blocks[this.state.questionIndex-1].option2_iscorrect==1) {
+      else if(this.state.blocks[this.state.questionIndex-1]['fields'].option2_iscorrect==1) {
         this.setState({correctAnswer: 2})
       }
-      else if(this.state.blocks[this.state.questionIndex-1].option3_iscorrect==1) {
+      else if(this.state.blocks[this.state.questionIndex-1]['fields'].option3_iscorrect==1) {
         this.setState({correctAnswer: 3})
       }
       else {
@@ -235,23 +235,23 @@ class loadingTest extends Component {
     await this.setState({attempted: false});
     //await this.setState({question: this.state.blocks[this.state.questionIndex+1].question});
     //console.log("PPP: "+this.state.question);
-    this.setState({question: this.state.blocks[this.state.questionIndex+1].question});
-    this.setState({option1: this.state.blocks[this.state.questionIndex+1].option1});
-    this.setState({option2: this.state.blocks[this.state.questionIndex+1].option2});
-    this.setState({option3: this.state.blocks[this.state.questionIndex+1].option3});
-    this.setState({option4: this.state.blocks[this.state.questionIndex+1].option4});
-    this.setState({option1_iscorrect: this.state.blocks[this.state.questionIndex+1].option1_iscorrect});
-    this.setState({option2_iscorrect: this.state.blocks[this.state.questionIndex+1].option2_iscorrect});
-    this.setState({option3_iscorrect: this.state.blocks[this.state.questionIndex+1].option3_iscorrect});
-    this.setState({option4_iscorrect: this.state.blocks[this.state.questionIndex+1].option4_iscorrect});
+    this.setState({question: this.state.blocks[this.state.questionIndex+1]['fields'].question});
+    this.setState({option1: this.state.blocks[this.state.questionIndex+1]['fields'].option1});
+    this.setState({option2: this.state.blocks[this.state.questionIndex+1]['fields'].option2});
+    this.setState({option3: this.state.blocks[this.state.questionIndex+1]['fields'].option3});
+    this.setState({option4: this.state.blocks[this.state.questionIndex+1]['fields'].option4});
+    this.setState({option1_iscorrect: this.state.blocks[this.state.questionIndex+1]['fields'].option1_iscorrect});
+    this.setState({option2_iscorrect: this.state.blocks[this.state.questionIndex+1]['fields'].option2_iscorrect});
+    this.setState({option3_iscorrect: this.state.blocks[this.state.questionIndex+1]['fields'].option3_iscorrect});
+    this.setState({option4_iscorrect: this.state.blocks[this.state.questionIndex+1]['fields'].option4_iscorrect});
     console.log("oooiijj: "+this.state.questionIndex+"||"+this.state.question);
-    if(this.state.blocks[this.state.questionIndex+1].option1_iscorrect==1) {
+    if(this.state.blocks[this.state.questionIndex+1]['fields'].option1_iscorrect==1) {
         this.setState({correctAnswer: 1})
       }
-      else if(this.state.blocks[this.state.questionIndex+1].option2_iscorrect==1) {
+      else if(this.state.blocks[this.state.questionIndex+1]['fields'].option2_iscorrect==1) {
         this.setState({correctAnswer: 2})
       }
-      else if(this.state.blocks[this.state.questionIndex+1].option3_iscorrect==1) {
+      else if(this.state.blocks[this.state.questionIndex+1]['fields'].option3_iscorrect==1) {
         this.setState({correctAnswer: 3})
       }
       else {

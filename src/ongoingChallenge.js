@@ -7,6 +7,18 @@ import {NavigationActions} from 'react-navigation';
 import MathJax from 'react-native-mathjax';
 import Modal from 'react-native-modal';
 import firebase from 'react-native-firebase';
+import {
+  BallIndicator,
+  BarIndicator,
+  DotIndicator,
+  MaterialIndicator,
+  PacmanIndicator,
+  PulseIndicator,
+  SkypeIndicator,
+  UIActivityIndicator,
+  WaveIndicator,
+} from 'react-native-indicators';
+
 
 vh = screen.height / 100;
 vw = screen.width / 100;
@@ -18,23 +30,19 @@ class ongoingChallenge extends Component {
     header: null
   })
 
-  loadQuestions() {
+  async loadQuestions() {
     console.log("ADADASid: "+this.props.navigation.state.params.challenge_id);
-    axios.get('https://classcast-198812.appspot.com/challenge/fetchchallengequestions/'+ this.props.navigation.state.params.challenge_id)
+    await axios.get('https://classcast-198812.appspot.com/challenge/fetchchallengequestions/'+ this.props.navigation.state.params.challenge_id)
     .then(function (response){
       this.setState({blocks: response.data  });
-      console.log("OOOOIIJJ0: "+this.state.blocks[0].question);
-      console.log("OOOOIIJJ1: "+this.state.blocks[1].question);
-      console.log("OOOOIIJJ2: "+this.state.blocks[2].question);
+      //console.log("OOOOIIJJ0: "+this.state.blocks[0].question);
+      //console.log("OOOOIIJJ1: "+this.state.blocks[1].question);
+      //console.log("OOOOIIJJ2: "+this.state.blocks[2].question);
+      console.log("ADADAASSS");
+      this.setState({loadingCompleted: true});
       this.setState({n_questions: this.state.blocks.length});
       this.updateQuestions();
-    
-      this.setState({loadingCompleted: true});
     }.bind(this))
-    .then(res=>{
-      this.setState({loadingCompleted: true});
-      console.log("ADADAS"+this.state.loadingCompleted)
-    })
     .catch(function (error) {
       console.log("ADADASeerror: "+error);
     });
@@ -42,25 +50,25 @@ class ongoingChallenge extends Component {
 
   updateQuestions() { 
     this.setState({attempted: false});
-    this.setState({question: this.state.blocks[this.state.questionIndex].question});
-    console.log("PPP: "+this.state.questionIndex+" || "+ this.state.blocks[this.state.questionIndex].question);
-    this.setState({option1: this.state.blocks[this.state.questionIndex].option1});
-    this.setState({option2: this.state.blocks[this.state.questionIndex].option2});
-    this.setState({option3: this.state.blocks[this.state.questionIndex].option3});
-    this.setState({option4: this.state.blocks[this.state.questionIndex].option4});
-    this.setState({option1_iscorrect: this.state.blocks[this.state.questionIndex].option1_iscorrect});
-    this.setState({option2_iscorrect: this.state.blocks[this.state.questionIndex].option2_iscorrect});
-    this.setState({option3_iscorrect: this.state.blocks[this.state.questionIndex].option3_iscorrect});
-    this.setState({option4_iscorrect: this.state.blocks[this.state.questionIndex].option4_iscorrect});
+    this.setState({question: this.state.blocks[this.state.questionIndex]['fields'].question});
+    //console.log("PPP: "+this.state.questionIndex+" || "+ this.state.blocks[this.state.questionIndex].question);
+    this.setState({option1: this.state.blocks[this.state.questionIndex]['fields'].option1});
+    this.setState({option2: this.state.blocks[this.state.questionIndex]['fields'].option2});
+    this.setState({option3: this.state.blocks[this.state.questionIndex]['fields'].option3});
+    this.setState({option4: this.state.blocks[this.state.questionIndex]['fields'].option4});
+    this.setState({option1_iscorrect: this.state.blocks[this.state.questionIndex]['fields'].option1_iscorrect});
+    this.setState({option2_iscorrect: this.state.blocks[this.state.questionIndex]['fields']['fields'].option2_iscorrect});
+    this.setState({option3_iscorrect: this.state.blocks[this.state.questionIndex]['fields'].option3_iscorrect});
+    this.setState({option4_iscorrect: this.state.blocks[this.state.questionIndex]['fields'].option4_iscorrect});
     
     console.log("oooiijj: "+this.state.questionIndex+"||"+this.state.question);
-    if(this.state.blocks[this.state.questionIndex].option1_iscorrect==1) {
+    if(this.state.blocks[this.state.questionIndex]['fields'].option1_iscorrect==1) {
         this.setState({correctAnswer: 1})
       }
-      else if(this.state.blocks[this.state.questionIndex].option2_iscorrect==1) {
+      else if(this.state.blocks[this.state.questionIndex]['fields'].option2_iscorrect==1) {
         this.setState({correctAnswer: 2})
       }
-      else if(this.state.blocks[this.state.questionIndex].option3_iscorrect==1) {
+      else if(this.state.blocks[this.state.questionIndex]['fields'].option3_iscorrect==1) {
         this.setState({correctAnswer: 3})
       }
       else {
@@ -70,25 +78,25 @@ class ongoingChallenge extends Component {
 
   updateNextQuestions() { 
     this.setState({attempted: false});
-    this.setState({question: this.state.blocks[this.state.questionIndex+1].question});
-    console.log("PPP: "+this.state.questionIndex+" || "+ this.state.blocks[this.state.questionIndex].question);
-    this.setState({option1: this.state.blocks[this.state.questionIndex+1].option1});
-    this.setState({option2: this.state.blocks[this.state.questionIndex+1].option2});
-    this.setState({option3: this.state.blocks[this.state.questionIndex+1].option3});
-    this.setState({option4: this.state.blocks[this.state.questionIndex+1].option4});
+    this.setState({question: this.state.blocks[this.state.questionIndex+1]['fields'].question});
+    //console.log("PPP: "+this.state.questionIndex+" || "+ this.state.blocks[this.state.questionIndex].question);
+    this.setState({option1: this.state.blocks[this.state.questionIndex+1]['fields'].option1});
+    this.setState({option2: this.state.blocks[this.state.questionIndex+1]['fields'].option2});
+    this.setState({option3: this.state.blocks[this.state.questionIndex+1]['fields'].option3});
+    this.setState({option4: this.state.blocks[this.state.questionIndex+1]['fields'].option4});
     
-    this.setState({option1_iscorrect: this.state.blocks[this.state.questionIndex+1].option1_iscorrect});
-    this.setState({option2_iscorrect: this.state.blocks[this.state.questionIndex+1].option2_iscorrect});
-    this.setState({option3_iscorrect: this.state.blocks[this.state.questionIndex+1].option3_iscorrect});
-    this.setState({option4_iscorrect: this.state.blocks[this.state.questionIndex+1].option4_iscorrect});
+    this.setState({option1_iscorrect: this.state.blocks[this.state.questionIndex+1]['fields'].option1_iscorrect});
+    this.setState({option2_iscorrect: this.state.blocks[this.state.questionIndex+1]['fields'].option2_iscorrect});
+    this.setState({option3_iscorrect: this.state.blocks[this.state.questionIndex+1]['fields'].option3_iscorrect});
+    this.setState({option4_iscorrect: this.state.blocks[this.state.questionIndex+1]['fields'].option4_iscorrect});
     console.log("oooiijj: "+this.state.questionIndex+"||"+this.state.question);
-    if(this.state.blocks[this.state.questionIndex+1].option1_iscorrect==1) {
+    if(this.state.blocks[this.state.questionIndex+1]['fields'].option1_iscorrect==1) {
         this.setState({correctAnswer: 1})
       }
-      else if(this.state.blocks[this.state.questionIndex+1].option2_iscorrect==1) {
+      else if(this.state.blocks[this.state.questionIndex+1]['fields'].option2_iscorrect==1) {
         this.setState({correctAnswer: 2})
       }
-      else if(this.state.blocks[this.state.questionIndex+1].option3_iscorrect==1) {
+      else if(this.state.blocks[this.state.questionIndex+1]['fields'].option3_iscorrect==1) {
         this.setState({correctAnswer: 3})
       }
       else {
@@ -213,200 +221,166 @@ class ongoingChallenge extends Component {
     console.log("eSkjGJ: "+this.state.opponent_answer);
     console.log("eSkjGJ: "+this.state.opponent_answer.length);
     console.log("eSkjGALLLL: "+this.state.answer);
-    return (
-      <View style={styles.container}>
-          <View style={styles.header}>
-            <View style={styles.header1}>
-              <Text style={styles.text}>Time: {Math.floor(this.state.timer/60)}:{(this.state.timer % 60) > 9 ? this.state.timer % 60 : '0'+ this.state.timer % 60}</Text>
-            </View>
-            <View style={styles.header2}>
-            <TouchableNativeFeedback
-                    onPress={() => {
-                      Alert.alert(
-              'sure???',
-              'My Alert Msg',
-              [
-                {
-                  text: 'Cancel',
-                  onPress: () => console.log('Cancel Pressed'),
-                  style: 'cancel',
-                },
-                {text: 'Submit', onPress: () =>{
-                  if(this.props.navigation.state.params.is_sender) {
-                    axios.post('https://classcast-198812.appspot.com/challenge/updateChallengeRequest', {
-                                          "challenge_id": this.props.navigation.state.params.challenge_id,
-                                          "completed_by_sender": true
-                                        })
-                                    }
-                  else {
-                    axios.post('https://classcast-198812.appspot.com/challenge/updateChallengeRequest', {
-                                          "challenge_id": this.props.navigation.state.params.challenge_id,
-                                          "completed_by_receiver": true
-                                        })
-                  }
-                  
-
-
-                  const navigateAction = NavigationActions.navigate({
-                  routeName: 'challengePerformance',
-                  params: {
-                    opponent_username: this.props.navigation.state.params.username,
-                    opponent_name: this.props.navigation.state.params.name,
-                    timer: this.state.timer,
-                    answer: this.state.answer,
-                    opponent_answer: this.state.opponent_answer
-                  },
-                });
-                this.props.navigation.dispatch(navigateAction); 
-                }},
-              ],
-              {cancelable: false},
-            );
-                      //this.calculateScore();
-                    }
-                }
-
-               >
-              <View style={styles.submitButton}>
-                <Text style={styles.activeSnapText}>End</Text>
+    if(!this.state.loadingCompleted) {
+      return(
+        <BarIndicator color='purple' count={5} size={60} />
+      )
+    }
+    else {
+      return (
+        <View style={styles.container}>
+            <View style={styles.header}>
+              <View style={styles.header1}>
+                <Text style={styles.text}>Time: {Math.floor(this.state.timer/60)}:{(this.state.timer % 60) > 9 ? this.state.timer % 60 : '0'+ this.state.timer % 60}</Text>
               </View>
-            </TouchableNativeFeedback>
-            </View>
-          </View>
-          <ScrollView style={{width: '100%'}}>
-          <View style={{marginLeft: 2 * vw,marginTop: 0.02 * screen.height, marginBottom: 0.02 * screen.height, width: '95%'}}>
-              <Text style={styles.text}>Opponent</Text>
-                <FlatList
-                    ref={(ref) => { this.flatListRef = ref; }}
-                    keyExtractor={item => item}
-                    horizontal={true}
-                    showsHorizontalScrollIndicator={false}
-                    data = {Object.keys(this.state.blocks)}
+              <View style={styles.header2}>
+              <TouchableNativeFeedback
+                      onPress={() => {
+                        Alert.alert(
+                'sure???',
+                'My Alert Msg',
+                [
+                  {
+                    text: 'Cancel',
+                    onPress: () => console.log('Cancel Pressed'),
+                    style: 'cancel',
+                  },
+                  {text: 'Submit', onPress: () =>{
+                    if(this.props.navigation.state.params.is_sender) {
+                      axios.post('https://classcast-198812.appspot.com/challenge/updateChallengeRequest', {
+                                            "challenge_id": this.props.navigation.state.params.challenge_id,
+                                            "completed_by_sender": true
+                                          })
+                                      }
+                    else {
+                      axios.post('https://classcast-198812.appspot.com/challenge/updateChallengeRequest', {
+                                            "challenge_id": this.props.navigation.state.params.challenge_id,
+                                            "completed_by_receiver": true
+                                          })
+                    }
                     
-                renderItem={({item}) => (
-                  <View>
-                  {console.log("bsxxabaxj: "+item+" || "+this.state.opponent_answer.length)}
-                  { item == this.state.opponent_answer.length &&
-                    <View style={styles.activeQuestion}>
-                      <Text style={styles.activeSnapText}>
+                    this.props.navigation.navigate('Playground', {}, NavigationActions.navigate({ 
+                            routeName: 'challengePerformance',
+                            params: {
+                              opponent_username: this.props.navigation.state.params.username,
+                              opponent_name: this.props.navigation.state.params.name,
+                              timer: this.state.timer,
+                              answer: this.state.answer,
+                              opponent_answer: this.state.opponent_answer,
+                              challenge_id: this.props.navigation.state.params.challenge_id, 
+                              is_sender: this.props.navigation.state.params.is_sender
+                            },
+                          }));
+
+                    /*
+                    const navigateAction = NavigationActions.navigate({
+                    routeName: 'challengePerformance',
+                    params: {
+                      opponent_username: this.props.navigation.state.params.username,
+                      opponent_name: this.props.navigation.state.params.name,
+                      timer: this.state.timer,
+                      answer: this.state.answer,
+                      opponent_answer: this.state.opponent_answer,
+                      challenge_id: this.props.navigation.state.params.challenge_id, 
+                      is_sender: this.props.navigation.state.params.is_sender
+                    },
+                  });
+                  this.props.navigation.dispatch(navigateAction); 
+                  */
+                  }},
+                ],
+                {cancelable: false},
+              );
+                        //this.calculateScore();
+                      }
+                  }
+
+                 >
+                <View style={styles.submitButton}>
+                  <Text style={styles.activeSnapText}>End</Text>
+                </View>
+              </TouchableNativeFeedback>
+              </View>
+            </View>
+            <ScrollView style={{width: '100%'}}>
+            <View style={{marginLeft: 2 * vw,marginTop: 0.02 * screen.height, marginBottom: 0.02 * screen.height, width: '95%'}}>
+                <Text style={styles.text}>Opponent</Text>
+                  <FlatList
+                      ref={(ref) => { this.flatListRef = ref; }}
+                      keyExtractor={item => item}
+                      horizontal={true}
+                      showsHorizontalScrollIndicator={false}
+                      data = {Object.keys(this.state.blocks)}
+                      
+                  renderItem={({item}) => (
+                    <View>
+                    {console.log("bsxxabaxj: "+item+" || "+this.state.opponent_answer.length)}
+                    { item == this.state.opponent_answer.length &&
+                      <View style={styles.activeQuestion}>
+                        <Text style={styles.activeSnapText}>
+                          {item}
+                        </Text>
+                      </View>
+                    }
+                    { item != this.state.opponent_answer.length &&
+                      <View style={[styles.inActiveQuestion, {backgroundColor: this.state.opponent_answer[item]== 4 ? 'green': this.state.opponent_answer[item]== -1? 'red': 'white'}]}>
+                      <Text style={styles.inactiveSnapText}>
                         {item}
                       </Text>
-                    </View>
-                  }
-                  { item != this.state.opponent_answer.length &&
-                    <View style={[styles.inActiveQuestion, {backgroundColor: this.state.opponent_answer[item]== 4 ? 'green': this.state.opponent_answer[item]== -1? 'red': 'white'}]}>
-                    <Text style={styles.inactiveSnapText}>
-                      {item}
-                    </Text>
-                    </View>
-                  }
-                  {console.log("JJJHHH: "+this.state.ActiveSlide1)}
-               </View>
-                )}
-              />
-               
-          </View>
-           <View style={{marginLeft: 2 * vw,marginTop: 0.02 * screen.height, marginBottom: 0.02 * screen.height, width: '95%'}}>
-                <Text style={styles.text}>You</Text>
-                <FlatList
-                    ref={(ref) => { this.flatListRef = ref; }}
-                    keyExtractor={item => item}
-                    horizontal={true}
-                    showsHorizontalScrollIndicator={false}
-                    data = {Object.keys(this.state.blocks)}
-                    
-                renderItem={({item}) => (
-                  <View>
-                  { this.state.ActiveSlide == item &&
-                    <View style={styles.activeQuestion}>
-                      <Text style={styles.activeSnapText}>
-                        {this.state.ActiveSlide}
-                      </Text>
-                    </View>
-                  }
-                  { this.state.ActiveSlide != item &&
-                    <View style={[styles.inActiveQuestion, {backgroundColor: this.state.answer[item]==4 ? 'green': this.state.answer[item]== -1 ? 'red': 'white'}]}>
-                    <Text style={styles.inactiveSnapText}>
-                      {item}
-                    </Text>
-                    </View>
-                  }
-                  {console.log("JJJHHH: "+this.state.ActiveSlide)}
-               </View>
-                )}
-              />
-               
-          </View>
-
-
-          <View style={styles.questionHeader}>
-            <Text>Question</Text>
-            <View style={styles.questionHeaderPositive}>
-              <Text style={{color: 'white', fontSize: 12, fontWeight: 'bold'}}>+4</Text>
-            </View>
-            <View style={styles.questionHeaderNegative}>
-              <Text style={{color: 'white', fontSize: 12, fontWeight: 'bold'}}>-1</Text>
-            </View>
-          </View>
-          <View style={styles.questionContainer}>
-          {console.log('HHH: '+this.state.question)}
-          <MathJax
-                  html={this.state.question.split('\\\\').join('\\')}
-                  mathJaxOptions={{
-                    tex2jax: {
-                      inlineMath: [['{tex}', '{/tex}'], ['\\(', '\\)']],
-                      displayMath: [['$$', '$$'], ['\\[', '\\]']],
-                      processEscapes: true,
-                    },
-                  }}
-                  
-                  hasIframe={true}
-                  style={{width: 0.9 * screen.width}}
-                  enableAnimation={false}
-                  scalesPageToFit={Platform.OS === 'android'}
+                      </View>
+                    }
+                    {console.log("JJJHHH: "+this.state.ActiveSlide1)}
+                 </View>
+                  )}
                 />
-          </View>
-         
-          <View style={{width: vw * 94, marginTop: 2 * vh, flexDirection: 'row',}}>
+                 
+            </View>
+             <View style={{marginLeft: 2 * vw,marginTop: 0.02 * screen.height, marginBottom: 0.02 * screen.height, width: '95%'}}>
+                  <Text style={styles.text}>You</Text>
+                  <FlatList
+                      ref={(ref) => { this.flatListRef = ref; }}
+                      keyExtractor={item => item}
+                      horizontal={true}
+                      showsHorizontalScrollIndicator={false}
+                      data = {Object.keys(this.state.blocks)}
+                      
+                  renderItem={({item}) => (
+                    <View>
+                    { this.state.ActiveSlide == item &&
+                      <View style={styles.activeQuestion}>
+                        <Text style={styles.activeSnapText}>
+                          {this.state.ActiveSlide}
+                        </Text>
+                      </View>
+                    }
+                    { this.state.ActiveSlide != item &&
+                      <View style={[styles.inActiveQuestion, {backgroundColor: this.state.answer[item]==4 ? 'green': this.state.answer[item]== -1 ? 'red': 'white'}]}>
+                      <Text style={styles.inactiveSnapText}>
+                        {item}
+                      </Text>
+                      </View>
+                    }
+                    {console.log("JJJHHH: "+this.state.ActiveSlide)}
+                 </View>
+                  )}
+                />
+                 
+            </View>
 
-            <View style={styles.activeQuestion1}>
-                <Text style={styles.activeSnapText}>
-                  A
-                </Text>
+
+            <View style={styles.questionHeader}>
+              <Text>Question</Text>
+              <View style={styles.questionHeaderPositive}>
+                <Text style={{color: 'white', fontSize: 12, fontWeight: 'bold'}}>+4</Text>
               </View>
-          <TouchableNativeFeedback
-                    onPress={() => {
-                      if(!this.state.attempted) {
-                        this.setState({selectedAnswer: 1});
-                        this.setState({questionAttempted: this.state.questionAttempted+1});
-                        this.setState({attempted: true});
-
-                        if(this.state.correctAnswer== 1) {
-                          this.setState({ backgroundColorOptionA: 'green'});
-                          this.setState({correctlyAttempted: this.state.correctlyAttempted+1});
-                        }
-                        else if(this.state.correctAnswer==2) {
-                          this.setState({ backgroundColorOptionB: 'green'});
-                          this.setState({ backgroundColorOptionA: 'red'}); 
-                        }
-                        else if(this.state.correctAnswer==3) {
-                          this.setState({ backgroundColorOptionC: 'green'});
-                          this.setState({ backgroundColorOptionA: 'red'}); 
-                        }
-                        else if(this.state.correctAnswer==4) {
-                          this.setState({ backgroundColorOptionD: 'green'});
-                          this.setState({ backgroundColorOptionA: 'red'}); 
-                        }
-                        else {
-                          this.setState({ backgroundColorOptionA: 'red'}); 
-                        }
-                      }
-                    }}
-
-               >
-            <View style={[styles.optionContainer, { borderColor:  this.state.backgroundColorOptionA }]}>
-          <MathJax
-                    html={this.state.option1.split('\\\\').join('\\')}
+              <View style={styles.questionHeaderNegative}>
+                <Text style={{color: 'white', fontSize: 12, fontWeight: 'bold'}}>-1</Text>
+              </View>
+            </View>
+            <View style={styles.questionContainer}>
+            {console.log('HHH: '+this.state.question)}
+            <MathJax
+                    html={this.state.question.split('\\\\').join('\\')}
                     mathJaxOptions={{
                       tex2jax: {
                         inlineMath: [['{tex}', '{/tex}'], ['\\(', '\\)']],
@@ -416,265 +390,321 @@ class ongoingChallenge extends Component {
                     }}
                     
                     hasIframe={true}
-                    style={{width: 0.78 * screen.width}}
+                    style={{width: 0.9 * screen.width}}
                     enableAnimation={false}
                     scalesPageToFit={Platform.OS === 'android'}
-                  />                      
+                  />
             </View>
-           </TouchableNativeFeedback>
-          </View>
-          <View style={{width: vw * 94, marginTop: 2 * vh, flexDirection: 'row',}}>
+           
+            <View style={{width: vw * 94, marginTop: 2 * vh, flexDirection: 'row',}}>
 
-            <View style={styles.activeQuestion1}>
-                <Text style={styles.activeSnapText}>
-                  B
-                </Text>
+              <View style={styles.activeQuestion1}>
+                  <Text style={styles.activeSnapText}>
+                    A
+                  </Text>
+                </View>
+            <TouchableNativeFeedback
+                      onPress={() => {
+                        if(!this.state.attempted) {
+                          this.setState({selectedAnswer: 1});
+                          this.setState({questionAttempted: this.state.questionAttempted+1});
+                          this.setState({attempted: true});
+
+                          if(this.state.correctAnswer== 1) {
+                            this.setState({ backgroundColorOptionA: 'green'});
+                            this.setState({correctlyAttempted: this.state.correctlyAttempted+1});
+                          }
+                          else if(this.state.correctAnswer==2) {
+                            this.setState({ backgroundColorOptionB: 'green'});
+                            this.setState({ backgroundColorOptionA: 'red'}); 
+                          }
+                          else if(this.state.correctAnswer==3) {
+                            this.setState({ backgroundColorOptionC: 'green'});
+                            this.setState({ backgroundColorOptionA: 'red'}); 
+                          }
+                          else if(this.state.correctAnswer==4) {
+                            this.setState({ backgroundColorOptionD: 'green'});
+                            this.setState({ backgroundColorOptionA: 'red'}); 
+                          }
+                          else {
+                            this.setState({ backgroundColorOptionA: 'red'}); 
+                          }
+                        }
+                      }}
+
+                 >
+              <View style={[styles.optionContainer, { borderColor:  this.state.backgroundColorOptionA }]}>
+            <MathJax
+                      html={this.state.option1.split('\\\\').join('\\')}
+                      mathJaxOptions={{
+                        tex2jax: {
+                          inlineMath: [['{tex}', '{/tex}'], ['\\(', '\\)']],
+                          displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                          processEscapes: true,
+                        },
+                      }}
+                      
+                      hasIframe={true}
+                      style={{width: 0.78 * screen.width}}
+                      enableAnimation={false}
+                      scalesPageToFit={Platform.OS === 'android'}
+                    />                      
               </View>
-             <TouchableNativeFeedback
-                    onPress={() => {
-                      if(!this.state.attempted) {
-                        this.setState({selectedAnswer: 2});
-                        this.setState({questionAttempted: this.state.questionAttempted+1});
-                        this.setState({attempted: true});
+             </TouchableNativeFeedback>
+            </View>
+            <View style={{width: vw * 94, marginTop: 2 * vh, flexDirection: 'row',}}>
 
-                        if(this.state.correctAnswer== 1) {
-                          this.setState({ backgroundColorOptionA: 'green'});
-                          this.setState({ backgroundColorOptionB: 'red'});
-                        }
-                        else if(this.state.correctAnswer==2) {
-                          this.setState({ backgroundColorOptionB: 'green'});
-                          this.setState({correctlyAttempted: this.state.correctlyAttempted+1});
-                        }
-                        else if(this.state.correctAnswer==3) {
-                          this.setState({ backgroundColorOptionC: 'green'});
-                          this.setState({ backgroundColorOptionB: 'red'}); 
-                        }
-                        else if(this.state.correctAnswer==4) {
-                          this.setState({ backgroundColorOptionD: 'green'});
-                          this.setState({ backgroundColorOptionB: 'red'}); 
-                        }
-                        else {
-                          this.setState({ backgroundColorOptionB: 'red'}); 
+              <View style={styles.activeQuestion1}>
+                  <Text style={styles.activeSnapText}>
+                    B
+                  </Text>
+                </View>
+               <TouchableNativeFeedback
+                      onPress={() => {
+                        if(!this.state.attempted) {
+                          this.setState({selectedAnswer: 2});
+                          this.setState({questionAttempted: this.state.questionAttempted+1});
+                          this.setState({attempted: true});
+
+                          if(this.state.correctAnswer== 1) {
+                            this.setState({ backgroundColorOptionA: 'green'});
+                            this.setState({ backgroundColorOptionB: 'red'});
+                          }
+                          else if(this.state.correctAnswer==2) {
+                            this.setState({ backgroundColorOptionB: 'green'});
+                            this.setState({correctlyAttempted: this.state.correctlyAttempted+1});
+                          }
+                          else if(this.state.correctAnswer==3) {
+                            this.setState({ backgroundColorOptionC: 'green'});
+                            this.setState({ backgroundColorOptionB: 'red'}); 
+                          }
+                          else if(this.state.correctAnswer==4) {
+                            this.setState({ backgroundColorOptionD: 'green'});
+                            this.setState({ backgroundColorOptionB: 'red'}); 
+                          }
+                          else {
+                            this.setState({ backgroundColorOptionB: 'red'}); 
+                          }
                         }
                       }
-                    }
-                }
+                  }
 
-               >
-            <View style={[styles.optionContainer, { borderColor:  this.state.backgroundColorOptionB }]}>
-          <MathJax
-                    html={this.state.option2.split('\\\\').join('\\')}
-                    mathJaxOptions={{
-                      tex2jax: {
-                        inlineMath: [['{tex}', '{/tex}'], ['\\(', '\\)']],
-                        displayMath: [['$$', '$$'], ['\\[', '\\]']],
-                        processEscapes: true,
-                      },
-                    }}
-                    
-                    hasIframe={true}
-                    style={{width: 0.78 * screen.width}}
-                    enableAnimation={false}
-                    scalesPageToFit={Platform.OS === 'android'}
-                  />                      
-            </View>
-            </TouchableNativeFeedback>
-          </View>
-          <View style={{width: vw * 94, marginTop: 2 * vh, flexDirection: 'row',}}>
-
-            <View style={styles.activeQuestion1}>
-                <Text style={styles.activeSnapText}>
-                  C
-                </Text>
+                 >
+              <View style={[styles.optionContainer, { borderColor:  this.state.backgroundColorOptionB }]}>
+            <MathJax
+                      html={this.state.option2.split('\\\\').join('\\')}
+                      mathJaxOptions={{
+                        tex2jax: {
+                          inlineMath: [['{tex}', '{/tex}'], ['\\(', '\\)']],
+                          displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                          processEscapes: true,
+                        },
+                      }}
+                      
+                      hasIframe={true}
+                      style={{width: 0.78 * screen.width}}
+                      enableAnimation={false}
+                      scalesPageToFit={Platform.OS === 'android'}
+                    />                      
               </View>
-              <TouchableNativeFeedback
-                    onPress={() => {
-                      if(!this.state.attempted) {
-                        this.setState({selectedAnswer: 3});
-                        this.setState({questionAttempted: this.state.questionAttempted+1});
-                        this.setState({attempted: true});
+              </TouchableNativeFeedback>
+            </View>
+            <View style={{width: vw * 94, marginTop: 2 * vh, flexDirection: 'row',}}>
 
-                        if(this.state.correctAnswer== 1) {
-                          this.setState({ backgroundColorOptionA: 'green'});
-                          this.setState({ backgroundColorOptionC: 'red'});
-                        }
-                        else if(this.state.correctAnswer==2) {
-                          this.setState({ backgroundColorOptionB: 'green'});
-                          this.setState({ backgroundColorOptionC: 'red'}); 
-                        }
-                        else if(this.state.correctAnswer==3) {
-                          this.setState({ backgroundColorOptionC: 'green'});
-                          this.setState({correctlyAttempted: this.state.correctlyAttempted+1});
-                        }
-                        else if(this.state.correctAnswer==4) {
-                          this.setState({ backgroundColorOptionD: 'green'});
-                          this.setState({ backgroundColorOptionC: 'red'}); 
-                        }
-                        else {
-                          this.setState({ backgroundColorOptionC: 'red'}); 
+              <View style={styles.activeQuestion1}>
+                  <Text style={styles.activeSnapText}>
+                    C
+                  </Text>
+                </View>
+                <TouchableNativeFeedback
+                      onPress={() => {
+                        if(!this.state.attempted) {
+                          this.setState({selectedAnswer: 3});
+                          this.setState({questionAttempted: this.state.questionAttempted+1});
+                          this.setState({attempted: true});
+
+                          if(this.state.correctAnswer== 1) {
+                            this.setState({ backgroundColorOptionA: 'green'});
+                            this.setState({ backgroundColorOptionC: 'red'});
+                          }
+                          else if(this.state.correctAnswer==2) {
+                            this.setState({ backgroundColorOptionB: 'green'});
+                            this.setState({ backgroundColorOptionC: 'red'}); 
+                          }
+                          else if(this.state.correctAnswer==3) {
+                            this.setState({ backgroundColorOptionC: 'green'});
+                            this.setState({correctlyAttempted: this.state.correctlyAttempted+1});
+                          }
+                          else if(this.state.correctAnswer==4) {
+                            this.setState({ backgroundColorOptionD: 'green'});
+                            this.setState({ backgroundColorOptionC: 'red'}); 
+                          }
+                          else {
+                            this.setState({ backgroundColorOptionC: 'red'}); 
+                          }
                         }
                       }
-                    }
-                }
+                  }
 
-               >
-            <View style={[styles.optionContainer, { borderColor:  this.state.backgroundColorOptionC }]}>
-          <MathJax
-                    html={this.state.option3.split('\\\\').join('\\')}
-                    mathJaxOptions={{
-                      tex2jax: {
-                        inlineMath: [['{tex}', '{/tex}'], ['\\(', '\\)']],
-                        displayMath: [['$$', '$$'], ['\\[', '\\]']],
-                        processEscapes: true,
-                      },
-                    }}
-                    
-                    hasIframe={true}
-                    style={{width: 0.78 * screen.width}}
-                    enableAnimation={false}
-                    scalesPageToFit={Platform.OS === 'android'}
-                  />                      
-            </View>
-            </TouchableNativeFeedback>
-          </View>
-          <View style={{width: vw * 94, marginTop: 2 * vh, flexDirection: 'row',}}>
-
-            <View style={styles.activeQuestion1}>
-                <Text style={styles.activeSnapText}>
-                  D
-                </Text>
+                 >
+              <View style={[styles.optionContainer, { borderColor:  this.state.backgroundColorOptionC }]}>
+            <MathJax
+                      html={this.state.option3.split('\\\\').join('\\')}
+                      mathJaxOptions={{
+                        tex2jax: {
+                          inlineMath: [['{tex}', '{/tex}'], ['\\(', '\\)']],
+                          displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                          processEscapes: true,
+                        },
+                      }}
+                      
+                      hasIframe={true}
+                      style={{width: 0.78 * screen.width}}
+                      enableAnimation={false}
+                      scalesPageToFit={Platform.OS === 'android'}
+                    />                      
               </View>
-          <TouchableNativeFeedback
-              background={TouchableNativeFeedback.SelectableBackground()}
-                    onPress={() => {
-                      if(!this.state.attempted) {
-                        this.setState({selectedAnswer: 4});
-                        this.setState({questionAttempted: this.state.questionAttempted+1});
-                        this.setState({attempted: true});
+              </TouchableNativeFeedback>
+            </View>
+            <View style={{width: vw * 94, marginTop: 2 * vh, flexDirection: 'row',}}>
 
-                        if(this.state.correctAnswer== 1) {
-                          this.setState({ backgroundColorOptionA: 'green'});
-                          this.setState({ backgroundColorOptionD: 'red'});
-                        }
-                        else if(this.state.correctAnswer==2) {
-                          this.setState({ backgroundColorOptionB: 'green'});
-                          this.setState({ backgroundColorOptionD: 'red'}); 
-                        }
-                        else if(this.state.correctAnswer==3) {
-                          this.setState({ backgroundColorOptionC: 'green'});
-                          this.setState({ backgroundColorOptionD: 'red'}); 
-                        }
-                        else if(this.state.correctAnswer==4) {
-                          this.setState({ backgroundColorOptionD: 'green'});
-                          this.setState({correctlyAttempted: this.state.correctlyAttempted+1});
-                        }
-                        else {
-                          this.setState({ backgroundColorOptionD: 'red'}); 
+              <View style={styles.activeQuestion1}>
+                  <Text style={styles.activeSnapText}>
+                    D
+                  </Text>
+                </View>
+            <TouchableNativeFeedback
+                background={TouchableNativeFeedback.SelectableBackground()}
+                      onPress={() => {
+                        if(!this.state.attempted) {
+                          this.setState({selectedAnswer: 4});
+                          this.setState({questionAttempted: this.state.questionAttempted+1});
+                          this.setState({attempted: true});
+
+                          if(this.state.correctAnswer== 1) {
+                            this.setState({ backgroundColorOptionA: 'green'});
+                            this.setState({ backgroundColorOptionD: 'red'});
+                          }
+                          else if(this.state.correctAnswer==2) {
+                            this.setState({ backgroundColorOptionB: 'green'});
+                            this.setState({ backgroundColorOptionD: 'red'}); 
+                          }
+                          else if(this.state.correctAnswer==3) {
+                            this.setState({ backgroundColorOptionC: 'green'});
+                            this.setState({ backgroundColorOptionD: 'red'}); 
+                          }
+                          else if(this.state.correctAnswer==4) {
+                            this.setState({ backgroundColorOptionD: 'green'});
+                            this.setState({correctlyAttempted: this.state.correctlyAttempted+1});
+                          }
+                          else {
+                            this.setState({ backgroundColorOptionD: 'red'}); 
+                          }
                         }
                       }
-                    }
-                }
+                  }
 
-               >
-            <View style={[styles.optionContainer, { borderColor:  this.state.backgroundColorOptionD }]}>
-          <MathJax
-                    html={this.state.option4.split('\\\\').join('\\')}
-                    backgroundColor={'yellow'}
-                    mathJaxOptions={{
-                      tex2jax: {
-                        inlineMath: [['{tex}', '{/tex}'], ['\\(', '\\)']],
-                        displayMath: [['$$', '$$'], ['\\[', '\\]']],
-                        processEscapes: true,
-                      },
-                    }}
-                    hasIframe={true}
-                    style={{width: 0.78 * screen.width}}
-                    enableAnimation={false}
-                    scalesPageToFit={Platform.OS === 'android'}
-                  />                      
+                 >
+              <View style={[styles.optionContainer, { borderColor:  this.state.backgroundColorOptionD }]}>
+            <MathJax
+                      html={this.state.option4.split('\\\\').join('\\')}
+                      backgroundColor={'yellow'}
+                      mathJaxOptions={{
+                        tex2jax: {
+                          inlineMath: [['{tex}', '{/tex}'], ['\\(', '\\)']],
+                          displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                          processEscapes: true,
+                        },
+                      }}
+                      hasIframe={true}
+                      style={{width: 0.78 * screen.width}}
+                      enableAnimation={false}
+                      scalesPageToFit={Platform.OS === 'android'}
+                    />                      
 
+              </View>
+              
+              </TouchableNativeFeedback>
             </View>
             
-            </TouchableNativeFeedback>
-          </View>
-          
-          <View style={{flexDirection: 'row', marginBottom: 2 * vh}}>
-            <TouchableNativeFeedback
-                    onPress={() => {
-                      if(this.state.selectedAnswer == -1) {
-                        var joined = this.state.answer.concat(0);
-                        this.setState({ answer: joined })
-                        axios.post('https://classcast-198812.appspot.com/challenge/submitchallengequestions', {
-                            "challenge_id": this.props.navigation.state.params.challenge_id,
-                            "is_sender": this.props.navigation.state.params.is_sender,
-                            "question_index": this.state.questionIndex,
-                            "status": "skipped"
-                          })
-                      }
-                      if(this.state.selectedAnswer == this.state.correctAnswer) {
-                        var joined = this.state.answer.concat(4);
-                        this.setState({ answer: joined })
-                        axios.post('https://classcast-198812.appspot.com/challenge/submitchallengequestions', {
-                            "challenge_id": this.props.navigation.state.params.challenge_id,
-                            "is_sender": this.props.navigation.state.params.is_sender,
-                            "question_index": this.state.questionIndex,
-                            "status": "correct"
-                          })
-                      }
-                      else {
-                        var joined = this.state.answer.concat(-1);
-                        this.setState({ answer: joined })
-                        axios.post('https://classcast-198812.appspot.com/challenge/submitchallengequestions', {
-                            "challenge_id": this.props.navigation.state.params.challenge_id,
-                            "is_sender": this.props.navigation.state.params.is_sender,
-                            "question_index": this.state.questionIndex,
-                            "status": "wrong"
-                          })
-                      }
-                      this.setState({selectedAnswer: -1});
-                      this.setState({totalQuestions: this.state.totalQuestions+1});
-                      console.log("working3: "+this.state.questionIndex+"||"+this.state.n_questions);
-                      if(this.state.questionIndex+1 < this.state.n_questions) {
-                        this.setState({ActiveSlide: this.state.ActiveSlide +1});
-                        this.flatListRef.scrollToIndex({animated: true, index: this.state.ActiveSlide+1});
-                        this.updateNextQuestions();
+            <View style={{flexDirection: 'row', marginBottom: 2 * vh}}>
+              <TouchableNativeFeedback
+                      onPress={() => {
+                        if(this.state.selectedAnswer == -1) {
+                          var joined = this.state.answer.concat(0);
+                          this.setState({ answer: joined })
+                          axios.post('https://classcast-198812.appspot.com/challenge/submitchallengequestions', {
+                              "challenge_id": this.props.navigation.state.params.challenge_id,
+                              "is_sender": this.props.navigation.state.params.is_sender,
+                              "question_index": this.state.questionIndex,
+                              "status": "skipped"
+                            })
+                        }
+                        if(this.state.selectedAnswer == this.state.correctAnswer) {
+                          var joined = this.state.answer.concat(4);
+                          this.setState({ answer: joined })
+                          axios.post('https://classcast-198812.appspot.com/challenge/submitchallengequestions', {
+                              "challenge_id": this.props.navigation.state.params.challenge_id,
+                              "is_sender": this.props.navigation.state.params.is_sender,
+                              "question_index": this.state.questionIndex,
+                              "status": "correct"
+                            })
+                        }
+                        else {
+                          var joined = this.state.answer.concat(-1);
+                          this.setState({ answer: joined })
+                          axios.post('https://classcast-198812.appspot.com/challenge/submitchallengequestions', {
+                              "challenge_id": this.props.navigation.state.params.challenge_id,
+                              "is_sender": this.props.navigation.state.params.is_sender,
+                              "question_index": this.state.questionIndex,
+                              "status": "wrong"
+                            })
+                        }
+                        this.setState({selectedAnswer: -1});
+                        this.setState({totalQuestions: this.state.totalQuestions+1});
+                        console.log("working3: "+this.state.questionIndex+"||"+this.state.n_questions);
+                        if(this.state.questionIndex+1 < this.state.n_questions) {
+                          this.setState({ActiveSlide: this.state.ActiveSlide +1});
+                          this.flatListRef.scrollToIndex({animated: true, index: this.state.ActiveSlide+1});
+                          this.updateNextQuestions();
+                          this.setState({ backgroundColorOptionB: 'white'});
+                          this.setState({ backgroundColorOptionC: 'white'});
+                          this.setState({ backgroundColorOptionA: 'white'});
+                          this.setState({ backgroundColorOptionD: 'white'});
+                        }
+                      if(this.state.questionIndex+1 == this.state.n_questions) {
+                        console.log("working1");
+                        this.setState({question: ''});
+                        this.setState({option1: ''});
+                        this.setState({option2: ''});
+                        this.setState({option3: ''});
+                        this.setState({option4: ''});
+                        this.setState({option1_iscorrect: ''});
+                        this.setState({option2_iscorrect: ''});
+                        this.setState({option3_iscorrect: ''});
+                        this.setState({option4_iscorrect: ''});
                         this.setState({ backgroundColorOptionB: 'white'});
                         this.setState({ backgroundColorOptionC: 'white'});
                         this.setState({ backgroundColorOptionA: 'white'});
                         this.setState({ backgroundColorOptionD: 'white'});
                       }
-                    if(this.state.questionIndex+1 == this.state.n_questions) {
-                      console.log("working1");
-                      this.setState({question: ''});
-                      this.setState({option1: ''});
-                      this.setState({option2: ''});
-                      this.setState({option3: ''});
-                      this.setState({option4: ''});
-                      this.setState({option1_iscorrect: ''});
-                      this.setState({option2_iscorrect: ''});
-                      this.setState({option3_iscorrect: ''});
-                      this.setState({option4_iscorrect: ''});
-                      this.setState({ backgroundColorOptionB: 'white'});
-                      this.setState({ backgroundColorOptionC: 'white'});
-                      this.setState({ backgroundColorOptionA: 'white'});
-                      this.setState({ backgroundColorOptionD: 'white'});
-                    }
-                    }
-                }
+                      }
+                  }
 
-               >
-            <View style={styles.nextButton}>
-              <Text style={styles.text}>Next</Text>
+                 >
+              <View style={styles.nextButton}>
+                <Text style={styles.text}>Next</Text>
+              </View>
+              </TouchableNativeFeedback>
             </View>
-            </TouchableNativeFeedback>
+            
+            </ScrollView>
+            
           </View>
-          
-          </ScrollView>
-          
-        </View>
-    )
+      )
+    }
+    }
   }
-}
 
 export default ongoingChallenge
 

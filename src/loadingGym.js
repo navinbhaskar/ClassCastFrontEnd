@@ -88,9 +88,10 @@ class loadingGym extends Component {
   }
 
   async loadNewQestions() {
-    console.log("working2");
-    axios.get('https://classcast-198812.appspot.com/gym/gym/?username=1111111122')
+    console.log("working2S: "+this.props.navigation.state.params.topic);
+    axios.get('https://classcast-198812.appspot.com/gym/gym/?chapterList='+this.props.navigation.state.params.topic)
           .then(function (response){
+            console.log("suasddbas: "+JSON.stringify(response.data[0]));
             this.setState({ blocks: response.data });
             console.log("PP: "+JSON.stringify(this.state.blocks));
             this.setState({n_questions: this.state.blocks.length});
@@ -113,32 +114,32 @@ class loadingGym extends Component {
 
   updateQuestions() { 
       //question = this.state.blocks[this.state.questionIndex].question;
-      //console.log("ADNDSKD: |"+question+"|")
+    console.log("ADNDSSSKD: "+this.state.blocks[this.state.questionIndex]['fields'].question);
     this.setState({attempted: false});
-    this.setState({question: this.state.blocks[this.state.questionIndex].question});
-    console.log("PPP: "+this.state.questionIndex+" || "+ this.state.blocks[this.state.questionIndex].question);
-    this.setState({option1: this.state.blocks[this.state.questionIndex].option1});
-    this.setState({option2: this.state.blocks[this.state.questionIndex].option2});
-    this.setState({option3: this.state.blocks[this.state.questionIndex].option3});
-    this.setState({option4: this.state.blocks[this.state.questionIndex].option4});
-    this.setState({option1_iscorrect: this.state.blocks[this.state.questionIndex].option1_iscorrect});
-    this.setState({option2_iscorrect: this.state.blocks[this.state.questionIndex].option2_iscorrect});
-    this.setState({option3_iscorrect: this.state.blocks[this.state.questionIndex].option3_iscorrect});
-    this.setState({option4_iscorrect: this.state.blocks[this.state.questionIndex].option4_iscorrect});
+    this.setState({question: this.state.blocks[this.state.questionIndex]['fields'].question});
+    //console.log("PPP: "+this.state.questionIndex+" || "+ this.state.blocks[this.state.questionIndex].question);
+    this.setState({option1: this.state.blocks[this.state.questionIndex]['fields'].option1});
+    this.setState({option2: this.state.blocks[this.state.questionIndex]['fields'].option2});
+    this.setState({option3: this.state.blocks[this.state.questionIndex]['fields'].option3});
+    this.setState({option4: this.state.blocks[this.state.questionIndex]['fields'].option4});
+    this.setState({option1_iscorrect: this.state.blocks[this.state.questionIndex]['fields'].option1_iscorrect});
+    this.setState({option2_iscorrect: this.state.blocks[this.state.questionIndex]['fields'].option2_iscorrect});
+    this.setState({option3_iscorrect: this.state.blocks[this.state.questionIndex]['fields'].option3_iscorrect});
+    this.setState({option4_iscorrect: this.state.blocks[this.state.questionIndex]['fields'].option4_iscorrect});
     try {
-       this.setState({explanation: this.state.blocks[this.state.questionIndex+1].explanation})
+       this.setState({explanation: this.state.blocks[this.state.questionIndex+1]['fields'].explanation})
     }
     catch (e) {
       this.setState({explanation: ''})
     }
     console.log("oooiijj: "+this.state.questionIndex+"||"+this.state.question);
-    if(this.state.blocks[this.state.questionIndex].option1_iscorrect==1) {
+    if(this.state.blocks[this.state.questionIndex]['fields'].option1_iscorrect==1) {
         this.setState({correctAnswer: 1})
       }
-      else if(this.state.blocks[this.state.questionIndex].option2_iscorrect==1) {
+      else if(this.state.blocks[this.state.questionIndex]['fields'].option2_iscorrect==1) {
         this.setState({correctAnswer: 2})
       }
-      else if(this.state.blocks[this.state.questionIndex].option3_iscorrect==1) {
+      else if(this.state.blocks[this.state.questionIndex]['fields'].option3_iscorrect==1) {
         this.setState({correctAnswer: 3})
       }
       else {
@@ -150,32 +151,32 @@ class loadingGym extends Component {
       //question = this.state.blocks[this.state.questionIndex].question;
       //console.log("ADNDSKD: |"+question+"|")
     this.setState({attempted: false});
-    console.log("PLKHDFSG: "+JSON.stringify(this.state.blocks[this.state.questionIndex+1].explanation));
-    this.setState({question: this.state.blocks[this.state.questionIndex+1].question});
-    console.log("PPP: "+this.state.questionIndex+" || "+ this.state.blocks[this.state.questionIndex].question);
-    this.setState({option1: this.state.blocks[this.state.questionIndex+1].option1});
-    this.setState({option2: this.state.blocks[this.state.questionIndex+1].option2});
-    this.setState({option3: this.state.blocks[this.state.questionIndex+1].option3});
-    this.setState({option4: this.state.blocks[this.state.questionIndex+1].option4});
+    //console.log("PLKHDFSG: "+JSON.stringify(this.state.blocks[this.state.questionIndex+1].explanation));
+    this.setState({question: this.state.blocks[this.state.questionIndex+1]['fields'].question});
+    //console.log("PPP: "+this.state.questionIndex+" || "+ this.state.blocks[this.state.questionIndex].question);
+    this.setState({option1: this.state.blocks[this.state.questionIndex+1]['fields'].option1});
+    this.setState({option2: this.state.blocks[this.state.questionIndex+1]['fields'].option2});
+    this.setState({option3: this.state.blocks[this.state.questionIndex+1]['fields'].option3});
+    this.setState({option4: this.state.blocks[this.state.questionIndex+1]['fields'].option4});
     try {
-       this.setState({explanation: this.state.blocks[this.state.questionIndex+1].explanation})
+       this.setState({explanation: this.state.blocks[this.state.questionIndex+1]['fields'].explanation})
     }
     catch (e) {
       this.setState({explanation: ''})
     }
     
-    this.setState({option1_iscorrect: this.state.blocks[this.state.questionIndex+1].option1_iscorrect});
-    this.setState({option2_iscorrect: this.state.blocks[this.state.questionIndex+1].option2_iscorrect});
-    this.setState({option3_iscorrect: this.state.blocks[this.state.questionIndex+1].option3_iscorrect});
-    this.setState({option4_iscorrect: this.state.blocks[this.state.questionIndex+1].option4_iscorrect});
+    this.setState({option1_iscorrect: this.state.blocks[this.state.questionIndex+1]['fields'].option1_iscorrect});
+    this.setState({option2_iscorrect: this.state.blocks[this.state.questionIndex+1]['fields'].option2_iscorrect});
+    this.setState({option3_iscorrect: this.state.blocks[this.state.questionIndex+1]['fields'].option3_iscorrect});
+    this.setState({option4_iscorrect: this.state.blocks[this.state.questionIndex+1]['fields'].option4_iscorrect});
     console.log("oooiijj: "+this.state.questionIndex+"||"+this.state.question);
-    if(this.state.blocks[this.state.questionIndex+1].option1_iscorrect==1) {
+    if(this.state.blocks[this.state.questionIndex+1]['fields'].option1_iscorrect==1) {
         this.setState({correctAnswer: 1})
       }
-      else if(this.state.blocks[this.state.questionIndex+1].option2_iscorrect==1) {
+      else if(this.state.blocks[this.state.questionIndex+1]['fields'].option2_iscorrect==1) {
         this.setState({correctAnswer: 2})
       }
-      else if(this.state.blocks[this.state.questionIndex+1].option3_iscorrect==1) {
+      else if(this.state.blocks[this.state.questionIndex+1]['fields'].option3_iscorrect==1) {
         this.setState({correctAnswer: 3})
       }
       else {
