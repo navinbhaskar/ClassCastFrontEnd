@@ -198,7 +198,7 @@ const styles = StyleSheet.create({
   container:{
       flex: 1,
       alignItems: 'center',
-      backgroundColor: '#0F3651'
+      backgroundColor: '#121212'
     },
     h2:{
       fontSize: 25,

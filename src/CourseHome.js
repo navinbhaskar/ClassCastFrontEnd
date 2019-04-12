@@ -18,7 +18,6 @@ import {Icon} from 'react-native-elements';
 import Carousel from 'react-native-snap-carousel';
 import { ProgressCircle }  from 'react-native-svg-charts';
 import axios from 'axios';
-import Orientation from 'react-native-orientation';
 import {
   BallIndicator,
   BarIndicator,
@@ -62,9 +61,6 @@ class CourseHome extends Component {
     title: "Electrostatistics"
   })
 
-  componentWillMount() {
-    Orientation.lockToPortrait();
-  }
 
   componentDidMount() {
       axios.get(`https://classcast-198812.appspot.com/coursedata/courseblocks/MA1211AC`)

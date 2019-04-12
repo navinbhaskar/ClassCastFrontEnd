@@ -154,6 +154,7 @@ class video extends Component {
     };
   }
 
+  
   componentWillMount() {
     Orientation.lockToLandscape();
     const initial = Orientation.getInitialOrientation();
@@ -163,6 +164,7 @@ class video extends Component {
       console.log("KKKKKKKKKKKKKKLandscape");
     }
   }
+  
 
   ComponentDidMount() {
     Orientation.lockToLandscape();
@@ -173,11 +175,11 @@ class video extends Component {
       this.setState({sliderValue: this.state.currentTime / this.state.duration})
     }
   }
-
+  
   componentWillUnmount() {
     Orientation.lockToPortrait();
   }
-
+  
   render() {
     console.log("working3: "+JSON.stringify(this.props.navigation.state.params.url))
     return (

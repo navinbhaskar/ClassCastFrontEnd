@@ -9,8 +9,7 @@ import {
   AsyncStorage,
   TouchableNativeFeedback
 } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
-import { LineChart, Grid, YAxis } from 'react-native-svg-charts';
+import { AreaChart, LineChart, Grid, YAxis } from 'react-native-svg-charts';
 import { ListItem, Icon } from 'react-native-elements';
 import Carousel from 'react-native-snap-carousel';
 import axios from "axios";
@@ -28,18 +27,46 @@ class TabB extends Component {
 
   constructor(props) {
     super(props);
+    this._renderItem = this._renderItem.bind(this);
     this.state = {
+      isReady: false,
       newChallengeModal: false,
       challenge_id: '',
       username: '',
       selected: '',
-    teachers: [
-      {
-        type: 'add'
-      }
-      ],
+    teachers: [],
     performance: [
     ]
+    }
+  }
+
+  async checkPermission() {
+    console.log("fcmTokeniid");
+    const enabled = await firebase.messaging().hasPermission();
+    if (enabled) {
+        this.getToken();
+    } else {
+        this.requestPermission();
+    }
+  }
+
+  async getToken() {
+    fcmToken = await firebase.messaging().getToken();
+    console.log("njfkbjfkbfvjkbfv: "+fcmToken)
+    axios.post('https://classcast-198812.appspot.com/token/save_fcm_token/', {
+     username: this.state.username,
+     fcmToken: fcmToken
+    })
+  }
+
+  async requestPermission() {
+    try {
+        await firebase.messaging().requestPermission();
+        // User has authorised
+        this.getToken();
+    } catch (error) {
+        // User has rejected permissions
+        console.log('permission rejected');
     }
   }
 
@@ -58,8 +85,9 @@ class TabB extends Component {
       
       axios.get(`https://classcast-198812.appspot.com/teachers/myteachers/`)
                 .then(function (response){
-                  response.data.push({type: 'add'});
+                  response.data.unshift({type: 'add'});
                   this.setState({teachers: response.data});
+                  this.setState({isReady: true});
                 }.bind(this))
                 .catch(function (error) {
                   console.log(error);
@@ -100,6 +128,8 @@ class TabB extends Component {
         },
         
       )
+
+   this.checkPermission();
   } 
 
 
@@ -109,14 +139,14 @@ class TabB extends Component {
   }
 
   _renderItem ({item, index}) {
-
-     if(item.item.type) {
+      console.log("chuu" + JSON.stringify(item));
+      if(item.type) {
         return (
               <TouchableOpacity onPress={() => this.props.navigation.navigate('addTeachers', { title: "Add Teachers" })}>
                 <View style={styles.teacherContainer}>
                   <View style={styles.teacherImageContainer}>
                     <Icon
-                      name='pluscircleo'
+                      name='plus'
                       type='antdesign'
                       size= {80} 
                       style={styles.addTeacher}/>
@@ -132,19 +162,19 @@ class TabB extends Component {
       else {
 
         return (
-              <TouchableOpacity onPress={() => this.props.navigation.navigate('TeacherArea', { data: item.item})}>
+              <TouchableOpacity onPress={() => this.props.navigation.navigate('TeacherArea', { data: item})}>
                 <View style={styles.teacherContainer}>
                   <View style={styles.teacherImageContainer}>
                     <Image
-                      source={{uri: item.item.photo}}
+                      source={{uri: item.photo}}
                       style={styles.teacherImage}/>
                     </View>
-                    <Text style={styles.teacherName}> {item.item.firstname} </Text>
+                    <Text style={styles.teacherName}> {item.firstname} </Text>
                 </View>
               </TouchableOpacity>
         );
       }
-      }
+    }
 
   render() {
     
@@ -172,7 +202,7 @@ class TabB extends Component {
      <ScrollView>
      <View style={styles.container}>
       {
-          <View>
+      <View>
         <Modal 
               isVisible={this.state.newChallengeModal}
               backdropOpacity={0.6}
@@ -247,7 +277,7 @@ class TabB extends Component {
           </Modal>
       </View>
         }
-      <View style={{flex:1, flexDirection: 'row', alignItems: 'center'}}>
+      <View style={{flex:1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%'}}>
         <View style={{justifyContent:'flex-start', marginLeft:10}}>
         <Icon           
           name='menu'
@@ -257,10 +287,10 @@ class TabB extends Component {
           onPress={() => this.props.navigation.dispatch(DrawerActions.toggleDrawer())}
           />
         </View>
-        <View style={{marginLeft:10}}>
-          <Text style={{fontSize: 22, color: 'white', fontWeight: 'bold'}}> Heylo Babies </Text>
+        <View style={{marginLeft:0}}>
+          <Text style={{fontSize: 22, color: 'white', fontWeight: 'bold'}}> HOME </Text>
         </View>
-        <View style={{justifyContent:'flex-start', marginLeft:10}}>
+        <View style={{justifyContent:'flex-end', marginRight: 10}}>
         <Icon
           name='notifications'
           color='white'
@@ -275,37 +305,48 @@ class TabB extends Component {
       <View style={styles.classroomsContainer} >
         <Text style={styles.h3}> Your Classrooms</Text>
         <View style={styles.classrooms}>
-        <View>
         <CustomPlaceholder onReady={this.state.isReady} animate="fade">
-        <Carousel
-            ref={(c) => { this._carousel = c; }}
-            data={this.state.teachers}
-            renderItem={(item,index) => (<this._renderItem item = {item} index = {index}/>)}
-            sliderWidth={380}
-            itemWidth={100}
-            inactiveSlideOpacity={1}
-            inactiveSlideScale={1}
-          />
-
+          <Carousel
+              ref={(c) => { this._carousel = c; }}
+              data={this.state.teachers}
+              renderItem={this._renderItem}
+              sliderWidth={380}
+              activeSlideAlignment= {'start'}
+              itemWidth={100}
+              inactiveSlideOpacity={1}
+              inactiveSlideScale={1}
+            />
           </CustomPlaceholder>
-         </View>
        </View>
       </View>
       
 
       <View style={styles.performaceContainer} >
-        <Text style={styles.h3}> Your Performance</Text>
-      </View>  
+        <Text style={styles.h3}> Your Performance</Text> 
+      <View style={{alignItems:'center', justifyContent:'center'}}>
+      <View style={{flexDirection:'row'}}>
+      <YAxis
+          data={this.state.performance}
+          contentInset={{ top: 20,  bottom: 4}}                    
+          svg={{
+              fill: 'black',
+              fontSize: 12,
+          }}
+          numberOfTicks={ 4 }
+          formatLabel={ value => `${value}` }
+      />
       <LineChart
-                  style={{ height: 120, width: 320, position: 'absolute', marginTop: 320, borderRadius:2, borderWidth: 1, borderColor:'grey' }}
-                  data={ this.state.performance }
-                  svg={{ stroke: 'rgb(134, 65, 244)',
-                          strokeWidth: 2, }}
-                  contentInset={{ top: 20, bottom: 20 }}
-                  curve={ shape.curveNatural }
-              >
-                  
+          style={{ height: 120, width: 320, borderRadius:2, borderWidth: 1, borderColor:'grey' }}
+          data={this.state.performance}
+          svg={{ stroke: 'rgb(134, 65, 244)',
+                  strokeWidth: 2, }}
+          contentInset={{ top: 10, bottom: 10 }}
+          curve={ shape.curveNatural }
+      >                  
       </LineChart>
+      </View>
+      </View>
+      </View> 
 
       <View style={styles.updatesContainer}>
         <Text style={styles.h3}> Updates...</Text>
@@ -334,10 +375,15 @@ const styles = StyleSheet.create({
   container: {
     paddingBottom: 20,
     paddingTop: 20,
-    backgroundColor: '#0F3651',
+    backgroundColor: '#121212',
     width: '100%',
     height: '100%',
     alignItems: 'center',
+  },
+  addTeacher: {
+    height: 80,
+    width: 80,
+    resizeMode:'contain',
   },
   buttons: {
     flexDirection: 'row',
@@ -388,6 +434,7 @@ const styles = StyleSheet.create({
   },
   classroomsContainer:{
     marginTop: 10,
+    height: 30 * vh,
     width: '100%',
     borderRadius:5,
     backgroundColor:'white',
@@ -459,7 +506,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     paddingLeft: 10,
     color: 'black',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
    teacherImage: {
     height: 80,
@@ -472,12 +519,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',   
   },
   classrooms:{
-    height: 150,
+    marginTop: 8 * vh,
+    height: 22 * vh,
     width:'100%',
     borderRadius:5,
     position: 'absolute',
-    marginTop: 95,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   linearGradient:{
     marginTop: 10,
@@ -494,7 +541,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
     height: 220,
     width:'100%',
-    flexDirection: 'row',
     borderRadius:5,
     backgroundColor:'white',
     borderWidth:1,
@@ -556,10 +602,13 @@ const styles = StyleSheet.create({
   },
   teacherContainer: {
     margin: 3,
+    marginBottom: 2 * vh,
     height: 145,
-    elevation: 4,
+    width: '100%',
+    paddingLeft: 1 * vw,
+    paddingRight: 1 * vw,
     zIndex: 1,
-    alignItems:'center'
+    alignItems:'center',
   },
   userName: {
     color: 'black',

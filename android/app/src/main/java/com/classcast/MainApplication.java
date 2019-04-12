@@ -3,12 +3,12 @@ package com.classcast;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
-import ca.bigdata.voice.contacts.BDVSimpleContactsPackage;
+import org.devio.rn.splashscreen.SplashScreenReactPackage;
 import com.github.yamill.orientation.OrientationPackage;
+import ca.bigdata.voice.contacts.BDVSimpleContactsPackage;
 import com.brentvatne.react.ReactVideoPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.horcrux.svg.SvgPackage;
-import com.BV.LinearGradient.LinearGradientPackage;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
 import io.invertase.firebase.RNFirebasePackage;
 import io.invertase.firebase.auth.RNFirebaseAuthPackage;
@@ -18,6 +18,7 @@ import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
 import com.rt2zz.reactnativecontacts.ReactNativeContacts;
 import io.invertase.firebase.firestore.RNFirebaseFirestorePackage;
+import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
 
 import java.util.Arrays;
 import java.util.List;
@@ -34,16 +35,17 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
-            new BDVSimpleContactsPackage(),
+            new SplashScreenReactPackage(),
             new OrientationPackage(),
+            new BDVSimpleContactsPackage(),
             new ReactVideoPackage(),
             new VectorIconsPackage(),
             new SvgPackage(),
-            new LinearGradientPackage(),
             new RNGestureHandlerPackage(),
             new RNFirebasePackage(),
             new RNFirebaseAuthPackage(),
             new RNFirebaseFirestorePackage(),
+            new RNFirebaseMessagingPackage(),
             new ReactNativeContacts()
       );
     }

@@ -10,7 +10,6 @@ import {
   View,
 } from 'react-native';
 import { createMaterialTopTabNavigator, createAppContainer } from 'react-navigation';
-import LinearGradient from 'react-native-linear-gradient';
 import Carousel from 'react-native-snap-carousel';
 import TabA from './TabA';
 import Courses from './Courses'
@@ -18,20 +17,7 @@ import ClassUpdates from './ClassUpdates'
 
 
 const Rohit_gaba = require('./images/user-hp.png');
-const TeacherHomeNavigator = createMaterialTopTabNavigator(
-  {
-    Courses: { screen: Courses },
-    Updates: { screen: ClassUpdates },
-    About : { screen: TabA },
-  },{
-  initialRouteName: 'Courses',
-    navigationOptions: {
-        headerVisible: true,
-    }
-}
-);
 
-const AppContainer5 = createAppContainer(TeacherHomeNavigator);
 
 class TeacherHome extends Component {
 

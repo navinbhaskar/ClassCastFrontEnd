@@ -7,7 +7,9 @@ import {
   Dimensions,
   Image,
   TouchableNativeFeedback
-} from 'react-native'
+} from 'react-native';
+import { DrawerActions } from 'react-navigation-drawer';
+import { ListItem, Icon } from 'react-native-elements';
 
 const screen = Dimensions.get('window');
   vh = screen.height / 100;
@@ -53,9 +55,32 @@ class ItemList extends Component {
   render () {
     return (
       <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>PLAYGROUND</Text>
+
+      <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', height: 5 * vh}}>
+        <View style={{justifyContent:'flex-start', marginLeft:10}}>
+        <Icon           
+          name='menu'
+          color='white'
+          type='material'
+          size= {35} 
+          onPress={() => this.props.navigation.dispatch(DrawerActions.toggleDrawer())}
+          />
+        </View>
+        <View style={{marginLeft:0}}>
+          <Text style={{fontSize: 22, color: 'white', fontWeight: 'bold'}}> PLAYGROUND </Text>
+        </View>
+        <View style={{justifyContent:'flex-end', marginRight: 10}}>
+        <Icon
+          name='notifications'
+          color='white'
+          type='material'
+          size= {35} 
+          onPress={() => this.props.navigation.navigate('notification', { title: "Notification" })}
+          />
+        </View>
+
       </View>
+
       <View style={styles.body}>
         {
           this.state.buttons.map((button, index) => (
@@ -96,7 +121,11 @@ const styles = StyleSheet.create({
   container: {
     height: 100 * vh,
     width: 100 * vw,
-    flexDirection: 'column'
+    paddingBottom: 20,
+    paddingTop: 20,
+    flexDirection: 'column',
+    backgroundColor: 'black',
+    alignItems: 'center',
   },
   header: {
     height: 20 * vh,
@@ -108,7 +137,6 @@ const styles = StyleSheet.create({
   body: {
     height: 70 * vh,
     width: 100 * vw,
-    marginTop: 20 * vh,
     justifyContent: 'center',
     alignItems: 'center',
   },

@@ -14,7 +14,6 @@ import {
 } from 'react-native';
 import { Input, Button } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/SimpleLineIcons';
-import LinearGradient from 'react-native-linear-gradient';
 import Modal from "react-native-modal";
 import firebase from 'react-native-firebase';
 
