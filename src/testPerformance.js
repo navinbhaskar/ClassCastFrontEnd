@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import {Dimensions, Image, Text, TouchableWithoutFeedback, View, Button, TouchableNativeFeedback, BackHandler} from 'react-native'
 import styles from './TestStyles';
 import SnapCarousel from 'react-native-snap-carousel';
-import {NavigationActions} from 'react-navigation';
+import {StackActions, NavigationActions} from 'react-navigation';
 import axios from "axios/index";
 const screen = Dimensions.get('window');
   vh = screen.height / 100;
@@ -52,6 +52,7 @@ class testPerformance extends Component {
 
   handleBackButton() {
     console.log("workingjdh");
+    this.props.navigation.dispatch(StackActions.popToTop());
     this.props.navigation.navigate('HomeStack', {}, NavigationActions.navigate({ routeName: 'Home' }));
     return true;
   }
@@ -145,6 +146,7 @@ class testPerformance extends Component {
         </View>
         <TouchableNativeFeedback
           onPress={() => {
+            this.props.navigation.dispatch(StackActions.popToTop());
             this.props.navigation.navigate('HomeStack', {}, NavigationActions.navigate({ routeName: 'Home' }))
           }}
             >

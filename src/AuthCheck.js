@@ -12,27 +12,28 @@ class AuthCheck extends Component {
 	constructor(props) {
     super(props);
   
-  	this.authChecker = this.authChecker.bind(this);
 	}
 
+	componentWillUnmount() {
+        this.unsubscribe();
+    }
 
-	authChecker() {
-
-		firebase.auth().onAuthStateChanged(user => {
-	            if (user) {
-	                this.props.navigation.navigate('Drawer');
-	            }
-	            else {
-	                this.props.navigation.navigate("Login");
-	            }
-	          }
-	       	);
+	componentWillMount() {
+		this.unsubscribe = firebase.auth().onAuthStateChanged(user => {
+			console.log("snsfwfhaohf1: "+JSON.stringify(user));
+	        if (!user) {
+	        	console.log("snsfwfhaohf2: "+JSON.stringify(user));
+	            this.props.navigation.navigate('Login2');
+	        }
+	        else {
+	        	console.log("snsfwfhaohf3: "+JSON.stringify(user));
+	            this.props.navigation.navigate("Drawer");
+	        }
+	      }
+	   	);
 	}
-
 
 	render () {
-
-		this.authChecker();
 
 		return (
 	      <View>

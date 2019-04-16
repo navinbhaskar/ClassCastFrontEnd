@@ -11,7 +11,9 @@ import {
   SectionList,
   TouchableNativeFeedback,
   ActivityIndicator,
-  Modal
+  Modal,
+  ToastAndroid,
+  Dimensions
 } from 'react-native';
 import {NavigationActions} from 'react-navigation';
 import {Icon} from 'react-native-elements';
@@ -29,6 +31,10 @@ import {
   UIActivityIndicator,
   WaveIndicator,
 } from 'react-native-indicators';
+
+const screen = Dimensions.get('window'),
+  vh = screen.height / 100,
+  vw = screen.width / 100;
 
 const videoIcon = require('./images/download.jpg');    
 
@@ -49,6 +55,7 @@ class CourseHome extends Component {
     super(props);
     this.state = {
       startBuffering: false,
+      title: '',
       blocks: [
         {
          
@@ -58,15 +65,17 @@ class CourseHome extends Component {
   }
 
   static navigationOptions = ({ navigation }) => ({
-    title: "Electrostatistics"
+    title: "course"
   })
 
 
   componentDidMount() {
-      axios.get(`https://classcast-198812.appspot.com/coursedata/courseblocks/MA1211AC`)
+    //this.setState({title: this.props.navigation.state.params.display_name});
+    console.log("hsbsahbhdasaa: "+JSON.stringify(this.props.navigation.state.params));
+      axios.get('https://classcast-198812.appspot.com/coursedata/courseblocks/'+this.props.navigation.state.params.course_id+'/')
                 .then(function (response){
                   this.setState({blocks: response.data.blocks});
-                  
+                  console.log("sakjbskbs: "+JSON.stringify(response))
                 }.bind(this))
                 .catch(function (error) {
                   console.log(error);
@@ -75,14 +84,16 @@ class CourseHome extends Component {
 
   render() {     
     return (
-            <View>
+            <View style={{height: 100*vh, width: '100%', justifyContent: 'center',  alignItems: 'center', flex: 1}}>
             <Modal
-              animationType="fade"
-              transparent={true}
               visible={this.state.startBuffering}
+              transparent={true}
+              backdropOpacity={0.6}
+              backdropColor="black"
             >
-            <View style={{height: 100, width: 100, alignItems: 'center', justifyContent: 'center', position: 'absolute', marginTop: 300, marginLeft: 150}}>
-              <DotIndicator color='purple' />
+
+            <View style={{height: 20 * vh,width: 30 * vw, borderRadius: 1.5 * vw, marginTop: 34 * vh, marginLeft: 35 * vw, backgroundColor: 'white'}}>
+              <MaterialIndicator/>
               </View>
             </Modal>
               <ScrollView contentContainerStyle={styles.container}>
@@ -94,7 +105,7 @@ class CourseHome extends Component {
                         type='material'
                         color='#0F3651'
                       />
-                      <Text style={styles.videoCount}> 3 Videos </Text>
+                      <Text style={styles.videoCount}> {this.props.navigation.state.params.number_of_videos+ ' Videos'} </Text>
                     </View>
                     <View style= {styles.singleComponentCount}>
                       <Icon
@@ -102,7 +113,7 @@ class CourseHome extends Component {
                         type='material'
                         color='#0F3651'
                       />
-                      <Text style={styles.videoCount}> 3 Videos </Text>
+                      <Text style={styles.videoCount}> {this.props.navigation.state.params.number_of_assignment+ ' Assignments'} </Text>
                     </View>
                     <View style= {styles.singleComponentCount}>
                       <Icon
@@ -110,16 +121,16 @@ class CourseHome extends Component {
                         type='material'
                         color='#0F3651'
                       />
-                      <Text style={styles.videoCount}> 3 PDFs </Text>
+                      <Text style={styles.videoCount}> {this.props.navigation.state.params.number_of_pdf+ ' PDFs'} </Text>
                     </View>
                   </View>
                   <View style = {styles.progress}>
                       <ProgressCircle
-                          style={ { height: 95, width: 95, position:'absolute' } }
-                          progress={ 0.7 }
+                          style={ { height: 95, width: 100, position:'absolute' } }
+                          progress={ this.props.navigation.state.params.percentage_completion }
                           progressColor={'#0F3651'}
                       />
-                      <Text style={{ color: 'black', fontSize: 24}}> 56% </Text>
+                      <Text style={{ color: 'black', fontSize: 24}}> {this.props.navigation.state.params.percentage_completion+'%'} </Text>
                       <Text style={styles.videoCount}> Completed </Text>
                   </View>
                 </View>
@@ -139,36 +150,136 @@ class CourseHome extends Component {
                         {
                           blocks.data && blocks.data.map((data, index)=>{
                             console.log("working4: "+data.url);
-                            return(
-                              <TouchableNativeFeedback
-                                onPress={() => {
-                                  this.setState({startBuffering: true});
-                                  axios.post(`https://classcast-198812.appspot.com/coursedata/generateSignedUrl`, {
-                                    "path": "/classcast-198812.appspot.com/classcast_videos/Mathematics_CBSE/Anurag_Chauhan_Delhi/Class_12/Applications_of_Derivatives/Day%201%20Out%20-%20%20(1)-1.mp4"
-                                  })
-                                    .then( response => {
-                                      console.log("ABCD: "+JSON.stringify(response.data));
-                                      this.setState({startBuffering: false});
-                                      this.navigateToScreen('video', response.data);
+                            console.log("working4: "+data.path);
+                            console.log("working4: "+data.block_type);
+                            if(data.block_type == 'video') {
+                              return(
+                                <TouchableNativeFeedback
+                                  onPress={() => {
+                                    this.setState({startBuffering: true});
+                                    axios.post(`https://classcast-198812.appspot.com/coursedata/generateSignedUrl`, {
+                                      "path": data.path
+                                      //"path": "/classcast-198812.appspot.com/classcast_videos/Mathematics_CBSE/Anurag_Chauhan_Delhi/Class_12/Applications_of_Derivatives/Day%201%20Out%20-%20%20(1)-1.mp4"
                                     })
-                                  }
-                              }
+                                      .then( response => {
+                                        console.log("ABCD: "+JSON.stringify(response.data));
+                                        this.setState({startBuffering: false});
+                                        this.navigateToScreen('video', response.data);
+                                      })
+                                      .catch(err => {
+                                        this.setState({startBuffering: false});
+                                        ToastAndroid.show('Something went wrong', ToastAndroid.SHORT);
+                                      })
+                                    }
+                                }
 
-                              >
-                                <View style={styles.videoComponent}>
-                                <View style={styles.videoPreview}>
-                                    <Image source={{uri: data.image}} style={{height:70, width: 130}}/>
-                                </View>
-                                {console.log("URL: "+JSON.stringify(data))}
-                                <View style = {styles.aboutVideo}>
-                                    <Text style={{fontSize: 16, color: 'black', fontWeight: 'bold'}}>{data.display_name}</Text>
-                                    <Text style={{fontSize: 12, color: 'black'}}> 36 Minutes</Text>
-                                    <Text style={{fontSize: 12, color: 'black'}}> +3 Points </Text>
-                                </View>                     
+                                >
+                                  <View style={styles.videoComponent}>
+                                  <View style={styles.videoPreview}>
+                                      <Image source={{uri: data.image}} style={{height:70, width: 130}}/>
+                                  </View>
+                                  {console.log("URL: "+JSON.stringify(data))}
+                                  <View style = {styles.aboutVideo}>
+                                      <Text style={{fontSize: 16, color: 'black', fontWeight: 'bold'}}>{data.display_name}</Text>
+                                      <Text style={{fontSize: 12, color: 'black'}}> 36 Minutes</Text>
+                                      <Text style={{fontSize: 12, color: 'black'}}> +3 Points </Text>
+                                  </View>                     
 
-                            </View>
-                            </TouchableNativeFeedback>
+                              </View>
+                              </TouchableNativeFeedback>
                               )
+                              }
+                            else if(data.block_type == 'pdf'){
+                              return(
+                                <TouchableNativeFeedback
+                                  onPress={() => {
+                                    this.setState({startBuffering: true});
+                                    axios.post(`https://classcast-198812.appspot.com/coursedata/generateSignedUrl`, {
+                                      "path": data.path
+                                    })
+                                      .then( response => {
+                                        console.log("ABCD: "+JSON.stringify(response.data));
+                                        this.setState({startBuffering: false});
+                                        this.navigateToScreen('pdfViewer', response.data);
+                                      })
+                                    }
+                                }
+
+                                >
+                                  <View style={styles.videoComponent}>
+                                  <View style={styles.videoPreview}>
+                                      <Image source={{uri: data.image}} style={{height:70, width: 130}}/>
+                                  </View>
+                                  {console.log("URL: "+JSON.stringify(data))}
+                                  <View style = {styles.aboutVideo}>
+                                      <Text style={{fontSize: 16, color: 'black', fontWeight: 'bold'}}>{data.display_name}</Text>
+                                      <Text style={{fontSize: 12, color: 'black'}}> 36 Minutes</Text>
+                                      <Text style={{fontSize: 12, color: 'black'}}> +3 Points </Text>
+                                  </View>                     
+
+                              </View>
+                              </TouchableNativeFeedback>
+                              )
+                            }
+                            else if(data.block_type == 'problem'){
+                              return(
+                                <TouchableNativeFeedback
+                                  onPress={() => {
+                                    this.setState({startBuffering: true});
+                                    axios.post(`https://classcast-198812.appspot.com/coursedata/fetchassignmentquestions`, {
+                                      "block_id": data.url
+                                    })
+                                      .then( response => {
+                                        console.log("ABCD: "+JSON.stringify(response.data));
+                                        this.setState({startBuffering: false});
+                                        this.navigateToScreen('assignmentQuestions', response.data);
+                                      })
+                                      .catch(err=> {
+                                        console.log("ABCDerror: "+JSON.stringify)
+                                      })
+                                    }
+                                }
+
+                                >
+                                  <View style={styles.videoComponent}>
+                                  <View style={styles.videoPreview}>
+                                      <Image source={{uri: data.image}} style={{height:70, width: 130}}/>
+                                  </View>
+                                  {console.log("URL: "+JSON.stringify(data))}
+                                  <View style = {styles.aboutVideo}>
+                                      <Text style={{fontSize: 16, color: 'black', fontWeight: 'bold'}}>{data.display_name}</Text>
+                                      <Text style={{fontSize: 12, color: 'black'}}> 36 Minutes</Text>
+                                      <Text style={{fontSize: 12, color: 'black'}}> +3 Points </Text>
+                                  </View>                     
+
+                              </View>
+                              </TouchableNativeFeedback>
+                              )
+                            }
+                            else {
+                              return(
+                                <TouchableNativeFeedback
+                                  onPress={() => {
+                                    
+                                    }
+                                }
+
+                                >
+                                  <View style={styles.videoComponent}>
+                                  <View style={styles.videoPreview}>
+                                      <Image source={{uri: data.image}} style={{height:70, width: 130}}/>
+                                  </View>
+                                  {console.log("URL: "+JSON.stringify(data))}
+                                  <View style = {styles.aboutVideo}>
+                                      <Text style={{fontSize: 16, color: 'black', fontWeight: 'bold'}}>{data.display_name}</Text>
+                                      <Text style={{fontSize: 12, color: 'black'}}> 36 Minutes</Text>
+                                      <Text style={{fontSize: 12, color: 'black'}}> +3 Points </Text>
+                                  </View>                     
+
+                              </View>
+                              </TouchableNativeFeedback>
+                              )
+                            }
                           })
                         }
                       </View>
@@ -189,7 +300,7 @@ export default CourseHome;
 const styles = StyleSheet.create({
   container:{
     paddingBottom: 100,
-    width: '100%',
+    width: 100 * vw,
     marginBottom: 10,
     backgroundColor: '#dbdbdb'
   },
@@ -226,7 +337,7 @@ const styles = StyleSheet.create({
   progress: {
     margin: 5,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   sectionContent: {
     backgroundColor: "white",

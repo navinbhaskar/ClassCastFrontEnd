@@ -175,7 +175,7 @@ class video extends Component {
       this.setState({sliderValue: this.state.currentTime / this.state.duration})
     }
   }
-  
+    
   componentWillUnmount() {
     Orientation.lockToPortrait();
   }

@@ -100,7 +100,7 @@ export default class Signup extends Component {
             // Example usage if handling here and not in optionalCompleteCb:
             const { verificationId, code } = phoneAuthSnapshot;
             const credential = firebase.auth.PhoneAuthProvider.credential(verificationId, code);
-            signon(credential);
+            this.signon(credential);
 
             
             // firebase.auth().currentUser.linkWithCredential(credential);
@@ -132,9 +132,16 @@ export default class Signup extends Component {
   signon(credential){
     firebase.auth().signInWithCredential(credential).then((result) => {
                         this.setState({ isModalVisible: false });
-                          if (result.additionalUserInfo.isNewUser)
+                        console.log("jkjsdfkjfs: "+JSON.stringify(this.props.navigation));
+                          if (result.additionalUserInfo.isNewUser) {
+                            console.log("jkjsdfkjfs1: "+JSON.stringify(this.props.navigation));
+                              //this.props.navigation.navigate('Login', {}, NavigationActions.navigate({ routeName: 'Home' }));
                               this.props.navigation.navigate("UserDetails");
-                          else this.props.navigation.navigate("Home");
+                            }
+                          else { 
+                            console.log("jkjsdfkjfs2: "+JSON.stringify(this.props.navigation));
+                            this.props.navigation.navigate("Home");
+                          }
                           
                           result.user.getIdToken().then(function(idToken) {
                           userIdToken = idToken;
@@ -298,8 +305,8 @@ export default class Signup extends Component {
                       value={OTP6}
                       onChangeText={OTP6 => {
                         this.setState({ OTP6 });
-                        const OTP= Number(OTP1+OTP2+OTP3+OTP4+OTP5+OTP6)
-                        console.log(OTP1+OTP2+OTP3+OTP4+OTP5+OTP6)
+                        const OTP= Number(OTP1+OTP2+OTP3+OTP4+OTP5+OTP6);
+                        console.log(OTP1+OTP2+OTP3+OTP4+OTP5+OTP6);
                         const credential = firebase.auth.PhoneAuthProvider.credential(verificationId, OTP1+OTP2+OTP3+OTP4+OTP5+OTP6);
                         console.log("huha" + credential);
                         this.signon(credential);

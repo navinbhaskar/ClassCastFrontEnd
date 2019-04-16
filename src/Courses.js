@@ -12,8 +12,10 @@ import {
   TouchableHighlight,
 } from 'react-native';
 import { Input, Button, Icon } from 'react-native-elements';
+import { NavigationActions } from 'react-navigation';
 import Carousel from 'react-native-snap-carousel';
 import axios from 'axios';
+import courseListPlaceholder from "./courseListPlaceholder";
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
@@ -26,6 +28,7 @@ class Courses extends Component {
          
         }
       ],
+      isReady: false,
       modalVisible: false,
       isEnrolled: true,
       enrollCode: ''
@@ -67,11 +70,13 @@ class Courses extends Component {
   }
 
    componentDidMount() {
-      axios.get(`https://classcast-198812.appspot.com/teachers/teachercoursedata/1111111122/6/`)
+    console.log("skkslanlx: "+JSON.stringify(this.props.navigation.state.params.data.teacher_id));
+      axios.get('https://classcast-198812.appspot.com/teachers/teachercoursedata/'+this.props.navigation.state.params.data.teacher_id+'/')
                 .then(function (response){
                   this.setState({courses: response.data.data});
                   this.setState({isEnrolled: response.data.teacher_enrolled});
-                  console.log("Navigation" + JSON.stringify(this.props.navigation));
+                  this.setState({isReady: true});
+                  console.log("Navigation" + JSON.stringify(response));
                 }.bind(this))
                 .catch(function (error) {
                   console.log(error);
@@ -80,6 +85,7 @@ class Courses extends Component {
 
 
   _renderItem ({item, index}) {
+    console.log("hsbsahbhdas: "+JSON.stringify(item))
     return (
             <View style={styles.courseCardContainer}>
               <Text style={styles.h2}>{item.display_name} </Text>
@@ -107,7 +113,22 @@ class Courses extends Component {
                 <View style={styles.courseImageContainer}>
                     <Image source={{uri: item.display_image}} style={styles.courseImage}/>
                     <Button title="Resume"
-                     onPress = {()=> this.props.navigation.navigate('CourseHome')} />
+                     onPress = {()=> {
+                      const navigateAction = NavigationActions.navigate({
+                      routeName: 'CourseHome',
+                      params: {
+                        course_id: item.block_id,
+                        display_name: item.display_name,
+                        number_of_videos: item.number_of_videos,
+                        number_of_assignment: item.number_of_assignment,
+                        number_of_pdf: item.number_of_pdf,
+                        percentage_completion: item.percentage_completion,
+                      },
+                    });
+                    this.props.navigation.dispatch(navigateAction);
+                     }}
+                      //this.props.navigation.navigate('CourseHome')} 
+                      />
                 </View>
               </View>
             </View>

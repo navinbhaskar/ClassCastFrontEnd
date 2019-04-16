@@ -191,7 +191,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white'
   },
   profilePicture: {
-    marginTop: 4.7 * vh,
+    
     height: 20 * vw,
     width: 20 * vw,
     borderRadius: 10 * vw,
@@ -200,6 +200,23 @@ const styles = StyleSheet.create({
     fontSize: 4 * vw,
     color: 'black',
     marginTop: 1.5 * vh,
+  },
+  nameTextContainer: {
+    height: 5 * vh,
+    width: 40 * vw,
+    marginTop: 25 * vh,
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'absolute',    
+  },
+  opponentNameTextContainer: {
+    height: 5 * vh,
+    width: 40 * vw,
+    marginTop: 25 * vh,
+    marginLeft: 60 * vw,
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'absolute',
   },
   centerVS: {
     marginTop: 15 * vh,

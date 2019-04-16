@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import {Dimensions, Image, Text, TouchableWithoutFeedback, View, BackHandler} from 'react-native'
 import styles from './TestStyles';
 import SnapCarousel from 'react-native-snap-carousel';
-import {NavigationActions} from 'react-navigation';
+import {NavigationActions, StackActions} from 'react-navigation';
 const screen = Dimensions.get('window');
 
 
@@ -55,7 +55,11 @@ class createTest extends Component {
 
   handleBackButton() {
     console.log("workingjdh");
-    this.props.navigation.navigate('Playground', {}, NavigationActions.navigate({ routeName: 'ItemList' }));
+    this.props.navigation.dispatch(StackActions.popToTop());
+    this.props.navigation.navigate('Tabs', {}, NavigationActions.navigate({ routeName: 'Tabs' }));
+    
+    //this.props.navigation.navigate('Playground', {}, NavigationActions.navigate({ routeName: 'ItemList' }));
+    //this.props.navigation.navigate('Playground', {}, NavigationActions.navigate({ routeName: 'ItemList' }));
     return true;
   }
 

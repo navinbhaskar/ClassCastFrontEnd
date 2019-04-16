@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import { Button, Icon } from 'react-native-elements';
 import axios from "axios";
+import firebase from 'react-native-firebase';
 
 const Teacher_Image = require('./images/user-hp.png');
 const data = [ 50, 10, 40, 95, -4, -24, 85, 91 ];
@@ -20,7 +21,9 @@ class addTeachers extends Component {
 
   constructor(props) {
     super(props);
+    this._renderItem = this._renderItem.bind(this);
     this.state = {
+    username: '',
     availableTeachers: [
       {
       }
@@ -28,8 +31,16 @@ class addTeachers extends Component {
     }
   }
 
-  componentDidMount() {                       
-    axios.get(`https://classcast-198812.appspot.com/teachers/availableTeachers/1111111122`)
+  async componentDidMount() {
+    var currentUser = await firebase.auth().currentUser;                 
+     await currentUser.getIdToken()
+                      .then(idToken => {
+                            console.log("AXABXJBJ: "+JSON.stringify(currentUser));
+                            console.log("AXABXJBJ: "+currentUser['phoneNumber'].slice(3, 13));
+                            this.setState({ username: currentUser['phoneNumber'].slice(3, 13) })
+                          });
+
+    axios.get('https://classcast-198812.appspot.com/teachers/availableTeachers/'+this.state.username)
               .then(function (response){
                 this.setState({availableTeachers: response.data});
               }.bind(this))
@@ -83,7 +94,8 @@ class addTeachers extends Component {
                 <View style= {styles.teacherImageContainer}>
                     <Image source={{uri: item.photo}} style={styles.teacherImage}/>
                 </View>
-                <Button title="View"  buttonStyle={{width:100}}/>
+                <Button title="View"  buttonStyle={{width:100}}
+                  onPress={() => this.props.navigation.navigate('TeacherArea', { data: item})}/>
                 </View>
               </View>
             </View>

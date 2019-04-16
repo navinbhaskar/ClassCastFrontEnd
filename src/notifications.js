@@ -18,7 +18,14 @@ vw = screen.width / 100;
 
 class notifications extends Component {
   static navigationOptions = ({ navigation }) => ({
-    title: 'Notification'
+    title: 'Notification',
+    headerStyle: {
+      backgroundColor: '#222126',
+    },
+    style: {
+      backgroundColor: '#222126',
+    },
+    headerTintColor: '#fff'
   })
   
   constructor() {
@@ -73,7 +80,7 @@ class notifications extends Component {
   render () {
   	console.log("sdkjdfkjbfd: "+JSON.stringify(this.state.notifications))
     return (
-    	<View>
+    	<View style={{backgroundColor: 'black', width: '100%', height: '100%'}}>
 	    	<ScrollView contentContainerStyle={{paddingVertical: 20}}>
 	    		{ 
 		            this.state.notifications.sort((a, b) => a.timestamp < b.timestamp).map((notification, index) => (
@@ -274,7 +281,7 @@ const styles = StyleSheet.create({
     paddingRight: 7.5 * vw,
     marginBottom: 1 * vh,
     flexDirection: 'row',
-    backgroundColor: '#f1f1f2'
+    backgroundColor: '#222126'
   },
   notificationUserIcon: {
     width: 15 * vw,
@@ -296,6 +303,7 @@ const styles = StyleSheet.create({
   notificationInfo: {
     fontSize: 4 * vw,
     marginBottom: vh,
+    color: 'white'
   },
   challengeModal: {
     height: 70 * vh,
@@ -336,18 +344,18 @@ const styles = StyleSheet.create({
     borderRadius: 10 * vw,
   },
   userName: {
-    color: 'black',
+    color: 'white',
     fontSize: 4 * vw,
     marginTop: 1 * vh,
     textAlign: 'center',
   },
   focusText: {
     fontSize: 6 * vw,
-    color: 'black',
+    color: 'white',
   },
   notFocusText: {
     fontSize: 4 * vw,
-    color: 'black',
+    color: 'white',
     marginBottom: vw,
     marginLeft: 0.5 * vw,
   },

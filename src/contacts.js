@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
-import {Dimensions, Image, Text, TouchableWithoutFeedback, View, PermissionsAndroid, TouchableNativeFeedback, ScrollView} from 'react-native'
+import {Dimensions, Image, Text, TouchableWithoutFeedback, View, PermissionsAndroid, TouchableNativeFeedback, ScrollView, BackHandler} from 'react-native'
 import SnapCarousel from 'react-native-snap-carousel';
-import {NavigationActions} from 'react-navigation';
+import {NavigationActions, StackActions} from 'react-navigation';
 import Contacts from 'react-native-contacts';
 import simpleContacts from 'react-native-simple-contacts';
 import axios from 'axios';
@@ -18,6 +18,7 @@ class contacts extends Component {
 
    constructor() {
     super();
+    this.handleBackButton = this.handleBackButton.bind(this);
     this.state = {
       selected: 0,
       viewRef: null,
@@ -52,20 +53,6 @@ class contacts extends Component {
             this.setState({registeredUsers: res.data});
             
           });
-
-          /*
-          axios.post('http://api.classcast.in/classcast/contactlist/number/', {
-            phonenumber: allContacts.map(contact => contact.number.replace(/\D/g, '').substr(contact.number.replace(/\D/g, '').length - 10)),
-          }).then(res => {
-            console.log("ggggggggggggwww: "+JSON.stringify(res));
-            const results = res.data;
-            const registeredUsers = Object.keys(results).map(username => ({
-              username,
-              ...this.state.contacts.find(contact => contact.number === results[username])
-            }));
-            this.setState({registeredUsers});
-            console.log("ggggggggggggwww: "+JSON.stringify(registeredUsers));
-          }); */
         });
       } else {
         console.log("Contacts permission denied")
@@ -75,7 +62,19 @@ class contacts extends Component {
     }
   };
 
+  componentWillUnmount() {
+    BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton);
+  }
+
+  handleBackButton() {
+    console.log("workingjdh");
+    this.props.navigation.dispatch(StackActions.popToTop());
+    this.props.navigation.navigate('Tabs', {}, NavigationActions.navigate({ routeName: 'Tabs' }));
+    return true;
+  }
+
   async componentDidMount() {
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
     await this.requestContactsPermission();
   }
 

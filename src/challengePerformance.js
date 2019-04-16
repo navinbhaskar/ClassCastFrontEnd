@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
-import {Dimensions, Image, Text, TouchableWithoutFeedback, View, Button, TouchableNativeFeedback} from 'react-native'
+import {Dimensions, Image, Text, TouchableWithoutFeedback, View, Button, TouchableNativeFeedback, BackHandler} from 'react-native'
 import styles from './TestStyles';
 import SnapCarousel from 'react-native-snap-carousel';
-import {NavigationActions} from 'react-navigation';
+import {NavigationActions, StackActions} from 'react-navigation';
 import axios from "axios/index";
 const screen = Dimensions.get('window');
   vh = screen.height / 100;
@@ -16,13 +16,26 @@ class challengePerformance extends Component {
 
   constructor() {
     super();
+    this.handleBackButton = this.handleBackButton.bind(this);
     this.state = {
       your_total: 0,
       opponents_total: 0,
     }
   }
 
+  componentWillUnmount() {
+    BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton);
+  }
+
+  handleBackButton() {
+    console.log("workingjdh");
+    this.props.navigation.dispatch(StackActions.popToTop());
+            this.props.navigation.navigate('HomeStack', {}, NavigationActions.navigate({ routeName: 'Home' }));
+    return true;
+  }
+
   componentDidMount() {
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
     console.log("jdbsjbdsj: "+this.props.navigation.state.params.answer + ' || '+ this.props.navigation.state.params.answer.reduce(function(acc, val) { return acc + val; }, 0));
     this.setState({your_total: this.props.navigation.state.params.answer.reduce(function(acc, val) { return acc + val; }, 0)});
 
@@ -99,6 +112,7 @@ class challengePerformance extends Component {
               </View>
           <TouchableNativeFeedback
           onPress={() => {
+            this.props.navigation.dispatch(StackActions.popToTop());
             this.props.navigation.navigate('HomeStack', {}, NavigationActions.navigate({ routeName: 'Home' }))
           }}
             >

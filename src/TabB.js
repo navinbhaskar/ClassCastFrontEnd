@@ -7,10 +7,11 @@ import {
   Text,
   View,
   AsyncStorage,
-  TouchableNativeFeedback
+  TouchableNativeFeedback,
+  FlatList
 } from 'react-native';
 import { AreaChart, LineChart, Grid, YAxis } from 'react-native-svg-charts';
-import { ListItem, Icon } from 'react-native-elements';
+import {Icon} from 'react-native-elements';
 import Carousel from 'react-native-snap-carousel';
 import axios from "axios";
 import firebase from 'react-native-firebase';
@@ -34,10 +35,13 @@ class TabB extends Component {
       challenge_id: '',
       username: '',
       selected: '',
-    teachers: [],
-    performance: [
-    ]
-    }
+      updates: [],
+      teachers: [],
+      updatesModal: false,
+      selectedUpdate: [],
+      performance: [
+      ]
+      }
   }
 
   async checkPermission() {
@@ -94,12 +98,20 @@ class TabB extends Component {
                 });
       axios.get('https://classcast-198812.appspot.com/performance/getmyperformance/'+this.state.username)
                 .then(function (response){
-                  console.log("Performance: " + response.data);
                   this.setState({performance: response.data});
                 }.bind(this))
                 .catch(function(error){
                   console.log(error);
                 });
+       axios.get('https://classcast-198812.appspot.com/users/announcements')
+                .then(function (response){
+                  console.log("Hi Ji" + JSON.stringify(response.data));
+                  this.setState({updates: response.data});
+                }.bind(this))
+                .catch(function(error){
+                  console.log(error);
+                });
+
 
     await firebase.firestore()
    .collection("challenge").where("challenge_to", "==", this.state.username).where("received", "==", false)
@@ -138,6 +150,27 @@ class TabB extends Component {
     header: null
   }
 
+  _renderUpdates ({item, index}) {
+    return (
+            <View >
+              <TouchableOpacity style={{flex: 1, flexDirection: 'row', marginLeft:8, marginTop:5, marginBottom: 5}} onPress={() => {this.setState({selectedUpdate: item});
+                                              this.setState({updatesModal: true});}}>
+              <View style={{marginRight:8,height:60, width: 60, borderRadius: 30, backgroundColor: '#4286f4', alignItems:'center', justifyContent: 'center'}}>
+                <Text style={{color: 'white', fontSize: 24, fontWeight: 'bold'}}>H</Text>
+              </View>
+              <View style={{width: '80%', height: '80%', justifyContent: 'space-evenly'}}>
+                <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between'}}>
+                  <Text style={{color: 'white', fontSize: 18, fontWeight: 'bold'}}>{item.firstname} {item.lastname}</Text>
+                  <Text style={{color: '#4286f4', fontSize: 16, fontStyle: 'italic'}}>{item.type}</Text>
+                </View>
+                <Text style={{color: 'white', fontSize: 16}}>{item.message}</Text>
+              </View>
+              </TouchableOpacity>
+            </View>
+
+         );
+    }
+
   _renderItem ({item, index}) {
       console.log("chuu" + JSON.stringify(item));
       if(item.type) {
@@ -148,7 +181,8 @@ class TabB extends Component {
                     <Icon
                       name='plus'
                       type='antdesign'
-                      size= {80} 
+                      size= {50} 
+                      color={'white'}
                       style={styles.addTeacher}/>
                     </View>
                     
@@ -184,20 +218,6 @@ class TabB extends Component {
     const verticalContentInset = { top: 10, bottom: 10 }
     const xAxisHeight = 30
       
-    const list = [
-      {
-        name: 'Rohit Gaba',
-        avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
-        subtitle: 'Chemistry',
-        message: 'Added a course in Electrochemistry',
-      },
-      {
-        name: 'Ashutosh Jha',
-        avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/adhamdannaway/128.jpg',
-        subtitle: 'Chemistry',
-        message: 'Cancelled class on 17/8/19',
-      }
-    ]
     return (
      <ScrollView>
      <View style={styles.container}>
@@ -274,7 +294,24 @@ class TabB extends Component {
             </View>
            
           </View>
-          </Modal>
+        </Modal>
+
+
+        <Modal 
+              isVisible={this.state.updatesModal}
+              backdropOpacity={0.6}
+              backdropColor="black"
+              transparent={true}>
+          <View style={styles.challengeModal}>
+            <TouchableOpacity onPress={() => this.setState({updatesModal: false})}>
+              <Text style={{color: 'white'}}> {this.state.selectedUpdate.firstname} </Text>
+            </TouchableOpacity>
+
+       
+           
+          </View>
+        </Modal>
+
       </View>
         }
       <View style={{flex:1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%'}}>
@@ -319,6 +356,8 @@ class TabB extends Component {
           </CustomPlaceholder>
        </View>
       </View>
+      <View style={{height: 1, width: '50%', backgroundColor:'white', borderRadius: 5, margin: 2}}/>
+      <View style={{height: 1, width: '50%', backgroundColor:'white', borderRadius: 5}}/>
       
 
       <View style={styles.performaceContainer} >
@@ -329,7 +368,7 @@ class TabB extends Component {
           data={this.state.performance}
           contentInset={{ top: 20,  bottom: 4}}                    
           svg={{
-              fill: 'black',
+              fill: 'white',
               fontSize: 12,
           }}
           numberOfTicks={ 4 }
@@ -338,8 +377,8 @@ class TabB extends Component {
       <LineChart
           style={{ height: 120, width: 320, borderRadius:2, borderWidth: 1, borderColor:'grey' }}
           data={this.state.performance}
-          svg={{ stroke: 'rgb(134, 65, 244)',
-                  strokeWidth: 2, }}
+          svg={{ stroke: 'white',
+                  strokeWidth: 6, }}
           contentInset={{ top: 10, bottom: 10 }}
           curve={ shape.curveNatural }
       >                  
@@ -350,16 +389,13 @@ class TabB extends Component {
 
       <View style={styles.updatesContainer}>
         <Text style={styles.h3}> Updates...</Text>
-        {
-          list.map((l, i) => (
-            <ListItem
-              key={i}
-              leftAvatar={{ source: { uri: l.avatar_url } }}
-              title={l.name}
-              subtitle={l.subtitle}
-            />
-          ))
-        }
+        <FlatList
+          data={this.state.updates}
+          showsVerticalScrollIndicator={false}
+          renderItem={this._renderUpdates.bind(this) }
+          keyExtractor={(item, index) => index.toString()}
+        />
+        
       </View>
 
 
@@ -435,11 +471,7 @@ const styles = StyleSheet.create({
   classroomsContainer:{
     marginTop: 10,
     height: 30 * vh,
-    width: '100%',
-    borderRadius:5,
-    backgroundColor:'white',
-    borderWidth:1,
-    borderColor: 'grey',
+    width: '100%'
   },
   challengeModalButton: {
     flex: 1,
@@ -505,7 +537,7 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     fontSize: 20,
     paddingLeft: 10,
-    color: 'black',
+    color: 'white',
     fontWeight: 'bold',
   },
    teacherImage: {
@@ -515,7 +547,7 @@ const styles = StyleSheet.create({
   },
   teacherName: {
     fontSize:12,
-    color: '#0F3651',
+    color: 'white',
     fontWeight: 'bold',   
   },
   classrooms:{
@@ -540,11 +572,7 @@ const styles = StyleSheet.create({
   performaceContainer:{
     marginTop: 10,
     height: 220,
-    width:'100%',
-    borderRadius:5,
-    backgroundColor:'white',
-    borderWidth:1,
-    borderColor: 'grey'
+    width:'100%'
   },
   profilePicture: {
     height: 20 * vw,
@@ -560,10 +588,6 @@ const styles = StyleSheet.create({
   updatesContainer:{
     marginTop: 10,
     width:'100%',
-    borderRadius:5,
-    backgroundColor:'white',
-    borderWidth:1,
-    borderColor: 'grey'
   },
   ratingText: {
     paddingLeft: 10,
@@ -597,7 +621,7 @@ const styles = StyleSheet.create({
     marginTop:5,
     alignItems:'center',
     justifyContent: 'center',
-    borderColor: '#0F3651',
+    borderColor: 'white',
     elevation: 3
   },
   teacherContainer: {

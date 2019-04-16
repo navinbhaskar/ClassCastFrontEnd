@@ -23,6 +23,7 @@ const Entities = require('html-entities').XmlEntities;
 var S = require('string');
 const entities = new Entities();
 
+const ques = '<p>Calculate the standard cell potentials of galvanic cell, $\xe2\x88\x86_r G^o$and equilibrium constant of the reactions if the reaction is <br/><img src="https://console.cloud.google.com/storage/browser/question_imgs/3889.png"/><br/></p>'
 
 const screen = Dimensions.get('window');
   vh = screen.height / 100;
@@ -278,7 +279,7 @@ class loadingGym extends Component {
           <View style={styles.questionContainer}>
           {console.log('HHH: '+this.state.question)}
           <MathJax
-                  html={this.state.question.split('\\\\').join('\\')}
+                  html={this.state.question.split('https://console.cloud.google.com/storage/browser').join('https://storage.googleapis.com').split('\\\\').join('\\')}
                   mathJaxOptions={{
                     tex2jax: {
                       inlineMath: [['{tex}', '{/tex}'], ['\\(', '\\)']],
@@ -286,7 +287,9 @@ class loadingGym extends Component {
                       processEscapes: true,
                     },
                   }}
-                  
+                  onHeightUpdated={height => {
+                    console.log("nkjnska: "+height)
+                  }}
                   hasIframe={true}
                   style={{width: 0.9 * screen.width}}
                   enableAnimation={false}
@@ -331,7 +334,7 @@ class loadingGym extends Component {
                >
             <View style={[styles.optionContainer, { borderColor:  this.state.backgroundColorOptionA }]}>
           <MathJax
-                    html={this.state.option1.split('\\\\').join('\\')}
+                    html={this.state.option1.split('https://console.cloud.google.com/storage/browser').join('https://storage.googleapis.com').split('\\\\').join('\\')}
                     mathJaxOptions={{
                       tex2jax: {
                         inlineMath: [['{tex}', '{/tex}'], ['\\(', '\\)']],
@@ -386,7 +389,7 @@ class loadingGym extends Component {
                >
             <View style={[styles.optionContainer, { borderColor:  this.state.backgroundColorOptionB }]}>
           <MathJax
-                    html={this.state.option2.split('\\\\').join('\\')}
+                    html={this.state.option2.split('https://console.cloud.google.com/storage/browser').join('https://storage.googleapis.com').split('\\\\').join('\\')}
                     mathJaxOptions={{
                       tex2jax: {
                         inlineMath: [['{tex}', '{/tex}'], ['\\(', '\\)']],
@@ -441,7 +444,7 @@ class loadingGym extends Component {
                >
             <View style={[styles.optionContainer, { borderColor:  this.state.backgroundColorOptionC }]}>
           <MathJax
-                    html={this.state.option3.split('\\\\').join('\\')}
+                    html={this.state.option3.split('https://console.cloud.google.com/storage/browser').join('https://storage.googleapis.com').split('\\\\').join('\\')}
                     mathJaxOptions={{
                       tex2jax: {
                         inlineMath: [['{tex}', '{/tex}'], ['\\(', '\\)']],
@@ -497,7 +500,7 @@ class loadingGym extends Component {
                >
             <View style={[styles.optionContainer, { borderColor:  this.state.backgroundColorOptionD }]}>
           <MathJax
-                    html={this.state.option4.split('\\\\').join('\\')}
+                    html={this.state.option4.split('https://console.cloud.google.com/storage/browser').join('https://storage.googleapis.com').split('\\\\').join('\\')}
                     backgroundColor={'yellow'}
                     mathJaxOptions={{
                       tex2jax: {
@@ -524,7 +527,7 @@ class loadingGym extends Component {
           </View>
             <View style={styles.questionContainer}>
             <MathJax
-                    html={this.state.explanation.split('\\\\').join('\\')}
+                    html={this.state.explanation.split('https://console.cloud.google.com/storage/browser').join('https://storage.googleapis.com').split('\\\\').join('\\')}
                     mathJaxOptions={{
                       tex2jax: {
                         inlineMath: [['{tex}', '{/tex}'], ['\\(', '\\)']],

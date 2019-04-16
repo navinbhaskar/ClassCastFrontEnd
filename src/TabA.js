@@ -8,6 +8,8 @@ import {
 } from 'react-native';
 import { Button, Icon } from 'react-native-elements';
 import axios from "axios";
+import firebase from 'react-native-firebase';
+import { DrawerActions } from 'react-navigation-drawer';
 
 const Teacher_Image = require('./images/user-hp.png');
 const data = [ 50, 10, 40, 95, -4, -24, 85, 91 ];
@@ -21,6 +23,7 @@ class disover extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      username: '',
     availableTeachers: [
       {
       }
@@ -28,8 +31,16 @@ class disover extends Component {
     }
   }
 
-  componentDidMount() {                       
-    axios.get(`https://classcast-198812.appspot.com/teachers/availableTeachers/1111111122`)
+  async componentDidMount() {       
+    var currentUser = await firebase.auth().currentUser;                 
+     await currentUser.getIdToken()
+                      .then(idToken => {
+                            console.log("AXABXJBJ: "+JSON.stringify(currentUser));
+                            console.log("AXABXJBJ: "+currentUser['phoneNumber'].slice(3, 13));
+                            this.setState({ username: currentUser['phoneNumber'].slice(3, 13) })
+                          });
+
+    axios.get(`https://classcast-198812.appspot.com/teachers/availableTeachers/`+this.state.username)
               .then(function (response){
                 this.setState({availableTeachers: response.data});
               }.bind(this))
@@ -91,6 +102,31 @@ class disover extends Component {
   render () {
     return (
       <View style={styles.container}>
+        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', height: 9 * vh}}>
+        <View style={{justifyContent:'flex-start', marginLeft:10}}>
+        <Icon           
+          name='menu'
+          color='white'
+          type='material'
+          size= {35} 
+          onPress={() => this.props.navigation.dispatch(DrawerActions.toggleDrawer())}
+          />
+        </View>
+        <View style={{marginLeft:0}}>
+          <Text style={{fontSize: 22, color: 'white', fontWeight: 'bold'}}> SEARCH TEACHERS </Text>
+        </View>
+        <View style={{justifyContent:'flex-end', marginRight: 10}}>
+        <Icon
+          name='notifications'
+          color='white'
+          type='material'
+          size= {35} 
+          onPress={() => this.props.navigation.navigate('notification', { title: "Notification" })}
+          />
+        </View>
+
+      </View>
+
         <FlatList
           data={this.state.availableTeachers}
           showsVerticalScrollIndicator={false}
@@ -110,8 +146,7 @@ const styles = StyleSheet.create({
   container:{
       flex: 1,
       alignItems: 'center',
-      backgroundColor: 'white',
-      backgroundColor: '#0F3651',
+      backgroundColor: 'black'
     },
     h2:{
       fontSize: 18,

@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import {Dimensions, Image, Text, TouchableWithoutFeedback, View, Button, TouchableNativeFeedback} from 'react-native'
 import styles from './TestStyles';
 import SnapCarousel from 'react-native-snap-carousel';
-import {NavigationActions} from 'react-navigation';
+import {StackActions, NavigationActions} from 'react-navigation';
 import axios from "axios/index";
 const screen = Dimensions.get('window');
 
@@ -85,6 +85,7 @@ class gymPerformance extends Component {
         </View>
         <TouchableNativeFeedback
           onPress={() => {
+            this.props.navigation.dispatch(StackActions.popToTop());
             this.props.navigation.navigate('HomeStack', {}, NavigationActions.navigate({ routeName: 'Home' }))
           }}
             >

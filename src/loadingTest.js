@@ -43,6 +43,7 @@ class loadingTest extends Component {
       ActiveSlide: 0,
       startTime: new Date(),
       blocks: [],
+      questionContainerHeight: 0,
       question: '',
       option1: '',
       option2: '',
@@ -420,7 +421,7 @@ class loadingTest extends Component {
           <View style={styles.questionContainer}>
              
           <MathJax
-                  html={this.state.question.split('\\\\').join('\\')}
+                  html={this.state.question.split('https://console.cloud.google.com/storage/browser').join('https://storage.googleapis.com').split('\\\\').join('\\')}
                   mathJaxOptions={{
                     tex2jax: {
                       inlineMath: [['{tex}', '{/tex}'], ['\\(', '\\)']],
@@ -428,7 +429,9 @@ class loadingTest extends Component {
                       processEscapes: true,
                     },
                   }}
-                  
+                  onHeightUpdated={height => {
+                    console.log("sdjasjkadsn: "+height);
+                  }}
                   hasIframe={true}
                   style={{width: 0.9 * screen.width}}
                   enableAnimation={false}
@@ -464,7 +467,7 @@ class loadingTest extends Component {
                >
             <View style={[styles.optionContainer, { borderColor:  this.state.backgroundColorOptionA }]}>
           <MathJax
-                    html={this.state.option1.split('\\\\').join('\\')}
+                    html={this.state.option1.split('https://console.cloud.google.com/storage/browser').join('https://storage.googleapis.com').split('\\\\').join('\\')}
                     mathJaxOptions={{
                       tex2jax: {
                         inlineMath: [['{tex}', '{/tex}'], ['\\(', '\\)']],
@@ -509,7 +512,7 @@ class loadingTest extends Component {
                >
             <View style={[styles.optionContainer, { borderColor:  this.state.backgroundColorOptionB }]}>
           <MathJax
-                    html={this.state.option2.split('\\\\').join('\\')}
+                    html={this.state.option2.split('https://console.cloud.google.com/storage/browser').join('https://storage.googleapis.com').split('\\\\').join('\\')}
                     mathJaxOptions={{
                       tex2jax: {
                         inlineMath: [['{tex}', '{/tex}'], ['\\(', '\\)']],
@@ -554,7 +557,7 @@ class loadingTest extends Component {
                >
             <View style={[styles.optionContainer, { borderColor:  this.state.backgroundColorOptionC }]}>
           <MathJax
-                    html={this.state.option3.split('\\\\').join('\\')}
+                    html={this.state.option3.split('https://console.cloud.google.com/storage/browser').join('https://storage.googleapis.com').split('\\\\').join('\\')}
                     mathJaxOptions={{
                       tex2jax: {
                         inlineMath: [['{tex}', '{/tex}'], ['\\(', '\\)']],
@@ -600,7 +603,7 @@ class loadingTest extends Component {
                >
             <View style={[styles.optionContainer, { borderColor:  this.state.backgroundColorOptionD }]}>
           <MathJax
-                    html={this.state.option4.split('\\\\').join('\\')}
+                    html={this.state.option4.split('https://console.cloud.google.com/storage/browser').join('https://storage.googleapis.com').split('\\\\').join('\\')}
                     backgroundColor={'yellow'}
                     mathJaxOptions={{
                       tex2jax: {

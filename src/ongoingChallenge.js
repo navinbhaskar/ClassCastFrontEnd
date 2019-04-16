@@ -380,7 +380,7 @@ class ongoingChallenge extends Component {
             <View style={styles.questionContainer}>
             {console.log('HHH: '+this.state.question)}
             <MathJax
-                    html={this.state.question.split('\\\\').join('\\')}
+                    html={this.state.question.split('https://console.cloud.google.com/storage/browser').join('https://storage.googleapis.com').split('\\\\').join('\\')}
                     mathJaxOptions={{
                       tex2jax: {
                         inlineMath: [['{tex}', '{/tex}'], ['\\(', '\\)']],
@@ -435,7 +435,7 @@ class ongoingChallenge extends Component {
                  >
               <View style={[styles.optionContainer, { borderColor:  this.state.backgroundColorOptionA }]}>
             <MathJax
-                      html={this.state.option1.split('\\\\').join('\\')}
+                      html={this.state.option1.split('https://console.cloud.google.com/storage/browser').join('https://storage.googleapis.com').split('\\\\').join('\\')}
                       mathJaxOptions={{
                         tex2jax: {
                           inlineMath: [['{tex}', '{/tex}'], ['\\(', '\\)']],
@@ -492,7 +492,7 @@ class ongoingChallenge extends Component {
                  >
               <View style={[styles.optionContainer, { borderColor:  this.state.backgroundColorOptionB }]}>
             <MathJax
-                      html={this.state.option2.split('\\\\').join('\\')}
+                      html={this.state.option2.split('https://console.cloud.google.com/storage/browser').join('https://storage.googleapis.com').split('\\\\').join('\\')}
                       mathJaxOptions={{
                         tex2jax: {
                           inlineMath: [['{tex}', '{/tex}'], ['\\(', '\\)']],
@@ -549,7 +549,7 @@ class ongoingChallenge extends Component {
                  >
               <View style={[styles.optionContainer, { borderColor:  this.state.backgroundColorOptionC }]}>
             <MathJax
-                      html={this.state.option3.split('\\\\').join('\\')}
+                      html={this.state.option3.split('https://console.cloud.google.com/storage/browser').join('https://storage.googleapis.com').split('\\\\').join('\\')}
                       mathJaxOptions={{
                         tex2jax: {
                           inlineMath: [['{tex}', '{/tex}'], ['\\(', '\\)']],
@@ -607,7 +607,7 @@ class ongoingChallenge extends Component {
                  >
               <View style={[styles.optionContainer, { borderColor:  this.state.backgroundColorOptionD }]}>
             <MathJax
-                      html={this.state.option4.split('\\\\').join('\\')}
+                      html={this.state.option4.split('https://console.cloud.google.com/storage/browser').join('https://storage.googleapis.com').split('\\\\').join('\\')}
                       backgroundColor={'yellow'}
                       mathJaxOptions={{
                         tex2jax: {
@@ -673,20 +673,61 @@ class ongoingChallenge extends Component {
                           this.setState({ backgroundColorOptionD: 'white'});
                         }
                       if(this.state.questionIndex+1 == this.state.n_questions) {
-                        console.log("working1");
-                        this.setState({question: ''});
-                        this.setState({option1: ''});
-                        this.setState({option2: ''});
-                        this.setState({option3: ''});
-                        this.setState({option4: ''});
-                        this.setState({option1_iscorrect: ''});
-                        this.setState({option2_iscorrect: ''});
-                        this.setState({option3_iscorrect: ''});
-                        this.setState({option4_iscorrect: ''});
-                        this.setState({ backgroundColorOptionB: 'white'});
-                        this.setState({ backgroundColorOptionC: 'white'});
-                        this.setState({ backgroundColorOptionA: 'white'});
-                        this.setState({ backgroundColorOptionD: 'white'});
+                        Alert.alert(
+                          'sure???',
+                          'My Alert Msg',
+                          [
+                            {
+                              text: 'Cancel',
+                              onPress: () => console.log('Cancel Pressed'),
+                              style: 'cancel',
+                            },
+                            {text: 'Submit', onPress: () =>{
+                              if(this.props.navigation.state.params.is_sender) {
+                                axios.post('https://classcast-198812.appspot.com/challenge/updateChallengeRequest', {
+                                                      "challenge_id": this.props.navigation.state.params.challenge_id,
+                                                      "completed_by_sender": true
+                                                    })
+                                                }
+                              else {
+                                axios.post('https://classcast-198812.appspot.com/challenge/updateChallengeRequest', {
+                                                      "challenge_id": this.props.navigation.state.params.challenge_id,
+                                                      "completed_by_receiver": true
+                                                    })
+                              }
+                              
+                              this.props.navigation.navigate('Playground', {}, NavigationActions.navigate({ 
+                                      routeName: 'challengePerformance',
+                                      params: {
+                                        opponent_username: this.props.navigation.state.params.username,
+                                        opponent_name: this.props.navigation.state.params.name,
+                                        timer: this.state.timer,
+                                        answer: this.state.answer,
+                                        opponent_answer: this.state.opponent_answer,
+                                        challenge_id: this.props.navigation.state.params.challenge_id, 
+                                        is_sender: this.props.navigation.state.params.is_sender
+                                      },
+                                    }));
+
+                              /*
+                              const navigateAction = NavigationActions.navigate({
+                              routeName: 'challengePerformance',
+                              params: {
+                                opponent_username: this.props.navigation.state.params.username,
+                                opponent_name: this.props.navigation.state.params.name,
+                                timer: this.state.timer,
+                                answer: this.state.answer,
+                                opponent_answer: this.state.opponent_answer,
+                                challenge_id: this.props.navigation.state.params.challenge_id, 
+                                is_sender: this.props.navigation.state.params.is_sender
+                              },
+                            });
+                            this.props.navigation.dispatch(navigateAction); 
+                            */
+                            }},
+                          ],
+                          {cancelable: false},
+                        );
                       }
                       }
                   }

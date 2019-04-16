@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
-import {Dimensions, Image, Text, TouchableWithoutFeedback, View} from 'react-native'
+import {Dimensions, Image, Text, TouchableWithoutFeedback, View, BackHandler} from 'react-native'
 import styles from './TestStyles';
 import SnapCarousel from 'react-native-snap-carousel';
-import {NavigationActions} from 'react-navigation';
+import {NavigationActions, StackActions} from 'react-navigation';
 const screen = Dimensions.get('window');
 
 
@@ -14,6 +14,7 @@ class createGym extends Component {
 
    constructor() {
     super();
+    this.handleBackButton = this.handleBackButton.bind(this);
     this.state = {
       subjects: [
         {
@@ -34,6 +35,20 @@ class createGym extends Component {
     }
   }
 
+  componentWillUnmount() {
+    BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton);
+  }
+
+  handleBackButton() {
+    console.log("workingjdh");
+    this.props.navigation.dispatch(StackActions.popToTop());
+    this.props.navigation.navigate('Tabs', {}, NavigationActions.navigate({ routeName: 'Tabs' }));
+    return true;
+  }
+
+  async componentDidMount() {
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
+  }
  
   _renderItemSubject = ({item, index}) => {
     return (

@@ -31,6 +31,7 @@ export default class UserDetails extends Component {
     fontLoaded: false,
     name: '',
     username:'',
+    lastname: '',
     usernameValid: true,
     phone:'',
   };
@@ -108,19 +109,29 @@ export default class UserDetails extends Component {
     return usernameValid;
   }
 
+  validateLastname() {
+    const { lastname } = this.state;
+    const lastnameValid = lastname.length > 0;
+    LayoutAnimation.easeInEaseOut();
+    this.setState({ lastnameValid });
+    lastnameValid || this.lastnameInput.shake();
+    return lastnameValid;
+  }
+
   async updateinfo(){
 
     const nameValid = await this.validateUsername();
+    const lastnameValid = await this.validateLastname();
     const genderValid = await this.validateGender();
     const classValid = await this.validateClass();
     const streamValid = await this.validateStream();
     const token = await this.retrieveData();
 
-    if (nameValid && genderValid && classValid && streamValid){
+    if (nameValid && lastnameValid && genderValid && classValid && streamValid){
 
       var data = {
               "firstname": this.state.username,
-              "lastname": "Jha",
+              "lastname": this.state.lastname,
               "gender": genderValid,
               "standard": classValid,
               "phone_number": this.state.phone,
@@ -134,7 +145,7 @@ export default class UserDetails extends Component {
               .then((response) => 
               {
                  console.log("API response" + JSON.stringify(response))
-                 this.props.navigation.navigate("Home");
+                 this.props.navigation.navigate("accessCode");
               })
               .catch((error) => {
                   console.log("API error" + JSON.stringify(error))
@@ -145,11 +156,14 @@ export default class UserDetails extends Component {
   }
 
 
+  componentDidMount() {
+    console.log("snakjnfsworking2");
+  }
 
   render() {
     const classes = ['11', '12', '12+']
     const streams = ['Science', 'Commerce']
-    const { selectedClassesIndex, selectedStreamIndex, name, selectedType, username, usernameValid } = this.state
+    const { selectedClassesIndex, selectedStreamIndex, name, selectedType, username, lastname, usernameValid } = this.state
     return (
      <ScrollView
         scrollEnabled={true}
@@ -177,9 +191,10 @@ export default class UserDetails extends Component {
             <FormInput
               refInput={input => (this.usernameInput = input)}
               icon="user"
+              autoFocus={true}
               value={username}
               onChangeText={username => this.setState({ username })}
-              placeholder="Full Name"
+              placeholder="First Name"
               returnKeyType="next"
               errorMessage={
                 usernameValid ? null : "Please tell us your name"
@@ -189,7 +204,22 @@ export default class UserDetails extends Component {
               }}
             />
         </View>
-
+        <View style={{ width: '80%', alignItems: 'center' }}>
+            <FormInput
+              refInput={input => (this.lastnameInput = input)}
+              icon="user"
+              value={lastname}
+              onChangeText={lastname => this.setState({ lastname })}
+              placeholder="Last Name"
+              returnKeyType="next"
+              errorMessage={
+                usernameValid ? null : "Please tell us your name"
+              }
+              onSubmitEditing={() => {
+                this.validateLastname();
+              }}
+            />
+        </View>
       <Text style={styles.h3}> Select your Class</Text>
           <ButtonGroup
             onPress={this.updateClassesIndex}
