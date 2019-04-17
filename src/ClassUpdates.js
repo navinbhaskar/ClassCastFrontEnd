@@ -21,8 +21,9 @@ class ClassUpdates extends Component {
   }
 
 async componentDidMount() {
+  console.log("skksNJKlanlx: "+JSON.stringify(this.props.navigation.state.params.data));
   await firebase.firestore()
-   .collection('announcement/6/Batch-1')
+   .collection('announcement/'+this.props.navigation.state.params.data.teacher_id+'/'+this.props.navigation.state.params.data.batch_id)
     .get()
     .then(snapshot => {
       snapshot

@@ -30,7 +30,7 @@ export default class teacherAbout extends Component {
             <ScrollView style={{ flex: 1 }}>
               <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                 <Image
-                  source= {require('./images/anurag.png')}
+                  source= {{uri: this.props.navigation.state.params.data.photo}}
                   style={{
                     width: IMAGE_SIZE,
                     height: IMAGE_SIZE,
@@ -56,7 +56,7 @@ export default class teacherAbout extends Component {
                     fontFamily: 'bold',
                   }}
                 >
-                  Anurag Ji
+                  {this.props.navigation.state.params.data.firstname+ ' '+this.props.navigation.state.params.data.lastname}
                 </Text>
                 <Text
                   style={{
@@ -67,7 +67,7 @@ export default class teacherAbout extends Component {
                     marginTop: 5,
                   }}
                 >
-                  EduMitra
+                  {this.props.navigation.state.params.data.coaching_name}
                 </Text>
               </View>
               <View
@@ -86,7 +86,7 @@ export default class teacherAbout extends Component {
                     fontFamily: 'regular',
                   }}
                 >
-                  Kaafi cool aadmi. Maths boht faad padhata hai. Burari me padha raha hai sadiyo se, gazab aadmi hai
+                  {this.props.navigation.state.params.data.about}
                 </Text>
               </View>
               <View style={{ flex: 1, marginTop: 30 }}>
@@ -117,10 +117,10 @@ export default class teacherAbout extends Component {
                       <Text style={styles.infoTypeLabel}>Focus Exams</Text>
                     </View>
                     <View style={{ flex: 1, marginLeft: 10 }}>
-                      <Text style={styles.infoAnswerLabel}>Mathematics</Text>
-                      <Text style={styles.infoAnswerLabel}>Burari</Text>
-                      <Text style={styles.infoAnswerLabel}>11, 12</Text>
-                      <Text style={styles.infoAnswerLabel}>CBSE, JEE Mains</Text>
+                      <Text style={styles.infoAnswerLabel}>{this.props.navigation.state.params.data.subject}</Text>
+                      <Text style={styles.infoAnswerLabel}>{this.props.navigation.state.params.data.area}</Text>
+                      <Text style={styles.infoAnswerLabel}>{this.props.navigation.state.params.data.classes}</Text>
+                      <Text style={styles.infoAnswerLabel}>{this.props.navigation.state.params.data.goal}</Text>
                     </View>
                   </View>
                 </View>

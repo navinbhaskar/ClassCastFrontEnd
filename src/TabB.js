@@ -89,6 +89,7 @@ class TabB extends Component {
       
       axios.get(`https://classcast-198812.appspot.com/teachers/myteachers/`)
                 .then(function (response){
+                  console.log("edkdwkdwb: "+JSON.stringify(response));
                   response.data.unshift({type: 'add'});
                   this.setState({teachers: response.data});
                   this.setState({isReady: true});
@@ -156,7 +157,13 @@ class TabB extends Component {
               <TouchableOpacity style={{flex: 1, flexDirection: 'row', marginLeft:8, marginTop:5, marginBottom: 5}} onPress={() => {this.setState({selectedUpdate: item});
                                               this.setState({updatesModal: true});}}>
               <View style={{marginRight:8,height:60, width: 60, borderRadius: 30, backgroundColor: '#4286f4', alignItems:'center', justifyContent: 'center'}}>
-                <Text style={{color: 'white', fontSize: 24, fontWeight: 'bold'}}>H</Text>
+                <Image
+                  source= {{uri: item.photo}}
+                  style={{
+                    width: 55,
+                    height: 55,
+                  }}
+                />
               </View>
               <View style={{width: '80%', height: '80%', justifyContent: 'space-evenly'}}>
                 <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between'}}>
