@@ -127,7 +127,7 @@ class CourseHome extends Component {
                   <View style = {styles.progress}>
                       <ProgressCircle
                           style={ { height: 95, width: 100, position:'absolute' } }
-                          progress={ this.props.navigation.state.params.percentage_completion }
+                          progress={ this.props.navigation.state.params.percentage_completion/100 }
                           progressColor={'#0F3651'}
                       />
                       <Text style={{ color: 'black', fontSize: 24}}> {this.props.navigation.state.params.percentage_completion+'%'} </Text>
@@ -149,7 +149,7 @@ class CourseHome extends Component {
                       <View style={styles.sectionContent}>
                         {
                           blocks.data && blocks.data.map((data, index)=>{
-                            console.log("working4: "+data.url);
+                            console.log("working41: "+JSON.stringify(data));
                             console.log("working4: "+data.path);
                             console.log("working4: "+data.block_type);
                             if(data.block_type == 'video') {
@@ -157,6 +157,16 @@ class CourseHome extends Component {
                                 <TouchableNativeFeedback
                                   onPress={() => {
                                     this.setState({startBuffering: true});
+                                    axios.post(`http://classcast-198812.appspot.com/coursedata/storestudentblockinteractions`, {
+                                      "course_id": this.props.navigation.state.params.course_id,
+                                      "block_id": data.block_id
+                                    })
+                                    .then( response => {
+                                        console.log("ABCDEF: "+JSON.stringify(response.data));
+                                      })
+                                      .catch(err => {
+                                        console.log("ABCDEFE: "+JSON.stringify(err));
+                                      });
                                     axios.post(`https://classcast-198812.appspot.com/coursedata/generateSignedUrl`, {
                                       "path": data.path
                                       //"path": "/classcast-198812.appspot.com/classcast_videos/Mathematics_CBSE/Anurag_Chauhan_Delhi/Class_12/Applications_of_Derivatives/Day%201%20Out%20-%20%20(1)-1.mp4"
@@ -194,6 +204,16 @@ class CourseHome extends Component {
                                 <TouchableNativeFeedback
                                   onPress={() => {
                                     this.setState({startBuffering: true});
+                                    axios.post(`http://classcast-198812.appspot.com/coursedata/storestudentblockinteractions`, {
+                                      "course_id": this.props.navigation.state.params.course_id,
+                                      "block_id": data.block_id
+                                    })
+                                    .then( response => {
+                                        console.log("ABCDEF: "+JSON.stringify(response.data));
+                                      })
+                                      .catch(err => {
+                                        console.log("ABCDEFE: "+JSON.stringify(err));
+                                      });
                                     axios.post(`https://classcast-198812.appspot.com/coursedata/generateSignedUrl`, {
                                       "path": data.path
                                     })
@@ -226,6 +246,16 @@ class CourseHome extends Component {
                                 <TouchableNativeFeedback
                                   onPress={() => {
                                     this.setState({startBuffering: true});
+                                    axios.post(`http://classcast-198812.appspot.com/coursedata/storestudentblockinteractions`, {
+                                      "course_id": this.props.navigation.state.params.course_id,
+                                      "block_id": data.block_id
+                                    })
+                                    .then( response => {
+                                        console.log("ABCDEF: "+JSON.stringify(response.data));
+                                      })
+                                      .catch(err => {
+                                        console.log("ABCDEFE: "+JSON.stringify(err));
+                                      });
                                     axios.post(`https://classcast-198812.appspot.com/coursedata/fetchassignmentquestions`, {
                                       "block_id": data.url
                                     })

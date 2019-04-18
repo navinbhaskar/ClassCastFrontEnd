@@ -53,7 +53,7 @@ class video extends Component {
   };
 
   onProgress = (data) => {
-    console.log("Buffering1");
+    console.log("Buffering1: "+data);
     this.setState({
       currentTime: data.currentTime,
       playableDuration: this.state.duration,

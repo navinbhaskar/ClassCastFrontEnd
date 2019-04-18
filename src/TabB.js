@@ -37,7 +37,9 @@ class TabB extends Component {
       selected: '',
       updates: [],
       teachers: [],
+      n_teachers: 1,
       updatesModal: false,
+      n_updates: 0,
       selectedUpdate: [],
       performance: [
       ]
@@ -89,9 +91,11 @@ class TabB extends Component {
       
       axios.get(`https://classcast-198812.appspot.com/teachers/myteachers/`)
                 .then(function (response){
-                  console.log("edkdwkdwb: "+JSON.stringify(response));
+                  console.log("edkdwkdwb: "+JSON.stringify(response.data));
                   response.data.unshift({type: 'add'});
                   this.setState({teachers: response.data});
+                  this.setState({n_teachers: response.data.length});
+                  console.log("dsndsklndjl: "+response.data.length);
                   this.setState({isReady: true});
                 }.bind(this))
                 .catch(function (error) {
@@ -107,6 +111,7 @@ class TabB extends Component {
        axios.get('https://classcast-198812.appspot.com/users/announcements')
                 .then(function (response){
                   console.log("Hi Ji" + JSON.stringify(response.data));
+                  this.setState({n_updates: response.data.length});
                   this.setState({updates: response.data});
                 }.bind(this))
                 .catch(function(error){
@@ -181,23 +186,20 @@ class TabB extends Component {
   _renderItem ({item, index}) {
       console.log("chuu" + JSON.stringify(item));
       if(item.type) {
-        return (
-              <TouchableOpacity onPress={() => this.props.navigation.navigate('addTeachers', { title: "Add Teachers" })}>
-                <View style={styles.teacherContainer}>
-                  <View style={styles.teacherImageContainer}>
-                    <Icon
-                      name='plus'
-                      type='antdesign'
-                      size= {50} 
-                      color={'white'}
-                      style={styles.addTeacher}/>
-                    </View>
-                    
-                    <Text style={styles.teacherName}> Add New </Text>
-                </View>
-              </TouchableOpacity>
-
-        );
+          return (
+                <TouchableOpacity onPress={() => this.props.navigation.navigate('addTeachers', { title: "Add Teachers" })}>
+                  <View style={styles.teacherContainer}>
+                    <View style={styles.teacherImageContainer}>
+                      <Icon
+                        name='plus'
+                        type='antdesign'
+                        size= {50} 
+                        color={'white'}
+                        style={styles.addTeacher}/>
+                      </View>
+                  </View>
+                </TouchableOpacity>
+          );
       }
 
       else {
@@ -361,6 +363,14 @@ class TabB extends Component {
               inactiveSlideScale={1}
             />
           </CustomPlaceholder>
+          { this.state.n_teachers == 1 && this.state.isReady &&
+            <View style={{height: 10 * vh, width: 60 * vw, marginBottom: 8 * vh, marginRight: 5 * vw, marginRight: 10 * vw}}>
+            <TouchableOpacity onPress={() => this.props.navigation.navigate('addTeachers', { title: "Add Teachers" })}>
+              <Text style={{fontSize: 20, color: 'white', textAlign: 'center'}}>You are not enrolled in any Classroom, Please add 
+                atleat one teacher </Text>
+            </TouchableOpacity>
+            </View>
+          }
        </View>
       </View>
       <View style={{height: 1, width: '50%', backgroundColor:'white', borderRadius: 5, margin: 2}}/>
@@ -396,6 +406,13 @@ class TabB extends Component {
 
       <View style={styles.updatesContainer}>
         <Text style={styles.h3}> Updates...</Text>
+        { this.state.n_updates == 0 &&
+            <View style={{height: 5 * vh, width: 60 * vw, marginLeft: 20 * vw}}>
+            <TouchableOpacity onPress={() => this.props.navigation.navigate('addTeachers', { title: "Add Teachers" })}>
+              <Text style={{fontSize: 20, color: 'white', textAlign: 'center'}}> No Updates </Text>
+            </TouchableOpacity>
+            </View>
+          }
         <FlatList
           data={this.state.updates}
           showsVerticalScrollIndicator={false}
@@ -558,12 +575,14 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',   
   },
   classrooms:{
+    flexDirection: 'row',
     marginTop: 8 * vh,
     height: 22 * vh,
     width:'100%',
     borderRadius:5,
     position: 'absolute',
-    alignItems: 'center',
+    alignItems:'center',
+    justifyContent: 'center',
   },
   linearGradient:{
     marginTop: 10,

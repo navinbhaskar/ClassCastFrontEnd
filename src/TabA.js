@@ -24,10 +24,12 @@ class disover extends Component {
     super(props);
     this.state = {
       username: '',
-    availableTeachers: [
-      {
-      }
-      ]
+      n_teachers: 0,
+      isReady: false,
+      availableTeachers: [
+        {
+        }
+        ]
     }
   }
 
@@ -43,6 +45,8 @@ class disover extends Component {
     axios.get(`https://classcast-198812.appspot.com/teachers/availableTeachers/`+this.state.username)
               .then(function (response){
                 this.setState({availableTeachers: response.data});
+                this.setState({n_teachers: response.data.length});
+                this.setState({isReady: true});
               }.bind(this))
               .catch(function (error) {
                 console.log(error);
@@ -126,7 +130,11 @@ class disover extends Component {
         </View>
 
       </View>
-
+      { this.state.n_teachers == 0 && this.state.isReady &&
+        <View style={{height: 5 * vh, width: 60 * vw, marginTop: 5 * vh}}>
+          <Text style={{fontSize: 20, color: 'white', textAlign: 'center'}}> No Updates </Text>
+        </View>
+      }
         <FlatList
           data={this.state.availableTeachers}
           showsVerticalScrollIndicator={false}

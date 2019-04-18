@@ -4,7 +4,8 @@ import {
   Text,
   StyleSheet,
   Image,
-  FlatList
+  FlatList,
+  TouchableOpacity
 } from 'react-native';
 import { Button, Icon } from 'react-native-elements';
 import axios from "axios";
@@ -24,6 +25,8 @@ class addTeachers extends Component {
     this._renderItem = this._renderItem.bind(this);
     this.state = {
     username: '',
+    n_teachers: 0,
+    isReady: false,
     availableTeachers: [
       {
       }
@@ -43,6 +46,8 @@ class addTeachers extends Component {
     axios.get('https://classcast-198812.appspot.com/teachers/availableTeachers/'+this.state.username)
               .then(function (response){
                 this.setState({availableTeachers: response.data});
+                this.setState({n_teachers: response.data.length});
+                this.setState({isReady: true});
               }.bind(this))
               .catch(function (error) {
                 console.log(error);
@@ -106,6 +111,11 @@ class addTeachers extends Component {
   render () {
     return (
       <View style={styles.container}>
+      { this.state.n_teachers == 0 && this.state.isReady &&
+        <View style={{height: 5 * vh, width: 60 * vw, marginTop: 5 * vh}}>
+          <Text style={{fontSize: 20, color: 'white', textAlign: 'center'}}> No Updates </Text>
+        </View>
+      }
         <FlatList
           data={this.state.availableTeachers}
           showsVerticalScrollIndicator={false}
