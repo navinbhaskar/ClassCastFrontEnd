@@ -54,7 +54,7 @@ class createTest extends Component {
   }
 
   handleBackButton() {
-    console.log("workingjdh");
+    
     this.props.navigation.dispatch(StackActions.popToTop());
     this.props.navigation.navigate('Tabs', {}, NavigationActions.navigate({ routeName: 'Tabs' }));
     
@@ -83,8 +83,6 @@ class createTest extends Component {
 
             const goal = !index ? 'CBSE': index === 1? 'JEE MAIN': 'JEE ADVANCED';
 
-            //this.setState({goal: goal});
-            console.log(JSON.stringify(this.state.goal[index].name));
             this.setState({selectedGoalName: this.state.goal[index].name});
           }}
         >
@@ -126,8 +124,7 @@ class createTest extends Component {
               selectedSubject: index,
             });
             const sub = !index? 'p': index === 1? 'c': 'm';
-            console.log(index);
-            console.log(this.state.subjects[index].name);
+            
             this.setState({selectedSubjectName: this.state.subjects[index].name});
           }}
         >
@@ -198,16 +195,16 @@ class createTest extends Component {
             </TouchableWithoutFeedback>
             <TouchableWithoutFeedback
               onPress={() => {
-                this.setState({duration: 1});
+                this.setState({duration: 60});
               }}
             >
               <View style={
-                this.state.duration === 1
+                this.state.duration === 60
                   ? [styles.durationToggle, styles.activeToggle]
                   : styles.durationToggle
               }>
                 {
-                  this.state.duration === 1
+                  this.state.duration === 60
                   && <Image
                     style={{
                       position: 'absolute',
@@ -219,7 +216,7 @@ class createTest extends Component {
                   />
                 }
                 <Text style={
-                  this.state.duration === 1
+                  this.state.duration === 60
                     ? [styles.durationToggleText, styles.activeToggleText]
                     : styles.durationToggleText
                 }>1 HOUR</Text>
@@ -275,6 +272,7 @@ class createTest extends Component {
             const navigateAction = NavigationActions.navigate({
               routeName: 'topic',
               params: {
+                duration: this.state.duration,
                 goal: this.state.selectedGoalName,
                 goalIndex: this.state.selectedGoal,
                 subject: this.state.selectedSubjectName,

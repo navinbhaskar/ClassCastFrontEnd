@@ -38,7 +38,7 @@ class subject extends Component {
   }
 
   handleBackButton() {
-    console.log("workingjdh");
+    
     this.props.navigation.navigate('test1');
     return true;
   }
@@ -65,7 +65,7 @@ class subject extends Component {
         >
           {
             subjectsBg.map((subject, index) => {
-              console.log("jsaniask: "+subject+ ' || '+ index)
+              
               return (
                 <TouchableNativeFeedback
                   key={'subjectCards' + index}

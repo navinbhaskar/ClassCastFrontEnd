@@ -36,8 +36,6 @@ class accessCode extends Component {
     var currentUser = await firebase.auth().currentUser;                 
      await currentUser.getIdToken()
                       .then(idToken => {
-                            console.log("AXABXJBJ: "+JSON.stringify(currentUser));
-                            console.log("AXABXJBJ: "+currentUser['phoneNumber'].slice(3, 13));
                             this.setState({ username: currentUser['phoneNumber'].slice(3, 13) })
                           });
   }
@@ -46,8 +44,8 @@ class accessCode extends Component {
     const { access_code } = this.state
     return (
      <View style={styles.container}>
-      <Text style={styles.headerText}>Have an Access Code</Text>
-      <View style={{ width: '80%', alignItems: 'center' }}>
+      <Text style={styles.headerText}>Enter Access Code given by your teacher</Text>
+      <View style={{ width: '80%', alignItems: 'center', marginTop: 5 * vh }}>
             <FormInput
               refInput={input => (this.usernameInput = input)}
               icon="user"
@@ -74,7 +72,6 @@ class accessCode extends Component {
               })
               .catch((error) => {
                   ToastAndroid.show('Invalid code', ToastAndroid.SHORT);
-                  console.log("API error" + JSON.stringify(error))
               })
           }}
         >
@@ -91,7 +88,7 @@ class accessCode extends Component {
             this.props.navigation.navigate("Home");
           }}
         >
-          <Text style={[styles.headerText, {color: 'red'}]}>Doesn't have an Access Code</Text>
+          <Text style={[styles.headerText, {color: 'red'}]}>Don't have any Access Code</Text>
         </TouchableWithoutFeedback>
      </View>
   );
@@ -126,10 +123,11 @@ const styles = StyleSheet.create({
   
   container: {
     flex: 1,
-    alignItems: 'center',
     width: SCREEN_WIDTH,
     height: SCREEN_HEIGHT,
     backgroundColor: 'black',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   headerText: {
     fontSize: 20,

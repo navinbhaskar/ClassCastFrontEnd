@@ -55,7 +55,6 @@ class pdfViewer extends Component {
   }
   
   render() {
-    console.log("working3: "+JSON.stringify(this.props.navigation.state.params.url));
     const source = {uri: this.props.navigation.state.params.url , cache: true};
     return (
       <View style={styles.container}>
@@ -68,7 +67,7 @@ class pdfViewer extends Component {
                         console.log(`current page: ${page}`);
                     }}
                     onError={(error)=>{
-                        console.log(error);
+                        console.log('error');
                     }}
                     style={styles.pdf}/>
             </View>

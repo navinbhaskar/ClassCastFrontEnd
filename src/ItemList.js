@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
     paddingTop: 20,
     flexDirection: 'column',
-    backgroundColor: 'black',
+    backgroundColor: '#262f46',
     alignItems: 'center',
   },
   header: {

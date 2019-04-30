@@ -32,6 +32,7 @@ const customPlaceholder = props => {
   );
 };
 
+
 export default Placeholder.connect(customPlaceholder);
 
 const styles = StyleSheet.create({

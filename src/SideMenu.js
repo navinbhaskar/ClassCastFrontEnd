@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import styles from './SideMenu.style';
-import {NavigationActions} from 'react-navigation';
+import {NavigationActions, StackActions} from 'react-navigation';
 import {ScrollView, Text, View, Image, TouchableOpacity, Linking} from 'react-native';
 import { Badge, Divider } from 'react-native-elements';
 import CustomHeader from "./CustomHeader";
@@ -18,11 +18,11 @@ class SideMenu extends Component {
       routeName: route
     });
     this.props.navigation.dispatch(navigateAction);
-    console.log(JSON.stringify(this.props));
   }
 
   constructor(props) {
     super(props);
+    this.signOutUser = this.signOutUser.bind(this);
     this.state = {
       name: '',
       standard: '',
@@ -35,53 +35,68 @@ class SideMenu extends Component {
     var currentUser = await firebase.auth().currentUser;                 
     await currentUser.getIdToken()
       .then(idToken => {
-            console.log("AXABXJBJ: "+JSON.stringify(currentUser));
-            console.log("AXABXJBJ: "+currentUser['phoneNumber'].slice(3, 13));
             this.setState({ username: currentUser['phoneNumber'].slice(3, 13) })
-            console.log(" ID Token : "  + idToken);
+
+            const url = 'http://classcast-198812.appspot.com/graphql?query=query {getUserInfo(username:"'+currentUser['phoneNumber'].slice(3, 13)+'"){firstname lastname standard}}'
+
+            axios.get(url)
+            .then(res => {
+              /*
+              if(res.data.data.getUserInfo.gender == 'A_1') {
+                this.setState({gender: 'M'});
+              }
+              else {
+                this.setState({gender: 'F'});
+              }*/
+
+              if(res.data.data.getUserInfo.standard == 'A_4') {
+                this.setState({standard: 12});
+              }
+              else if(res.data.data.getUserInfo.standard == 'A_3') {
+                this.setState({standard: 11}); 
+              }
+              else if(res.data.data.getUserInfo.standard == 'A_2') {
+                this.setState({standard: 10}); 
+              }
+              else if(res.data.data.getUserInfo.standard == 'A_1') {
+                this.setState({standard: 9}); 
+              }
+              else {
+                this.setState({standard: 12}); 
+              }
+              this.setState({name: res.data.data.getUserInfo.firstname+' '+res.data.data.getUserInfo.lastname });
+            })
+            .catch((error) => {
+                console.log("error")
+            })
           });
-
-    const url = 'http://classcast-198812.appspot.com/graphql?query=query {getUserInfo(username:"'+this.state.username+'"){firstname lastname standard gender}}'
-    axios.get(url)
-    .then(res => {
-      console.log("fnskjdfkL: "+JSON.stringify(res.data.data.getUserInfo));
-      if(res.data.data.getUserInfo.standard == 'A_1') {
-        this.setState({gender: 'M'});
-      }
-      else {
-        this.setState({gender: 'F'});
-      }
-
-      if(res.data.data.getUserInfo.standard == 'A_4') {
-        this.setState({standard: 12});
-      }
-      else if(res.data.data.getUserInfo.standard == 'A_3') {
-        this.setState({standard: 11}); 
-      }
-      else if(res.data.data.getUserInfo.standard == 'A_2') {
-        this.setState({standard: 10}); 
-      }
-      else if(res.data.data.getUserInfo.standard == 'A_1') {
-        this.setState({standard: 9}); 
-      }
-      else {
-        this.setState({standard: 12}); 
-      }
-      this.setState({name: res.data.data.getUserInfo.firstname+' '+res.data.data.getUserInfo.lastname });
-      console.log("kjdsbdkad: "+JSON.stringify(res.data.data.getUserInfo))
-    })
-    .catch((error) => {
-        console.log("kjdsbdkaderror" + error)
-    })
   }
 
-  signOutUser = async () => {
+  /*
+  async signOutUser() {
     try {
+        
+        //await firebase.auth().signOut();
+        this.props.navigation.dispatch(StackActions.popToTop());
+        this.props.navigation.navigate('Login1', {}, NavigationActions.navigate({ routeName: 'Login' }));
+        // this.props.navigation.dispatch(DrawerActions.toggleDrawer());
+        //this.props.navigation.popToTop();
+        //this.props.navigation.navigate('Login1', {}, NavigationActions.navigate({ routeName: 'Login'}));
+        
+    } catch (e) {
+        console.log('e');
+    }
+  }*/
+  signOutUser = async () => {
+    console.log("logout");
+    try {
+        this.props.navigation.dispatch(StackActions.popToTop());
+        this.props.navigation.navigate('Login1', {}, NavigationActions.navigate({ routeName: 'Login' }));
         await firebase.auth().signOut();
     } catch (e) {
         console.log(e);
     }
-  }
+}
 
   render () {
     return (
@@ -150,8 +165,10 @@ class SideMenu extends Component {
               Account
             </Text>
             <View style={styles.navSectionStyle}>
-              <Text style={styles.navItemStyle} onPress={this.navigateToScreen('TabB')}>
-                Edit Profile
+              <Text style={styles.navItemStyle} onPress={()=> {
+                Linking.openURL('whatsapp://send?text=Hello%20Deepak%2C%20I%27m%20'+ this.state.name+ '&phone=919555579357')
+              }}>
+                Talk to Us
               </Text>
               <Divider style={{ backgroundColor: 'black', width: '30%' }} />
               <Text style={styles.navItemStyle} onPress={()=> {
@@ -399,7 +416,7 @@ class SideMenu extends Component {
             site, please contact us at:
           </Text>
           <Text style={styles.contactInfo}>
-            Beatrix Technologies Pvt. Ltd.
+            Manjushri Educational Service Pvt. Ltd.
           </Text>
           <Text style={styles.contactInfo}>
             UU-195, Pitampura,

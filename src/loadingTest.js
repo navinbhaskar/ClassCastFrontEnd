@@ -19,15 +19,15 @@ import firebase from 'react-native-firebase';
 import MathJax from 'react-native-mathjax';
 import Modal from 'react-native-modal';
 import {NavigationActions} from 'react-navigation';
-//var currentUser = firebase.auth().currentUser;
-const Entities = require('html-entities').XmlEntities;
-var S = require('string');
-const entities = new Entities();
 
 
 const screen = Dimensions.get('window');
   vh = screen.height / 100;
   vw = screen.width / 100;
+
+const option1 = '<html><body><p>\xe2\x80\x93N=N\xe2\x80\x93 bond</p></body></html>'
+const option2 = '<html><body><p>2.46 X 102 min_ \xe2\x80\x93 1</p></body></html>'
+const option3 = '<html><body><p>\xe2\x80\x930.32 V</p></body></html>'
 
 class loadingTest extends Component {
 
@@ -100,10 +100,10 @@ class loadingTest extends Component {
   }
 
   handleBackButton() {
-    console.log("workingjdh");
+    
     Alert.alert(
-              'sure???',
-              'My Alert Msg',
+              'Are you sure you want to submit?',
+              '',
               [
                 {
                   text: 'Cancel',
@@ -117,7 +117,7 @@ class loadingTest extends Component {
                       params: {
                         blocks: this.state.blocks,
                         answer: this.state.answer,
-                        timer: 600-this.state.timer
+                        timer: (this.props.navigation.state.params.duration * 60) -this.state.timer
                       },
                     });
                     this.setState({timer: 0});
@@ -135,8 +135,8 @@ class loadingTest extends Component {
 
   async componentDidMount() {
     BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
-    var count = 0
-
+    var count = 0;
+    this.setState({timer: this.props.navigation.state.params.duration * 60});
     setInterval(() => {
       count += 1
       if(this.state.timer > 0) {
@@ -144,8 +144,8 @@ class loadingTest extends Component {
                 timer: --this.state.timer
             })
         }
-        if(count == 7) {
-          console.log("kjasnjkfsnajk");
+        if(count == 10) {
+          
           this.setState({testCardShow: true})
           }
 
@@ -153,14 +153,11 @@ class loadingTest extends Component {
           this.setState({modalTimeup: true})
           }
         }, 1000);
-    console.log("NNKJDA: " +this.props.navigation.state.params.goal);
-    await axios.get(`https://classcast-198812.appspot.com/test/test/?goal=`+this.props.navigation.state.params.goal+`&n_questions=15&chapter=`+this.props.navigation.state.params.topic)
+    
+    await axios.get(`https://classcast-198812.appspot.com/test/newtest/?goal=`+this.props.navigation.state.params.goal+`&n_questions=`+this.props.navigation.state.params.duration/2+this.props.navigation.state.params.topic.reduce((params, current) => params + `&chapter=${current}`, ''))
                 .then(function (response){
-                  console.log("suasddbas: "+response.data);
                   this.setState({blocks: response.data  });
-                  //console.log("OOOOIIJJ0: "+this.state.blocks[0].question);
-                  //console.log("OOOOIIJJ1: "+this.state.blocks[1].question);
-                  //console.log("OOOOIIJJ2: "+this.state.blocks[2].question);
+                  
                   this.setState({n_questions: this.state.blocks.length});
                   this.updateQuestions();
                 
@@ -168,24 +165,21 @@ class loadingTest extends Component {
                 }.bind(this))
                 .then(res=>{
                   this.setState({loadingCompleted: true});
-                  console.log("ADADAS"+this.state.loadingCompleted)
                 })
                 .catch(function (error) {
-                  console.log(error);
+                  console.log("error");
                 });
 
   }
 
 
   updateQuestions() { 
-      //question = this.state.blocks[this.state.questionIndex].question;
-      //console.log("ADNDSKD: |"+question+"|")
     this.setState({question: this.state.blocks[this.state.questionIndex]['fields'].question});
     this.setState({option1: this.state.blocks[this.state.questionIndex]['fields'].option1});
     this.setState({option2: this.state.blocks[this.state.questionIndex]['fields'].option2});
     this.setState({option3: this.state.blocks[this.state.questionIndex]['fields'].option3});
     this.setState({option4: this.state.blocks[this.state.questionIndex]['fields'].option4});
-    console.log("oooiijj: "+this.state.questionIndex+"||"+this.state.question);
+    
     if(this.state.blocks[this.state.questionIndex]['fields'].option1_iscorrect==1) {
         this.setState({correctAnswer: 1})
       }
@@ -201,11 +195,7 @@ class loadingTest extends Component {
   }
 
   async updatePreviousQuestions() { 
-      //question = this.state.blocks[this.state.questionIndex].question;
-      //console.log("ADNDSKD: |"+question+"|")
     await this.setState({attempted: true});
-    //await this.setState({question: this.state.blocks[this.state.questionIndex+1].question});
-    //console.log("PPP: "+this.state.question);
     this.setState({question: this.state.blocks[this.state.questionIndex-1]['fields'].question});
     this.setState({option1: this.state.blocks[this.state.questionIndex-1]['fields'].option1});
     this.setState({option2: this.state.blocks[this.state.questionIndex-1]['fields'].option2});
@@ -232,10 +222,8 @@ class loadingTest extends Component {
 
   async updateNextQuestions() { 
       //question = this.state.blocks[this.state.questionIndex].question;
-      //console.log("ADNDSKD: |"+question+"|")
     await this.setState({attempted: false});
     //await this.setState({question: this.state.blocks[this.state.questionIndex+1].question});
-    //console.log("PPP: "+this.state.question);
     this.setState({question: this.state.blocks[this.state.questionIndex+1]['fields'].question});
     this.setState({option1: this.state.blocks[this.state.questionIndex+1]['fields'].option1});
     this.setState({option2: this.state.blocks[this.state.questionIndex+1]['fields'].option2});
@@ -245,7 +233,6 @@ class loadingTest extends Component {
     this.setState({option2_iscorrect: this.state.blocks[this.state.questionIndex+1]['fields'].option2_iscorrect});
     this.setState({option3_iscorrect: this.state.blocks[this.state.questionIndex+1]['fields'].option3_iscorrect});
     this.setState({option4_iscorrect: this.state.blocks[this.state.questionIndex+1]['fields'].option4_iscorrect});
-    console.log("oooiijj: "+this.state.questionIndex+"||"+this.state.question);
     if(this.state.blocks[this.state.questionIndex+1]['fields'].option1_iscorrect==1) {
         this.setState({correctAnswer: 1})
       }
@@ -266,20 +253,8 @@ class loadingTest extends Component {
   }
 
   render () {
-    //console.log("Response:: "+JSON.stringify(this.state.question));
-    
-    //this.state.blocks.map(q => {
-    //  console.log("jdkjds: "+ JSON.stringify(q));
-    //  console.log("____________________")
-    //})
-    
-    console.log("JJJJJJJJJJJJJ: "+Object.keys(this.state.blocks));
-    console.log("JJJJJJJJJJJJJK: "+this.props.navigation.state.params.goalIndex);
-    console.log("JJJJJJJJJJJJJ: "+JSON.stringify(this.props));
-    console.log("JJJJJJJJJJJJJ: "+this.state.loadingCompleted);
-    console.log("oOOOOOOOOOOOOO: "+JSON.stringify(this.state.answer))
+    console.log("sakjsbgkjbL "+JSON.stringify(this.props.navigation.state.params.topic));
     if((!this.state.loadingCompleted) & (!this.state.testCardShow)) {
-      console.log("LLASNJNHADS: "+this.state.loadingCompleted+"OO"+this.state.testCardShow)
       return(
         <View style={styles.currentConfigContainer}>
         <View style={{height: 7 * vh, width: 100 * vw, position: 'absolute', marginTop: 2.5 * vh, justifyContent: 'center', alignItems: 'center', elevation: 5,}}>
@@ -290,7 +265,7 @@ class loadingTest extends Component {
           />
           </View>
           <View style={{height: 7 * vh, width: 100 * vw, position: 'absolute', marginTop: 2.5 * vh, justifyContent: 'center', alignItems: 'center', elevation: 5,}}>
-            <Text style={[styles.rightSplitText], {fontSize: 3 * vh, color: 'white'}}>30 Minutes</Text>
+            <Text style={[styles.rightSplitText], {fontSize: 3 * vh, color: 'white'}}>{ this.props.navigation.state.params.duration+' Minutes'}</Text>
           </View>
           <View style={styles.goalCardWrapper}>
                 <View style={styles.goalCard}>
@@ -320,10 +295,17 @@ class loadingTest extends Component {
           </View>
           <View style={{position: 'absolute', marginTop: 45 * vh}}>
             <Text style={styles.loadingTopicsHeader}>Topics</Text>
-            <View style={styles.topicListItem} >
+            <ScrollView>
+            {
+              this.props.navigation.state.params.topic.map((topic, index) => (
+                <View style={styles.topicListItem} key={'selectedTopic' + index}>
                   <View style={styles.bullet}/>
-                  <Text>{this.props.navigation.state.params.topic}</Text>
+                  <Text>{topic}</Text>
                 </View>
+              ))
+            }
+
+          </ScrollView>
           </View>
         </View>
       )
@@ -341,8 +323,8 @@ class loadingTest extends Component {
             <TouchableNativeFeedback
                     onPress={() => {
                       Alert.alert(
-              'sure???',
-              'My Alert Msg',
+              'Are you sure you want to submit?',
+              '',
               [
                 {
                   text: 'Cancel',
@@ -356,7 +338,7 @@ class loadingTest extends Component {
                       params: {
                         blocks: this.state.blocks,
                         answer: this.state.answer,
-                        timer: 600-this.state.timer
+                        timer: (this.props.navigation.state.params.duration * 60) - this.state.timer
                       },
                     });
                     this.setState({timer: 0});
@@ -402,7 +384,7 @@ class loadingTest extends Component {
                     </Text>
                     </View>
                   }
-                  {console.log("JJJHHH: "+this.state.ActiveSlide)}
+                  
                </View>
                 )}
               />
@@ -419,7 +401,10 @@ class loadingTest extends Component {
             </View>
           </View>
           <View style={styles.questionContainer}>
-             
+          {console.log("question: "+this.state.question)}
+          {console.log("option1: "+this.state.option1)}
+          {console.log("option2: "+this.state.option2)}
+          {console.log("option3: "+this.state.option3)}
           <MathJax
                   html={this.state.question.split('https://console.cloud.google.com/storage/browser').join('https://storage.googleapis.com').split('\\\\').join('\\')}
                   mathJaxOptions={{
@@ -430,7 +415,7 @@ class loadingTest extends Component {
                     },
                   }}
                   onHeightUpdated={height => {
-                    console.log("sdjasjkadsn: "+height);
+                    console.log("height");
                   }}
                   hasIframe={true}
                   style={{width: 0.9 * screen.width}}
@@ -645,7 +630,7 @@ class loadingTest extends Component {
           </TouchableNativeFeedback>
             <TouchableNativeFeedback
                     onPress={() => {
-                      console.log("KJDGSH: "+this.state.questionIndex+"||"+this.state.n_questions);
+                      
                       if(this.state.questionIndex+1 < this.state.n_questions) {
                         this.updateNextQuestions();
                         this.setState({ActiveSlide: this.state.ActiveSlide +1});
@@ -660,24 +645,26 @@ class loadingTest extends Component {
                       }
                     if(this.state.questionIndex+1 == this.state.n_questions) {
                       Alert.alert(
-                        'sure???',
-                        'My Alert Msg',
+                        'Are you sure you want to submit?',
+                        '',
                         [
                           {
                             text: 'Cancel',
                             onPress: () => console.log('Cancel Pressed'),
                             style: 'cancel',
                           },
-                          {
-                            text: 'Submit', 
+                          {text: 'Submit', 
                             onPress: () => {
-                            const navigateAction = NavigationActions.navigate({
-                            routeName: 'testPerformance',
-                            params: {
-                              
-                            },
-                          });
-                          this.props.navigation.dispatch(navigateAction); 
+                              const navigateAction = NavigationActions.navigate({
+                                routeName: 'testPerformance',
+                                params: {
+                                  blocks: this.state.blocks,
+                                  answer: this.state.answer,
+                                  timer: (this.props.navigation.state.params.duration * 60) - this.state.timer
+                                },
+                              });
+                              this.setState({timer: 0});
+                              this.props.navigation.dispatch(navigateAction); 
                           }},
                         ],
                         {cancelable: false},

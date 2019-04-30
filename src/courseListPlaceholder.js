@@ -10,59 +10,44 @@ const image = require('./images/user-hp.png');
 
 const courseListPlaceholder = props => {
   return (
-  	<View style={{flex:1, flexDirection: 'row', width: '100%'}}>
-    <View style={styles.teacherContainer}>
-      <View style={styles.teacherImageContainer}>
-        <Image
-          source={image}
-          style={styles.teacherImage}/>
+
+    <View style={{flex:2}}>
+    <View style={{margin: 12, backgroundColor:'white', borderRadius: 5, height: 160}} >
+        <View style={{width:320, height: 15, backgroundColor:'grey', margin:5}}>
         </View>
-        <View style={{width:50,  borderWidth:4, height: 8, borderColor:'grey', margin:5}}></View>
+      <View style={{flex:1, flexDirection:'row', height: 60}}>
+        <View style={{width:'58%', margin: 5}}>
+          <View style={{height: 10, backgroundColor:'grey', margin:8}}></View>
+          <View style={{height: 10, backgroundColor:'grey', margin:8}}></View>
+          <View style={{height: 10, backgroundColor:'grey', margin:8}}></View>
+          <View style={{height: 10, backgroundColor:'grey', margin:8}}></View>
+        </View>
+        <View  style={{width:'38%', margin: 5}}>
+          <View style={{height: 50, backgroundColor:'grey', margin:8}}></View>
+          <View style={{height: 20, backgroundColor:'grey', margin:8}}></View>
+        </View>
+      </View>
+              
     </View>
-    <View style={styles.teacherContainer}>
-      <View style={styles.teacherImageContainer}>
-        <Image
-          source={image}
-          style={styles.teacherImage}/>
+    <View style={{margin: 12, backgroundColor:'white', borderRadius: 5, height: 160}} >
+        <View style={{width:320, height: 15, backgroundColor:'grey', margin:5}}>
         </View>
-       	<View style={{width:50, borderWidth:4, height: 8, borderColor:'grey', margin:5}}></View>
+      <View style={{flex:1, flexDirection:'row', height: 60}}>
+        <View style={{width:'58%', margin: 5}}>
+          <View style={{height: 10, backgroundColor:'grey', margin:8}}></View>
+          <View style={{height: 10, backgroundColor:'grey', margin:8}}></View>
+          <View style={{height: 10, backgroundColor:'grey', margin:8}}></View>
+          <View style={{height: 10, backgroundColor:'grey', margin:8}}></View>
+        </View>
+        <View  style={{width:'38%', margin: 5}}>
+          <View style={{height: 50, backgroundColor:'grey', margin:8}}></View>
+          <View style={{height: 20, backgroundColor:'grey', margin:8}}></View>
+        </View>
+      </View>
+              
     </View>
     </View>
   );
 };
 
 export default Placeholder.connect(courseListPlaceholder);
-
-const styles = StyleSheet.create({
-  
- 
-   teacherImage: {
-    height: 80,
-    width: 80,
-    resizeMode:'contain',
-    opacity: 0.4
-  },
-  teacherName: {
-    fontSize:12,
-    color: '#0F3651',
-    fontWeight: 'bold',   
-  },
-  teacherImageContainer: {
-    height: 90,
-    width: 90,
-    borderRadius: 45,
-    borderWidth: 3,
-    marginTop:5,
-    alignItems:'center',
-    justifyContent: 'center',
-    borderColor: 'grey',
-    elevation: 3
-  },
-  teacherContainer: {
-    margin: 3,
-    height: 145,
-    elevation: 4,
-    zIndex: 1,
-    alignItems:'center'
-  }
-});

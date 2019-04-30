@@ -107,8 +107,8 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         multiDexEnabled true
-        versionCode 1
-        versionName "Taj_Mahal_1.0.0"
+        versionCode 25
+        versionName "Qutub_Minar_3.0.2"
     }
 
     packagingOptions {
@@ -164,6 +164,9 @@ android {
 }
 
 dependencies {
+    implementation project(':react-native-share')
+    implementation project(':react-native-version-check')
+    implementation project(':react-native-device-info')
     implementation project(':rn-fetch-blob')
     implementation project(':react-native-pdf')
     implementation project(':react-native-splash-screen')
@@ -174,7 +177,6 @@ dependencies {
     implementation project(':react-native-svg')
     implementation project(':react-native-gesture-handler')
     implementation project(':react-native-firebase')
-    implementation project(':react-native-contacts')
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
     implementation "com.facebook.react:react-native:+"  // From node_modules

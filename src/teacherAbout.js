@@ -11,6 +11,7 @@ import {
   StatusBar,
 } from 'react-native';
 import { Button } from 'react-native-elements';
+import {NavigationActions} from 'react-navigation';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
@@ -24,6 +25,7 @@ export default class teacherAbout extends Component {
 
 
   render() {
+    
     return (
       <SafeAreaView style={{ flex: 1 }}>
           <View style={{ flex: 1, backgroundColor: 'rgba(47,44,60,1)' }}>
@@ -127,6 +129,7 @@ export default class teacherAbout extends Component {
               </View>
               
             </ScrollView>
+            {!this.props.navigation.state.params.isEnrolled &&
             <Button
                 containerStyle={{ marginVertical: 20, marginLeft: 20 }}
                 style={{
@@ -148,9 +151,15 @@ export default class teacherAbout extends Component {
                   color: 'white',
                   textAlign: 'center',
                 }}
-                onPress={() => console.log('Message Theresa')}
+                onPress={() => {
+                  const navigateAction = NavigationActions.navigate({
+                          routeName: 'accessCode'
+                        });
+                        this.props.navigation.dispatch(navigateAction);
+                }}
                 activeOpacity={0.5}
               />
+            }
           </View>
       </SafeAreaView>
     );

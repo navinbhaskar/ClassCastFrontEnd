@@ -8,9 +8,11 @@ import {
   View,
   AsyncStorage,
   TouchableNativeFeedback,
-  FlatList
+  FlatList,
+  Linking,
+  Button
 } from 'react-native';
-import { AreaChart, LineChart, Grid, YAxis } from 'react-native-svg-charts';
+import { AreaChart, LineChart, Grid, YAxis, XAxis } from 'react-native-svg-charts';
 import {Icon} from 'react-native-elements';
 import Carousel from 'react-native-snap-carousel';
 import axios from "axios";
@@ -20,8 +22,14 @@ import Modal from 'react-native-modal';
 import {NavigationActions} from 'react-navigation';
 import { DrawerActions } from 'react-navigation-drawer';
 import CustomPlaceholder from './classroomPlaceholder';
+import { Defs, LinearGradient, Stop } from 'react-native-svg'
+import DeviceInfo from 'react-native-device-info';
+import Orientation from 'react-native-orientation';
 var USER_DP = require('./images/user-hp.png');
+import VersionCheck from 'react-native-version-check';
 
+
+const uniqueId = DeviceInfo.getUniqueID();
 
 class TabB extends Component {
 
@@ -29,6 +37,7 @@ class TabB extends Component {
   constructor(props) {
     super(props);
     this._renderItem = this._renderItem.bind(this);
+    this.timeSince = this.timeSince.bind(this);
     this.state = {
       isReady: false,
       newChallengeModal: false,
@@ -37,17 +46,47 @@ class TabB extends Component {
       selected: '',
       updates: [],
       teachers: [],
+      n_updates: 0,
       n_teachers: 1,
       updatesModal: false,
-      n_updates: 0,
+      forceUpdate: false,
       selectedUpdate: [],
       performance: [
       ]
       }
   }
 
+
+  timeSince(date) {
+
+    var seconds = Math.floor((new Date() - date) / 1000);
+
+    var interval = Math.floor(seconds / 31536000);
+
+    if (interval > 1) {
+        return interval + " years";
+    }
+    interval = Math.floor(seconds / 2592000);
+    if (interval > 1) {
+        return interval + " months";
+    }
+    interval = Math.floor(seconds / 86400);
+    if (interval > 1) {
+        return interval + " days";
+    }
+    interval = Math.floor(seconds / 3600);
+    if (interval > 1) {
+        return interval + " hours";
+    }
+    interval = Math.floor(seconds / 60);
+    if (interval > 1) {
+        return interval + " minutes";
+    }
+    return Math.floor(seconds) + " seconds";
+}
+
   async checkPermission() {
-    console.log("fcmTokeniid");
+    
     const enabled = await firebase.messaging().hasPermission();
     if (enabled) {
         this.getToken();
@@ -58,7 +97,6 @@ class TabB extends Component {
 
   async getToken() {
     fcmToken = await firebase.messaging().getToken();
-    console.log("njfkbjfkbfvjkbfv: "+fcmToken)
     axios.post('https://classcast-198812.appspot.com/token/save_fcm_token/', {
      username: this.state.username,
      fcmToken: fcmToken
@@ -76,59 +114,72 @@ class TabB extends Component {
     }
   }
 
+  componentWillMount() {
+    Orientation.lockToPortrait();
+    const initial = Orientation.getInitialOrientation();
+  }
 
-
-  async componentDidMount() {    
+  async componentDidMount() {
+    
+    Orientation.lockToPortrait();
     var currentUser = await firebase.auth().currentUser;                 
      await currentUser.getIdToken()
                       .then(idToken => {
-                            console.log("AXABXJBJ: "+JSON.stringify(currentUser));
-                            console.log("AXABXJBJ: "+currentUser['phoneNumber'].slice(3, 13));
-                            this.setState({ username: currentUser['phoneNumber'].slice(3, 13) })
-                            console.log(" ID Token : "  + idToken);
+                            this.setState({ username: currentUser['phoneNumber'].slice(3, 13) });
                             axios.defaults.headers.common['Authorization'] = idToken; 
                           });
       
       axios.get(`https://classcast-198812.appspot.com/teachers/myteachers/`)
                 .then(function (response){
-                  console.log("edkdwkdwb: "+JSON.stringify(response.data));
                   response.data.unshift({type: 'add'});
                   this.setState({teachers: response.data});
                   this.setState({n_teachers: response.data.length});
-                  console.log("dsndsklndjl: "+response.data.length);
                   this.setState({isReady: true});
                 }.bind(this))
                 .catch(function (error) {
-                  console.log(error);
+                  console.log('error');
                 });
       axios.get('https://classcast-198812.appspot.com/performance/getmyperformance/'+this.state.username)
                 .then(function (response){
                   this.setState({performance: response.data});
                 }.bind(this))
                 .catch(function(error){
-                  console.log(error);
+                  console.log('error');
                 });
        axios.get('https://classcast-198812.appspot.com/users/announcements')
                 .then(function (response){
-                  console.log("Hi Ji" + JSON.stringify(response.data));
+                  console.log("dndskj: "+JSON.stringify(response.data[0].time));
                   this.setState({n_updates: response.data.length});
                   this.setState({updates: response.data});
                 }.bind(this))
                 .catch(function(error){
-                  console.log(error);
+                  console.log('error');
                 });
 
+   firebase.firestore()
+   .collection('version')
+    .get()
+    .then(snapshot => {
+      snapshot
+        .docs
+        .forEach(doc => {
+          if(doc.data().version_code != VersionCheck.getCurrentVersion() && doc.data().force_update) {
+            this.setState({forceUpdate: true});
+          }
+          else {
+           this.setState({forceUpdate: false}); 
+          }
+          //this.setState({updates:[...this.state.updates, doc.data()]});
+        });
+    }); 
 
-    await firebase.firestore()
+   firebase.firestore()
    .collection("challenge").where("challenge_to", "==", this.state.username).where("received", "==", false)
    .onSnapshot(
         snapshot => {
-
           snapshot.docChanges.forEach(change => {
             const data = change.doc.data()
-            console.log("XXXXXXXXKKJHBC: "+change.type);
             if(change.type === 'added') {
-              console.log("XXXXXXXXKKJHBC: "+JSON.stringify(data));
               this.setState({selected: data});
               this.setState({ newChallengeModal: true });
               this.setState({challenge_id: data.challenge_id});
@@ -139,15 +190,44 @@ class TabB extends Component {
               .then(res => {
                 
               })
-              .catch(err => {console.log("AJASDBJD: "+err)})
+              .catch(err => {console.log('error')})
             }
-            //console.log("XXXXXXXX: "+JSON.stringify(data));
+            
           })
         },
         
       )
-
+   
    this.checkPermission();
+   this._navListener = this.props.navigation.addListener('didFocus', () => {
+    this.setState({isReady: false});
+    axios.get(`https://classcast-198812.appspot.com/teachers/myteachers/`)
+                .then(function (response){
+                  
+                  response.data.unshift({type: 'add'});
+                  this.setState({teachers: response.data});
+                  this.setState({n_teachers: response.data.length});
+                  this.setState({isReady: true});
+                }.bind(this))
+                .catch(function (error) {
+                  console.log('error');
+                });
+    axios.get('https://classcast-198812.appspot.com/performance/getmyperformance/'+this.state.username)
+                .then(function (response){
+                  this.setState({performance: response.data});
+                }.bind(this))
+                .catch(function(error){
+                  console.log('error');
+                });
+     axios.get('https://classcast-198812.appspot.com/users/announcements')
+              .then(function (response){
+                this.setState({n_updates: response.data.length});
+                this.setState({updates: response.data});
+              }.bind(this))
+              .catch(function(error){
+                console.log('error');
+              });
+   })
   } 
 
 
@@ -157,25 +237,32 @@ class TabB extends Component {
   }
 
   _renderUpdates ({item, index}) {
+    console.log("date: "+item.time);
+    console.log("data: "+this.timeSince(new Date(item.time)));
+
     return (
             <View >
-              <TouchableOpacity style={{flex: 1, flexDirection: 'row', marginLeft:8, marginTop:5, marginBottom: 5}} onPress={() => {this.setState({selectedUpdate: item});
+              <TouchableOpacity style={{flex: 1, flexDirection: 'row', marginLeft: 2 * vw, marginTop:.8 * vh, marginBottom: 1 * vh}} onPress={() => {this.setState({selectedUpdate: item});
                                               this.setState({updatesModal: true});}}>
-              <View style={{marginRight:8,height:60, width: 60, borderRadius: 30, backgroundColor: '#4286f4', alignItems:'center', justifyContent: 'center'}}>
+              <View style={{marginRight:2 * vw,height:8 * vh, width: 8 * vh, borderRadius: 4 * vh, backgroundColor: '#4286f4', alignItems:'center', justifyContent: 'center'}}>
                 <Image
                   source= {{uri: item.photo}}
                   style={{
-                    width: 55,
-                    height: 55,
+                    width: '92%',
+                    height: '92%',
                   }}
                 />
               </View>
               <View style={{width: '80%', height: '80%', justifyContent: 'space-evenly'}}>
-                <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between'}}>
-                  <Text style={{color: 'white', fontSize: 18, fontWeight: 'bold'}}>{item.firstname} {item.lastname}</Text>
-                  <Text style={{color: '#4286f4', fontSize: 16, fontStyle: 'italic'}}>{item.type}</Text>
+                <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between', marginLeft: 1 * vw, marginRight: 1 * vw, marginBottom: 1 * vh}}>
+                  <Text style={{color: 'white', fontSize: 2.4 * vh, fontWeight: 'bold'}}>{item.firstname} {item.lastname}</Text>
+                  <View style={{flexDirection: 'column'}}>
+                    <Text style={{color: '#4286f4', fontSize: 1.5 * vh, fontStyle: 'italic'}}>{this.timeSince(new Date(item.time)) + ' ago'}</Text>
+                    <Text style={{color: '#4286f4', fontSize: 1.5 * vh, fontStyle: 'italic'}}>{item.type}</Text>
+                  </View>
+                  
                 </View>
-                <Text style={{color: 'white', fontSize: 16}}>{item.message}</Text>
+                <Text style={{color: 'white', fontSize: 1.8 * vh}}>{item.message}</Text>
               </View>
               </TouchableOpacity>
             </View>
@@ -184,28 +271,31 @@ class TabB extends Component {
     }
 
   _renderItem ({item, index}) {
-      console.log("chuu" + JSON.stringify(item));
+      
       if(item.type) {
-          return (
-                <TouchableOpacity onPress={() => this.props.navigation.navigate('addTeachers', { title: "Add Teachers" })}>
-                  <View style={styles.teacherContainer}>
-                    <View style={styles.teacherImageContainer}>
-                      <Icon
-                        name='plus'
-                        type='antdesign'
-                        size= {50} 
-                        color={'white'}
-                        style={styles.addTeacher}/>
-                      </View>
-                  </View>
-                </TouchableOpacity>
-          );
+        return (
+              <TouchableOpacity onPress={() => this.props.navigation.navigate('addTeachers', { title: "Add Teachers" })}>
+                <View style={styles.teacherContainer}>
+                  <View style={styles.teacherImageContainer}>
+                    <Icon
+                      name='plus'
+                      type='antdesign'
+                      size= {50} 
+                      color={'white'}
+                      style={styles.addTeacher}/>
+                    </View>
+                    
+                    <Text style={styles.teacherName}> Add New </Text>
+                </View>
+              </TouchableOpacity>
+
+        );
       }
 
       else {
 
         return (
-              <TouchableOpacity onPress={() => this.props.navigation.navigate('TeacherArea', { data: item})}>
+              <TouchableOpacity onPress={() => this.props.navigation.navigate('TeacherArea', { data: item, isEnrolled: true})}>
                 <View style={styles.teacherContainer}>
                   <View style={styles.teacherImageContainer}>
                     <Image
@@ -226,12 +316,36 @@ class TabB extends Component {
     const axesSvg = { fontSize: 10, fill: 'grey' };
     const verticalContentInset = { top: 10, bottom: 10 }
     const xAxisHeight = 30
+    const Gradient = ({ index }) => (
+            <Defs key={index}>
+                <LinearGradient id={'gradient'} x1={'0%'} y={'0%'} x2={'0%'} y2={'100%'}>
+                    <Stop offset={'0%'} stopColor={'#d652d9'} stopOpacity={0.8}/>
+                    <Stop offset={'100%'} stopColor={'#963bd6'} stopOpacity={0.2}/>
+                </LinearGradient>
+            </Defs>
+        )
       
     return (
      <ScrollView>
      <View style={styles.container}>
       {
       <View>
+        <Modal 
+              isVisible={this.state.forceUpdate}
+              backdropOpacity={0.6}
+              backdropColor="black"
+              transparent={true}
+          >
+            <View style={{height: 30 * vh, width: 60 * vw, backgroundColor: 'white', borderRadius: 2 * vw, marginLeft: 15 * vw, alignItems:'center', justifyContent: 'center',}}>
+              <Text style={{fontSize: 2 * vh, color: 'black', textAlign: 'center', fontFamily: 'Montserrat-SemiBold', marginBottom: 5 * vh}}>We've released even a better version of this App for you. Please update your App to continue.</Text>
+              <Button
+                onPress={() => {Linking.openURL('https://goo.gl/5kwidv')}}
+                title="Click Here"
+                color="#841584"
+                //accessibilityLabel="Learn more about this purple button"
+              />
+            </View>
+          </Modal>
         <Modal 
               isVisible={this.state.newChallengeModal}
               backdropOpacity={0.6}
@@ -306,25 +420,10 @@ class TabB extends Component {
         </Modal>
 
 
-        <Modal 
-              isVisible={this.state.updatesModal}
-              backdropOpacity={0.6}
-              backdropColor="black"
-              transparent={true}>
-          <View style={styles.challengeModal}>
-            <TouchableOpacity onPress={() => this.setState({updatesModal: false})}>
-              <Text style={{color: 'white'}}> {this.state.selectedUpdate.firstname} </Text>
-            </TouchableOpacity>
-
-       
-           
-          </View>
-        </Modal>
-
       </View>
         }
       <View style={{flex:1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%'}}>
-        <View style={{justifyContent:'flex-start', marginLeft:10}}>
+        <View style={{justifyContent:'flex-start', marginLeft:3 * vw}}>
         <Icon           
           name='menu'
           color='white'
@@ -334,9 +433,9 @@ class TabB extends Component {
           />
         </View>
         <View style={{marginLeft:0}}>
-          <Text style={{fontSize: 22, color: 'white', fontWeight: 'bold'}}> HOME </Text>
+          <Text style={{fontSize: 3 * vh, color: 'white', fontWeight: 'bold'}}> HOME </Text>
         </View>
-        <View style={{justifyContent:'flex-end', marginRight: 10}}>
+        <View style={{justifyContent:'flex-end', marginRight: 3 * vw}}>
         <Icon
           name='notifications'
           color='white'
@@ -366,50 +465,59 @@ class TabB extends Component {
           { this.state.n_teachers == 1 && this.state.isReady &&
             <View style={{height: 10 * vh, width: 60 * vw, marginBottom: 8 * vh, marginRight: 5 * vw, marginRight: 10 * vw}}>
             <TouchableOpacity onPress={() => this.props.navigation.navigate('addTeachers', { title: "Add Teachers" })}>
-              <Text style={{fontSize: 20, color: 'white', textAlign: 'center'}}>You are not enrolled in any Classroom, Please add 
-                atleat one teacher </Text>
+              <Text style={{fontSize: 2 * vh, color: 'white', textAlign: 'center', fontFamily: 'Montserrat-SemiBold'}}>You are not enrolled in any Classroom, Please add 
+                atleast one teacher </Text>
             </TouchableOpacity>
             </View>
           }
        </View>
       </View>
-      <View style={{height: 1, width: '50%', backgroundColor:'white', borderRadius: 5, margin: 2}}/>
-      <View style={{height: 1, width: '50%', backgroundColor:'white', borderRadius: 5}}/>
-      
+    
 
       <View style={styles.performaceContainer} >
         <Text style={styles.h3}> Your Performance</Text> 
       <View style={{alignItems:'center', justifyContent:'center'}}>
       <View style={{flexDirection:'row'}}>
+      <XAxis
+          style={{marginTop: 18 * vh, position:'absolute', width: 85* vw, marginLeft: 1 * vw, padding: 1 * vw }}
+          data={ [7,6,5,4,3,2,1] }
+          formatLabel={ (value) => 6-value == 0 ? 'today' : 6-value ==1 ? `${6-value}`+ ' day ago': `${6-value}`+ ' days ago'}
+          contentInset={{ left: 20, right: 15 }}
+          svg={{ fontSize: 8, fill: 'white' }}
+      />
       <YAxis
           data={this.state.performance}
-          contentInset={{ top: 20,  bottom: 4}}                    
+          contentInset={{ top: 10,  bottom: 10}}                    
           svg={{
               fill: 'white',
               fontSize: 12,
           }}
-          numberOfTicks={ 4 }
+          numberOfTicks={ 5 }
           formatLabel={ value => `${value}` }
       />
       <LineChart
-          style={{ height: 120, width: 320, borderRadius:2, borderWidth: 1, borderColor:'grey' }}
+          style={{ height: 17 * vh, width: 80 * vw }}
           data={this.state.performance}
-          svg={{ stroke: 'white',
-                  strokeWidth: 6, }}
+          svg={{ strokeWidth: 6,
+                    stroke: 'url(#gradient)', }}
           contentInset={{ top: 10, bottom: 10 }}
           curve={ shape.curveNatural }
-      >                  
+      > 
+      <Grid svg={{ stroke: '#3c405b',
+                  strokeWidth: 0.5, }}/>
+      <Gradient/>                 
       </LineChart>
+
       </View>
       </View>
       </View> 
 
       <View style={styles.updatesContainer}>
         <Text style={styles.h3}> Updates...</Text>
-        { this.state.n_updates == 0 &&
+         { this.state.n_updates == 0 &&
             <View style={{height: 5 * vh, width: 60 * vw, marginLeft: 20 * vw}}>
             <TouchableOpacity onPress={() => this.props.navigation.navigate('addTeachers', { title: "Add Teachers" })}>
-              <Text style={{fontSize: 20, color: 'white', textAlign: 'center'}}> No Updates </Text>
+              <Text style={{fontSize: 2 * vh, color: 'white', textAlign: 'center', fontFamily: 'Montserrat-SemiBold'}}> No Updates </Text>
             </TouchableOpacity>
             </View>
           }
@@ -433,16 +541,15 @@ export default TabB;
 const styles = StyleSheet.create({
   
   container: {
-    paddingBottom: 20,
-    paddingTop: 20,
-    backgroundColor: '#121212',
+    paddingBottom: 3 * vh,
+    paddingTop: 2.6 * vh,
+    backgroundColor: '#262f46',
     width: '100%',
     height: '100%',
     alignItems: 'center',
   },
   addTeacher: {
-    height: 80,
-    width: 80,
+    height: 10 * vh,
     resizeMode:'contain',
   },
   buttons: {
@@ -557,20 +664,20 @@ const styles = StyleSheet.create({
     color: 'grey',
   },
    h3: {
-    paddingBottom: 20,
-    paddingTop: 20,
-    fontSize: 20,
-    paddingLeft: 10,
+    paddingBottom: 3 * vh,
+    paddingTop: 3 * vh,
+    fontSize: 2.7 * vh,
+    paddingLeft: 3 * vw,
     color: 'white',
     fontWeight: 'bold',
   },
    teacherImage: {
-    height: 80,
-    width: 80,
+    height: 12 * vh,
+    width: '95%',
     resizeMode:'contain',
   },
   teacherName: {
-    fontSize:12,
+    fontSize: 1.7 * vh,
     color: 'white',
     fontWeight: 'bold',   
   },
@@ -579,14 +686,13 @@ const styles = StyleSheet.create({
     marginTop: 8 * vh,
     height: 22 * vh,
     width:'100%',
-    borderRadius:5,
+    borderRadius: 1 * vh,
     position: 'absolute',
-    alignItems:'center',
-    justifyContent: 'center',
+    alignItems: 'center',
   },
   linearGradient:{
-    marginTop: 10,
-    height: 200,
+    marginTop: 1 * vh,
+    height: 20 * vh,
     flexDirection: 'row',
     width: '100%',
     borderRadius:5,
@@ -596,9 +702,9 @@ const styles = StyleSheet.create({
     zIndex: 0,
   },
   performaceContainer:{
-    marginTop: 10,
-    height: 220,
-    width:'100%'
+    marginTop: 0 * vh,
+    height: 32 * vh,
+    width:'100%',
   },
   profilePicture: {
     height: 20 * vw,
@@ -612,8 +718,11 @@ const styles = StyleSheet.create({
     marginTop: 2 * vh,
   },
   updatesContainer:{
-    marginTop: 10,
-    width:'100%',
+    margin:1 * vh,
+    width:'95%',
+    backgroundColor: '#2c3753',
+    elevation: 3,
+    borderRadius: 5
   },
   ratingText: {
     paddingLeft: 10,
@@ -640,18 +749,18 @@ const styles = StyleSheet.create({
     paddingTop: 5
   },
   teacherImageContainer: {
-    height: 90,
-    width: 90,
-    borderRadius: 45,
-    borderWidth: 3,
-    marginTop:5,
+    height: 12 * vh,
+    width: 12 * vh,
+    borderRadius: 6 * vh,
+    borderWidth: .4 * vh,
+    marginTop: 1 * vh,
     alignItems:'center',
     justifyContent: 'center',
-    borderColor: 'white',
+    borderColor: 'grey',
     elevation: 3
   },
   teacherContainer: {
-    margin: 3,
+    margin: .5 * vh,
     marginBottom: 2 * vh,
     height: 145,
     width: '100%',
@@ -677,4 +786,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 10 * vh,
   },
+  updatesModal: {
+    width: 90 * vw,
+    borderRadius: 1.5 * vw,
+    paddingTop: 4 * vh,
+    paddingLeft: 7.5 * vw,
+    paddingRight: 7.5 * vw,
+    paddingBottom: 4 * vh,
+    alignItems: 'center',
+    backgroundColor: 'white'
+  }
 });

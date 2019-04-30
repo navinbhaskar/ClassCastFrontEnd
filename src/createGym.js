@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import {Dimensions, Image, Text, TouchableWithoutFeedback, View, BackHandler} from 'react-native'
+import {Dimensions, Image, Text, TouchableWithoutFeedback, View, BackHandler, Button, Icon} from 'react-native'
 import styles from './TestStyles';
 import SnapCarousel from 'react-native-snap-carousel';
 import {NavigationActions, StackActions} from 'react-navigation';
@@ -40,9 +40,15 @@ class createGym extends Component {
   }
 
   handleBackButton() {
-    console.log("workingjdh");
+    
     this.props.navigation.dispatch(StackActions.popToTop());
-    this.props.navigation.navigate('Tabs', {}, NavigationActions.navigate({ routeName: 'Tabs' }));
+    this.props.navigation.navigate('Tabs', {}, NavigationActions.navigate({ 
+      routeName: 'Tabs',
+      params: {
+          subject: this.state.selectedSubjectName,
+          subjectIndex: this.state.selectedSubject
+      },
+     }));
     return true;
   }
 
@@ -59,8 +65,7 @@ class createGym extends Component {
               selectedSubject: index,
             });
             const sub = !index? 'p': index === 1? 'c': 'm';
-            console.log(index);
-            console.log(this.state.subjects[index].name);
+            
             this.setState({selectedSubjectName: this.state.subjects[index].name});
           }}
         >
@@ -125,6 +130,7 @@ class createGym extends Component {
               routeName: 'gymTopic',
               params: {
                 subject: this.state.selectedSubjectName,
+                subjectIndex: this.state.selectedSubject
               },
             });
             this.props.navigation.dispatch(navigateAction); 

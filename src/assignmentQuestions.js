@@ -74,7 +74,7 @@ class assignmentQuestions extends Component {
   }
 
   loadNewQestions() {
-    console.log("dsjlfdnsjlf: "+JSON.stringify(this.props.navigation.state.params.url[this.state.questionIndex]['fields'].question));
+    
     this.setState({question: this.props.navigation.state.params.url[this.state.questionIndex]['fields'].question});
     this.setState({option1: this.props.navigation.state.params.url[this.state.questionIndex]['fields'].option1});
     this.setState({option2: this.props.navigation.state.params.url[this.state.questionIndex]['fields'].option2});
@@ -95,7 +95,7 @@ class assignmentQuestions extends Component {
   }
 
   render() {
-    console.log("working3: "+JSON.stringify(this.props.navigation.state.params.url));
+    
     const source = {uri: this.props.navigation.state.params.url , cache: true};
     return (
       <View style={styles.container}>
@@ -113,7 +113,7 @@ class assignmentQuestions extends Component {
             
           </View>
           <View style={styles.questionContainer}>
-          {console.log('HHH: '+this.state.question)}
+          
           <MathJax
                   html={this.state.question.split('https://console.cloud.google.com/storage/browser').join('https://storage.googleapis.com').split('\\\\').join('\\')}
                   mathJaxOptions={{
@@ -383,7 +383,7 @@ class assignmentQuestions extends Component {
           <View style={{flexDirection: 'row', marginBottom: 2 * vh}}>
             <TouchableNativeFeedback
                 onPress={() => {
-                  console.log("workinghgg");
+                  
                   if(this.state.attempted) {
                     this.setState({showExplanation: true});
                   }
@@ -401,11 +401,11 @@ class assignmentQuestions extends Component {
                     onPress={() => {
 
                       this.setState({totalQuestions: this.state.totalQuestions+1});
-                      console.log("working3: "+this.state.questionIndex+"||"+this.state.n_questions);
+                      
                       if(this.state.questionIndex < this.state.n_questions) {
 
                         this.setState({showExplanation: false});
-                        console.log("PPPPP: "+this.state.questionIndex);
+                        
                         this.loadNewQestions();
                         this.setState({ backgroundColorOptionB: 'white'});
                         this.setState({ backgroundColorOptionC: 'white'});

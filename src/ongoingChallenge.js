@@ -31,37 +31,32 @@ class ongoingChallenge extends Component {
   })
 
   async loadQuestions() {
-    console.log("ADADASid: "+this.props.navigation.state.params.challenge_id);
+    
     await axios.get('https://classcast-198812.appspot.com/challenge/fetchchallengequestions/'+ this.props.navigation.state.params.challenge_id)
     .then(function (response){
       this.setState({blocks: response.data  });
-      //console.log("OOOOIIJJ0: "+this.state.blocks[0].question);
-      //console.log("OOOOIIJJ1: "+this.state.blocks[1].question);
-      //console.log("OOOOIIJJ2: "+this.state.blocks[2].question);
-      console.log("ADADAASSS");
+      
       this.setState({loadingCompleted: true});
       this.setState({n_questions: this.state.blocks.length});
       this.updateQuestions();
     }.bind(this))
     .catch(function (error) {
-      console.log("ADADASeerror: "+error);
+      console.log("error");
     });
   }
 
   updateQuestions() { 
     this.setState({attempted: false});
     this.setState({question: this.state.blocks[this.state.questionIndex]['fields'].question});
-    //console.log("PPP: "+this.state.questionIndex+" || "+ this.state.blocks[this.state.questionIndex].question);
     this.setState({option1: this.state.blocks[this.state.questionIndex]['fields'].option1});
     this.setState({option2: this.state.blocks[this.state.questionIndex]['fields'].option2});
     this.setState({option3: this.state.blocks[this.state.questionIndex]['fields'].option3});
     this.setState({option4: this.state.blocks[this.state.questionIndex]['fields'].option4});
     this.setState({option1_iscorrect: this.state.blocks[this.state.questionIndex]['fields'].option1_iscorrect});
-    this.setState({option2_iscorrect: this.state.blocks[this.state.questionIndex]['fields']['fields'].option2_iscorrect});
+    this.setState({option2_iscorrect: this.state.blocks[this.state.questionIndex]['fields'].option2_iscorrect});
     this.setState({option3_iscorrect: this.state.blocks[this.state.questionIndex]['fields'].option3_iscorrect});
     this.setState({option4_iscorrect: this.state.blocks[this.state.questionIndex]['fields'].option4_iscorrect});
     
-    console.log("oooiijj: "+this.state.questionIndex+"||"+this.state.question);
     if(this.state.blocks[this.state.questionIndex]['fields'].option1_iscorrect==1) {
         this.setState({correctAnswer: 1})
       }
@@ -79,7 +74,6 @@ class ongoingChallenge extends Component {
   updateNextQuestions() { 
     this.setState({attempted: false});
     this.setState({question: this.state.blocks[this.state.questionIndex+1]['fields'].question});
-    //console.log("PPP: "+this.state.questionIndex+" || "+ this.state.blocks[this.state.questionIndex].question);
     this.setState({option1: this.state.blocks[this.state.questionIndex+1]['fields'].option1});
     this.setState({option2: this.state.blocks[this.state.questionIndex+1]['fields'].option2});
     this.setState({option3: this.state.blocks[this.state.questionIndex+1]['fields'].option3});
@@ -89,7 +83,6 @@ class ongoingChallenge extends Component {
     this.setState({option2_iscorrect: this.state.blocks[this.state.questionIndex+1]['fields'].option2_iscorrect});
     this.setState({option3_iscorrect: this.state.blocks[this.state.questionIndex+1]['fields'].option3_iscorrect});
     this.setState({option4_iscorrect: this.state.blocks[this.state.questionIndex+1]['fields'].option4_iscorrect});
-    console.log("oooiijj: "+this.state.questionIndex+"||"+this.state.question);
     if(this.state.blocks[this.state.questionIndex+1]['fields'].option1_iscorrect==1) {
         this.setState({correctAnswer: 1})
       }
@@ -143,102 +136,9 @@ class ongoingChallenge extends Component {
   }
 
   handleBackButton() {
-    console.log("workingjdh");
-    this.props.navigation.navigate('start');
-    return true;
-  }
-
-  componentWillUnmount() {
-    BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton);
-  }
-
-  async componentDidMount() {
-    BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
-    await this.loadQuestions();
-    var count = 0
-
-    setInterval(() => {
-      count += 1
-      if(this.state.timer > 0) {
-            this.setState({
-                timer: --this.state.timer
-            })
-        }
-        if(count == 7) {
-          console.log("kjasnjkfsnajk");
-          this.setState({testCardShow: true})
-          }
-
-        if(this.state.timer == 1) {
-          this.setState({modalTimeup: true})
-          }
-        }, 1000);
-
-    if(this.props.navigation.state.params.is_sender) {
-      axios.post('https://classcast-198812.appspot.com/challenge/updateChallengeRequest', {
-                            "challenge_id": this.props.navigation.state.params.challenge_id,
-                            "started_by_sender": true
-                          })
-                      }
-    else {
-      axios.post('https://classcast-198812.appspot.com/challenge/updateChallengeRequest', {
-                            "challenge_id": this.props.navigation.state.params.challenge_id,
-                            "started_by_receiver": true
-                          })
-    }
-    
-
-     await firebase.firestore()
-     .collection("challenge_questions").where("challenge_id", "==", this.props.navigation.state.params.challenge_id)
-     .onSnapshot(
-        snapshot => {
-          snapshot.docChanges.forEach(change => {
-            const data = change.doc.data()
-            console.log("XXXXXXXXKKK: "+change.type);
-            //console.log("XXXXXXXX: "+JSON.stringify(data));
-            if (change.type === 'modified') {
-              console.log("eSkjGAAA: "+data.receiver_answers.length);
-              console.log("XXXXXXXXKKK: "+JSON.stringify(data.receiver_answers));
-              console.log("XXXXXXXXKKK: "+this.props.navigation.state.params.is_sender);
-              if(this.props.navigation.state.params.is_sender){
-                console.log("XXXXXXXXKKKTT");
-                this.setState({opponent_answer: data.receiver_answers});
-                this.setState({ActiveSlide1: data.receiver_answers.length});
-              }
-              else {
-                this.setState({opponent_answer: data.sender_answers});
-                this.setState({ActiveSlide1: data.sender_answers.length});
-              }
-            }
-          })
-        },
-        
-      )
-
-  }
-
-   render() {
-    console.log("eSkjGJ: "+this.state.opponent_answer);
-    console.log("eSkjGJ: "+this.state.opponent_answer.length);
-    console.log("eSkjGALLLL: "+this.state.answer);
-    if(!this.state.loadingCompleted) {
-      return(
-        <BarIndicator color='purple' count={5} size={60} />
-      )
-    }
-    else {
-      return (
-        <View style={styles.container}>
-            <View style={styles.header}>
-              <View style={styles.header1}>
-                <Text style={styles.text}>Time: {Math.floor(this.state.timer/60)}:{(this.state.timer % 60) > 9 ? this.state.timer % 60 : '0'+ this.state.timer % 60}</Text>
-              </View>
-              <View style={styles.header2}>
-              <TouchableNativeFeedback
-                      onPress={() => {
-                        Alert.alert(
-                'sure???',
-                'My Alert Msg',
+    Alert.alert(
+                'Are you sure you want to submit?',
+                '',
                 [
                   {
                     text: 'Cancel',
@@ -271,22 +171,128 @@ class ongoingChallenge extends Component {
                               is_sender: this.props.navigation.state.params.is_sender
                             },
                           }));
+                  }},
+                ],
+                {cancelable: false},
+              );
+    return true;
+  }
 
-                    /*
-                    const navigateAction = NavigationActions.navigate({
-                    routeName: 'challengePerformance',
-                    params: {
-                      opponent_username: this.props.navigation.state.params.username,
-                      opponent_name: this.props.navigation.state.params.name,
-                      timer: this.state.timer,
-                      answer: this.state.answer,
-                      opponent_answer: this.state.opponent_answer,
-                      challenge_id: this.props.navigation.state.params.challenge_id, 
-                      is_sender: this.props.navigation.state.params.is_sender
-                    },
-                  });
-                  this.props.navigation.dispatch(navigateAction); 
-                  */
+  componentWillUnmount() {
+    BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton);
+  }
+
+  async componentDidMount() {
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
+    await this.loadQuestions();
+    var count = 0
+
+    setInterval(() => {
+      count += 1
+      if(this.state.timer > 0) {
+            this.setState({
+                timer: --this.state.timer
+            })
+        }
+        if(count == 7) {
+          this.setState({testCardShow: true})
+          }
+
+        if(this.state.timer == 1) {
+          this.setState({modalTimeup: true})
+          }
+        }, 1000);
+
+    if(this.props.navigation.state.params.is_sender) {
+      axios.post('https://classcast-198812.appspot.com/challenge/updateChallengeRequest', {
+                            "challenge_id": this.props.navigation.state.params.challenge_id,
+                            "started_by_sender": true
+                          })
+                      }
+    else {
+      axios.post('https://classcast-198812.appspot.com/challenge/updateChallengeRequest', {
+                            "challenge_id": this.props.navigation.state.params.challenge_id,
+                            "started_by_receiver": true
+                          })
+    }
+    
+
+     await firebase.firestore()
+     .collection("challenge_questions").where("challenge_id", "==", this.props.navigation.state.params.challenge_id)
+     .onSnapshot(
+        snapshot => {
+          snapshot.docChanges.forEach(change => {
+            const data = change.doc.data()
+            
+            if (change.type === 'modified') {
+              if(this.props.navigation.state.params.is_sender){
+                
+                this.setState({opponent_answer: data.receiver_answers});
+                this.setState({ActiveSlide1: data.receiver_answers.length});
+              }
+              else {
+                this.setState({opponent_answer: data.sender_answers});
+                this.setState({ActiveSlide1: data.sender_answers.length});
+              }
+            }
+          })
+        },
+        
+      )
+
+  }
+
+   render() {
+    if(!this.state.loadingCompleted) {
+      return(
+        <BarIndicator color='purple' count={5} size={60} />
+      )
+    }
+    else {
+      return (
+        <View style={styles.container}>
+            <View style={styles.header}>
+              <View style={styles.header1}>
+                <Text style={styles.text}>Time: {Math.floor(this.state.timer/60)}:{(this.state.timer % 60) > 9 ? this.state.timer % 60 : '0'+ this.state.timer % 60}</Text>
+              </View>
+              <View style={styles.header2}>
+              <TouchableNativeFeedback
+                      onPress={() => {
+                        Alert.alert(
+                'Are you sure you want to submit?',
+                '',
+                [
+                  {
+                    text: 'Cancel',
+                    onPress: () => console.log('Cancel Pressed'),
+                    style: 'cancel',
+                  },
+                  {text: 'Submit', onPress: () =>{
+                    if(this.props.navigation.state.params.is_sender) {
+                      axios.post('https://classcast-198812.appspot.com/challenge/updateChallengeRequest', {
+                                            "challenge_id": this.props.navigation.state.params.challenge_id,
+                                            "completed_by_sender": true
+                                          })
+                                      }
+                    else {
+                      axios.post('https://classcast-198812.appspot.com/challenge/updateChallengeRequest', {
+                                            "challenge_id": this.props.navigation.state.params.challenge_id,
+                                            "completed_by_receiver": true
+                                          })
+                    }
+                    
+                    this.props.navigation.navigate('Playground', {}, NavigationActions.navigate({ 
+                            routeName: 'challengePerformance',
+                            params: {
+                              opponent_username: this.props.navigation.state.params.username,
+                              opponent_name: this.props.navigation.state.params.name,
+                              timer: this.state.timer,
+                              answer: this.state.answer,
+                              opponent_answer: this.state.opponent_answer,
+                              challenge_id: this.props.navigation.state.params.challenge_id, 
+                              is_sender: this.props.navigation.state.params.is_sender
+                            },
+                          }));
                   }},
                 ],
                 {cancelable: false},
@@ -314,7 +320,7 @@ class ongoingChallenge extends Component {
                       
                   renderItem={({item}) => (
                     <View>
-                    {console.log("bsxxabaxj: "+item+" || "+this.state.opponent_answer.length)}
+                    
                     { item == this.state.opponent_answer.length &&
                       <View style={styles.activeQuestion}>
                         <Text style={styles.activeSnapText}>
@@ -329,7 +335,7 @@ class ongoingChallenge extends Component {
                       </Text>
                       </View>
                     }
-                    {console.log("JJJHHH: "+this.state.ActiveSlide1)}
+                    
                  </View>
                   )}
                 />
@@ -360,7 +366,7 @@ class ongoingChallenge extends Component {
                       </Text>
                       </View>
                     }
-                    {console.log("JJJHHH: "+this.state.ActiveSlide)}
+                    
                  </View>
                   )}
                 />
@@ -378,7 +384,7 @@ class ongoingChallenge extends Component {
               </View>
             </View>
             <View style={styles.questionContainer}>
-            {console.log('HHH: '+this.state.question)}
+            
             <MathJax
                     html={this.state.question.split('https://console.cloud.google.com/storage/browser').join('https://storage.googleapis.com').split('\\\\').join('\\')}
                     mathJaxOptions={{
@@ -662,7 +668,7 @@ class ongoingChallenge extends Component {
                         }
                         this.setState({selectedAnswer: -1});
                         this.setState({totalQuestions: this.state.totalQuestions+1});
-                        console.log("working3: "+this.state.questionIndex+"||"+this.state.n_questions);
+                        
                         if(this.state.questionIndex+1 < this.state.n_questions) {
                           this.setState({ActiveSlide: this.state.ActiveSlide +1});
                           this.flatListRef.scrollToIndex({animated: true, index: this.state.ActiveSlide+1});
@@ -674,8 +680,8 @@ class ongoingChallenge extends Component {
                         }
                       if(this.state.questionIndex+1 == this.state.n_questions) {
                         Alert.alert(
-                          'sure???',
-                          'My Alert Msg',
+                          'Are you sure you want to submit?',
+                          '',
                           [
                             {
                               text: 'Cancel',

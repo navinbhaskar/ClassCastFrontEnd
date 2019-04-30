@@ -4,12 +4,12 @@ import {
   Text,
   StyleSheet,
   Image,
-  FlatList,
-  TouchableOpacity
+  FlatList
 } from 'react-native';
 import { Button, Icon } from 'react-native-elements';
 import axios from "axios";
 import firebase from 'react-native-firebase';
+import CourseListPlaceholder from "./courseListPlaceholder";
 
 const Teacher_Image = require('./images/user-hp.png');
 const data = [ 50, 10, 40, 95, -4, -24, 85, 91 ];
@@ -38,8 +38,6 @@ class addTeachers extends Component {
     var currentUser = await firebase.auth().currentUser;                 
      await currentUser.getIdToken()
                       .then(idToken => {
-                            console.log("AXABXJBJ: "+JSON.stringify(currentUser));
-                            console.log("AXABXJBJ: "+currentUser['phoneNumber'].slice(3, 13));
                             this.setState({ username: currentUser['phoneNumber'].slice(3, 13) })
                           });
 
@@ -50,7 +48,7 @@ class addTeachers extends Component {
                 this.setState({isReady: true});
               }.bind(this))
               .catch(function (error) {
-                console.log(error);
+                
               });
   } 
 
@@ -64,7 +62,7 @@ class addTeachers extends Component {
             <View style={styles.teacherCardContainer}>
               <View style={styles.teacherPreview}>
                 <View style={styles.teacherPreviewLeft}>
-                  <Text style={styles.h2}>{item.name} - {item.subject} </Text>
+                  <Text style={styles.h2}>{item.firstname} {item.lastname} - {item.subject} </Text>
                     <View style={styles.insituteName}>
                       <Icon
                           name='university'
@@ -100,7 +98,7 @@ class addTeachers extends Component {
                     <Image source={{uri: item.photo}} style={styles.teacherImage}/>
                 </View>
                 <Button title="View"  buttonStyle={{width:100}}
-                  onPress={() => this.props.navigation.navigate('TeacherArea', { data: item})}/>
+                  onPress={() => this.props.navigation.navigate('TeacherArea', { data: item, isEnrolled: false})}/>
                 </View>
               </View>
             </View>
@@ -111,9 +109,10 @@ class addTeachers extends Component {
   render () {
     return (
       <View style={styles.container}>
+      <CourseListPlaceholder onReady={this.state.isReady} animate="fade">
       { this.state.n_teachers == 0 && this.state.isReady &&
         <View style={{height: 5 * vh, width: 60 * vw, marginTop: 5 * vh}}>
-          <Text style={{fontSize: 20, color: 'white', textAlign: 'center'}}> No Updates </Text>
+          <Text style={{fontSize: 20, color: 'white', textAlign: 'center'}}> No available teachers </Text>
         </View>
       }
         <FlatList
@@ -122,6 +121,7 @@ class addTeachers extends Component {
           renderItem={this._renderItem }
           keyExtractor={(item, index) => index.toString()}
         />
+      </CourseListPlaceholder>
         
       </View>
       )
@@ -139,30 +139,29 @@ const styles = StyleSheet.create({
       backgroundColor: '#0F3651',
     },
     h2:{
-      fontSize: 18,
+      fontSize: 2.8 * vh,
       fontWeight: 'bold',
       color: 'black'
     },
     h3:{
-      fontSize: 16,
+      fontSize: 2.4 * vh,
       color: 'black'
     },
     videoCount: {
       color: 'black'
     },
     h2Blue:{
-      fontSize: 20,
+      fontSize: 3 * vh ,
       fontWeight: 'bold',
       color: 'blue'
     },
     teacherCardContainer:{
       width: '100%',
-      borderRadius:5,
-      borderWidth: 1,
+      borderRadius: 3 * vw,
       backgroundColor:'white',
       elevation: 3,
-      marginTop:5,
-      padding: 5
+      marginTop: 2* vh ,
+      padding: 2 * vh
     },
     teacherPreview:{
       flex:1,
@@ -170,36 +169,36 @@ const styles = StyleSheet.create({
     },
     teacherPreviewLeft:{
       width:'60%',
-      margin: 2,
+      margin: 0.5 * vh ,
     },
     teacherAbout:{
       width: '100%',
     },
     teacherImageContainer:{
-      margin: 5,
+      margin: 1 * vh,
       alignItems: 'center'
     },
     teacherCardRight:{
       width:'36%',
-      margin: 5,
+      margin: 0.5* vh ,
       alignItems: 'center'
 
     },
     teacherImage:{
       resizeMode:'contain',
-      height: 100,
-      width: 100
+      height: 25 * vw,
+      width: 25 * vw,
     },
     videoTestCount:{
       flex:1,
       alignItems:'center',
       flexDirection:'row',
-      margin: 2,
+      margin: 0.5 * vh,
     },
     insituteName:{
       flex:1,
       alignItems:'center',
       flexDirection:'row',
-      margin :2,
+      margin : 0.5 * vh,
     }
   });

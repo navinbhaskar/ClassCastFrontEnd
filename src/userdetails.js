@@ -10,11 +10,16 @@ import {
   Text,
   View,
   AsyncStorage,
-  ToastAndroid
+  ToastAndroid,
+  BackHandler
 } from 'react-native';
 import { Input, Button, ButtonGroup } from 'react-native-elements';
 import {Icon} from 'react-native-elements';
 import axios from "axios";
+import DeviceInfo from 'react-native-device-info';
+import {MaterialIndicator} from 'react-native-indicators';
+
+const uniqueId = DeviceInfo.getUniqueID();
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
@@ -27,12 +32,14 @@ export default class UserDetails extends Component {
     this.state = {
     selectedClassesIndex: 3,
     selectedStreamIndex: 2,
+    loading: false,
     selectedType: null,
     fontLoaded: false,
     name: '',
     username:'',
     lastname: '',
     usernameValid: true,
+    lastnameValid: true,
     phone:'',
   };
   this.updateClassesIndex = this.updateClassesIndex.bind(this);
@@ -76,6 +83,7 @@ export default class UserDetails extends Component {
     else if (selectedClassesIndex == 2) return 13;
     else {
       ToastAndroid.show('Please select you Class', ToastAndroid.SHORT);
+      this.setState({loading: false});
       return 0;
     }
   }
@@ -86,6 +94,7 @@ export default class UserDetails extends Component {
     else if (selectedStreamIndex == 1) return 'Commerce';
     else {
       ToastAndroid.show('Please select you Stream', ToastAndroid.SHORT);
+      this.setState({loading: false});
       return 0;
     }
   }
@@ -96,6 +105,7 @@ export default class UserDetails extends Component {
     else if (selectedType == 'Female') return 'Female';
     else {
       ToastAndroid.show('Please select you Gender', ToastAndroid.SHORT);
+      this.setState({loading: false});
       return 0;
     }
   }
@@ -105,6 +115,9 @@ export default class UserDetails extends Component {
     const usernameValid = username.length > 0;
     LayoutAnimation.easeInEaseOut();
     this.setState({ usernameValid });
+    if( !usernameValid) {
+      this.setState({loading: false});
+    }
     usernameValid || this.usernameInput.shake();
     return usernameValid;
   }
@@ -114,12 +127,15 @@ export default class UserDetails extends Component {
     const lastnameValid = lastname.length > 0;
     LayoutAnimation.easeInEaseOut();
     this.setState({ lastnameValid });
+    if( !lastnameValid) {
+      this.setState({loading: false});
+    }
     lastnameValid || this.lastnameInput.shake();
     return lastnameValid;
   }
 
   async updateinfo(){
-
+    this.setState({loading: true});
     const nameValid = await this.validateUsername();
     const lastnameValid = await this.validateLastname();
     const genderValid = await this.validateGender();
@@ -133,32 +149,36 @@ export default class UserDetails extends Component {
               "firstname": this.state.username,
               "lastname": this.state.lastname,
               "gender": genderValid,
-              "standard": classValid,
+              "standard": 12,
               "phone_number": this.state.phone,
               "username": this.state.phone,
               "email": this.state.phone + '' + '@gmail.com '
             }
-      if (token) console.log("tokento aa raha");
+      if (token)
       axios.defaults.headers.common['Authorization'] = token;
       axios.defaults.headers.post['Content-Type'] = 'application/json';
-      axios.post('https://classcast-198812.appspot.com/users/updateprofile', data)
-              .then((response) => 
-              {
-                 console.log("API response" + JSON.stringify(response))
-                 this.props.navigation.navigate("accessCode");
+       axios.post('https://classcast-198812.appspot.com/users/updateprofile', data)
+            .then((response) => 
+            {
+              var data2 = {
+                "device_id": uniqueId
+              }
+              axios.post('https://classcast-198812.appspot.com/deviceid/save_device_id/',data2)
+              .then(res =>{
+               this.props.navigation.navigate("accessCode");
               })
-              .catch((error) => {
-                  console.log("API error" + JSON.stringify(error))
-              })
+               
+            })
+            .catch((error) => {
+              this.setState({loading: false});
+            })
+      
+     
 
       }
 
   }
 
-
-  componentDidMount() {
-    console.log("snakjnfsworking2");
-  }
 
   render() {
     const classes = ['11', '12', '12+']
@@ -227,6 +247,7 @@ export default class UserDetails extends Component {
             buttons={classes}
             containerStyle={{height: 50, borderRadius: 20}}
           />
+          
       <Text style={styles.h3}> Engineer or CA ? </Text>
           <ButtonGroup
             onPress={this.updateStreamIndex}
@@ -234,13 +255,17 @@ export default class UserDetails extends Component {
             buttons={streams}
             containerStyle={{height: 50, borderRadius: 20}}
           />
+      { !this.state.loading &&
       <Icon
         raised
         name='arrow-circle-right'
         type='font-awesome'
         color='#293046'
         onPress={() => this.updateinfo()} />
-
+      }
+      { this.state.loading &&
+        <MaterialIndicator color='white'/>
+      }
      
       </ScrollView>
   );
@@ -297,12 +322,9 @@ export const FormInput = props => {
 const styles = StyleSheet.create({
   
   container: {
-    flex: 1,
     paddingBottom: 20,
     paddingTop: 20,
     backgroundColor: '#293046',
-    width: SCREEN_WIDTH,
-    height: SCREEN_HEIGHT,
     alignItems: 'center',
   },
    h2: {

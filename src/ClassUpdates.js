@@ -21,7 +21,7 @@ class ClassUpdates extends Component {
   }
 
 async componentDidMount() {
-  console.log("skksNJKlanlx: "+JSON.stringify(this.props.navigation.state.params.data));
+  
   await firebase.firestore()
    .collection('announcement/'+this.props.navigation.state.params.data.teacher_id+'/'+this.props.navigation.state.params.data.batch_id)
     .get()
@@ -29,7 +29,7 @@ async componentDidMount() {
       snapshot
         .docs
         .forEach(doc => {
-          console.log("working: "+doc.data());
+          
           this.setState({updates:[...this.state.updates, doc.data()]});
         });
     }); 

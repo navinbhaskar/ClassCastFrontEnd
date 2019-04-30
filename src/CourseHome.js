@@ -20,28 +20,17 @@ import {Icon} from 'react-native-elements';
 import Carousel from 'react-native-snap-carousel';
 import { ProgressCircle }  from 'react-native-svg-charts';
 import axios from 'axios';
-import {
-  BallIndicator,
-  BarIndicator,
-  DotIndicator,
-  MaterialIndicator,
-  PacmanIndicator,
-  PulseIndicator,
-  SkypeIndicator,
-  UIActivityIndicator,
-  WaveIndicator,
-} from 'react-native-indicators';
+import {MaterialIndicator} from 'react-native-indicators';
 
 const screen = Dimensions.get('window'),
   vh = screen.height / 100,
   vw = screen.width / 100;
-
-const videoIcon = require('./images/download.jpg');    
+   
 
 class CourseHome extends Component {
 
   navigateToScreen = (route, url) => {
-    console.log("working2");
+    
     const navigateAction = NavigationActions.navigate({
       routeName: route,
       params: {
@@ -56,6 +45,7 @@ class CourseHome extends Component {
     this.state = {
       startBuffering: false,
       title: '',
+      completion: 0,
       blocks: [
         {
          
@@ -71,18 +61,19 @@ class CourseHome extends Component {
 
   componentDidMount() {
     //this.setState({title: this.props.navigation.state.params.display_name});
-    console.log("hsbsahbhdasaa: "+JSON.stringify(this.props.navigation.state.params));
+      this.setState({completion: this.props.navigation.state.params.percentage_completion});
       axios.get('https://classcast-198812.appspot.com/coursedata/courseblocks/'+this.props.navigation.state.params.course_id+'/')
                 .then(function (response){
                   this.setState({blocks: response.data.blocks});
-                  console.log("sakjbskbs: "+JSON.stringify(response))
+                  
                 }.bind(this))
                 .catch(function (error) {
-                  console.log(error);
+                  console.log("error");
                 });
   }
 
   render() {     
+    console.log("andnhak: "+JSON.stringify(this.state.blocks))
     return (
             <View style={{height: 100*vh, width: '100%', justifyContent: 'center',  alignItems: 'center', flex: 1}}>
             <Modal
@@ -126,11 +117,11 @@ class CourseHome extends Component {
                   </View>
                   <View style = {styles.progress}>
                       <ProgressCircle
-                          style={ { height: 95, width: 100, position:'absolute' } }
-                          progress={ this.props.navigation.state.params.percentage_completion/100 }
+                          style={ { height: 25 * vw, width: 25 * vw, position:'absolute' } }
+                          progress={ this.state.completion/100 }
                           progressColor={'#0F3651'}
                       />
-                      <Text style={{ color: 'black', fontSize: 24}}> {this.props.navigation.state.params.percentage_completion+'%'} </Text>
+                      <Text style={{ color: 'black', fontSize: 24}}> {this.state.completion.toFixed(2)+'%'} </Text>
                       <Text style={styles.videoCount}> Completed </Text>
                   </View>
                 </View>
@@ -149,9 +140,7 @@ class CourseHome extends Component {
                       <View style={styles.sectionContent}>
                         {
                           blocks.data && blocks.data.map((data, index)=>{
-                            console.log("working41: "+JSON.stringify(data));
-                            console.log("working4: "+data.path);
-                            console.log("working4: "+data.block_type);
+                            
                             if(data.block_type == 'video') {
                               return(
                                 <TouchableNativeFeedback
@@ -161,18 +150,17 @@ class CourseHome extends Component {
                                       "course_id": this.props.navigation.state.params.course_id,
                                       "block_id": data.block_id
                                     })
-                                    .then( response => {
-                                        console.log("ABCDEF: "+JSON.stringify(response.data));
-                                      })
-                                      .catch(err => {
-                                        console.log("ABCDEFE: "+JSON.stringify(err));
-                                      });
+                                    .then(res=> {
+                                      if(res.data == 'Updated') {
+                                        this.setState({completion: this.state.completion + (100/this.props.navigation.state.params.number_of_videos)})
+                                      }
+                                    })
                                     axios.post(`https://classcast-198812.appspot.com/coursedata/generateSignedUrl`, {
                                       "path": data.path
                                       //"path": "/classcast-198812.appspot.com/classcast_videos/Mathematics_CBSE/Anurag_Chauhan_Delhi/Class_12/Applications_of_Derivatives/Day%201%20Out%20-%20%20(1)-1.mp4"
                                     })
                                       .then( response => {
-                                        console.log("ABCD: "+JSON.stringify(response.data));
+                                        
                                         this.setState({startBuffering: false});
                                         this.navigateToScreen('video', response.data);
                                       })
@@ -188,10 +176,10 @@ class CourseHome extends Component {
                                   <View style={styles.videoPreview}>
                                       <Image source={{uri: data.image}} style={{height:70, width: 130}}/>
                                   </View>
-                                  {console.log("URL: "+JSON.stringify(data))}
+                                  
                                   <View style = {styles.aboutVideo}>
                                       <Text style={{fontSize: 16, color: 'black', fontWeight: 'bold'}}>{data.display_name}</Text>
-                                      <Text style={{fontSize: 12, color: 'black'}}> 36 Minutes</Text>
+                                      <Text style={{fontSize: 12, color: 'black'}}> </Text>
                                       <Text style={{fontSize: 12, color: 'black'}}> +3 Points </Text>
                                   </View>                     
 
@@ -207,18 +195,11 @@ class CourseHome extends Component {
                                     axios.post(`http://classcast-198812.appspot.com/coursedata/storestudentblockinteractions`, {
                                       "course_id": this.props.navigation.state.params.course_id,
                                       "block_id": data.block_id
-                                    })
-                                    .then( response => {
-                                        console.log("ABCDEF: "+JSON.stringify(response.data));
-                                      })
-                                      .catch(err => {
-                                        console.log("ABCDEFE: "+JSON.stringify(err));
-                                      });
+                                    });
                                     axios.post(`https://classcast-198812.appspot.com/coursedata/generateSignedUrl`, {
                                       "path": data.path
                                     })
                                       .then( response => {
-                                        console.log("ABCD: "+JSON.stringify(response.data));
                                         this.setState({startBuffering: false});
                                         this.navigateToScreen('pdfViewer', response.data);
                                       })
@@ -230,7 +211,7 @@ class CourseHome extends Component {
                                   <View style={styles.videoPreview}>
                                       <Image source={{uri: data.image}} style={{height:70, width: 130}}/>
                                   </View>
-                                  {console.log("URL: "+JSON.stringify(data))}
+                                  
                                   <View style = {styles.aboutVideo}>
                                       <Text style={{fontSize: 16, color: 'black', fontWeight: 'bold'}}>{data.display_name}</Text>
                                       <Text style={{fontSize: 12, color: 'black'}}> 36 Minutes</Text>
@@ -249,23 +230,17 @@ class CourseHome extends Component {
                                     axios.post(`http://classcast-198812.appspot.com/coursedata/storestudentblockinteractions`, {
                                       "course_id": this.props.navigation.state.params.course_id,
                                       "block_id": data.block_id
-                                    })
-                                    .then( response => {
-                                        console.log("ABCDEF: "+JSON.stringify(response.data));
-                                      })
-                                      .catch(err => {
-                                        console.log("ABCDEFE: "+JSON.stringify(err));
-                                      });
+                                    });
                                     axios.post(`https://classcast-198812.appspot.com/coursedata/fetchassignmentquestions`, {
                                       "block_id": data.url
                                     })
                                       .then( response => {
-                                        console.log("ABCD: "+JSON.stringify(response.data));
+                                        
                                         this.setState({startBuffering: false});
                                         this.navigateToScreen('assignmentQuestions', response.data);
                                       })
                                       .catch(err=> {
-                                        console.log("ABCDerror: "+JSON.stringify)
+                                        console.log("error")
                                       })
                                     }
                                 }
@@ -275,7 +250,7 @@ class CourseHome extends Component {
                                   <View style={styles.videoPreview}>
                                       <Image source={{uri: data.image}} style={{height:70, width: 130}}/>
                                   </View>
-                                  {console.log("URL: "+JSON.stringify(data))}
+                                  
                                   <View style = {styles.aboutVideo}>
                                       <Text style={{fontSize: 16, color: 'black', fontWeight: 'bold'}}>{data.display_name}</Text>
                                       <Text style={{fontSize: 12, color: 'black'}}> 36 Minutes</Text>
@@ -299,7 +274,7 @@ class CourseHome extends Component {
                                   <View style={styles.videoPreview}>
                                       <Image source={{uri: data.image}} style={{height:70, width: 130}}/>
                                   </View>
-                                  {console.log("URL: "+JSON.stringify(data))}
+                                  
                                   <View style = {styles.aboutVideo}>
                                       <Text style={{fontSize: 16, color: 'black', fontWeight: 'bold'}}>{data.display_name}</Text>
                                       <Text style={{fontSize: 12, color: 'black'}}> 36 Minutes</Text>
@@ -329,7 +304,7 @@ export default CourseHome;
 
 const styles = StyleSheet.create({
   container:{
-    paddingBottom: 100,
+    paddingBottom: 10 * vh,
     width: 100 * vw,
     marginBottom: 10,
     backgroundColor: '#dbdbdb'
@@ -337,24 +312,24 @@ const styles = StyleSheet.create({
   singleComponentCount:{
     flex: 1,
     flexDirection: 'row',
-    margin: 5
+    margin: .6 * vh
   },
   componentCount:{
-    margin:15,
+    margin:1.8 * vh,
   },
   sectionHeader:{
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'flex-start',
-    margin: 5,
-    marginTop: 10,
+    margin: 1 * vh,
+    marginTop: 2 * vh,
     alignItems: 'center'
   },
   courseAboutContainer:{
-    borderRadius: 5,
-    borderWidth: 1,
+    borderRadius: .6 * vh,
+    borderWidth: .2 * vw,
     borderColor: 'grey',
-    margin: 5,
+    margin: .6 * vh,
     flex:1,
     flexDirection: 'row',
     justifyContent: 'space-around',
@@ -365,32 +340,32 @@ const styles = StyleSheet.create({
     color: 'black'
     },
   progress: {
-    margin: 5,
+    margin: .6 * vh,
     alignItems: 'center',
     justifyContent: 'center',
   },
   sectionContent: {
     backgroundColor: "white",
-    margin: 5,
+    margin: 1.5 * vw,
     elevation:2,
-    borderRadius: 5,
+    borderRadius: 1 * vw,
   },
   videoPreview:{
-    margin: 5,
-    height: 80,
-    width: 140,
+    margin: 1.3 * vw,
+    height: 10.5 * vh,
+    width: 35 * vw,
   },
   videoComponent:{
-    marginTop: 8,
-    marginLeft: 8,
+    marginTop: .5 * vh,
+    marginLeft: 2 * vw,
     marginBottom: 0,
-    marginRight: 8,
+    marginRight: 2 * vw,
     flex:1,
     flexDirection: 'row',
   },
   aboutVideo:{
     justifyContent:'center',
-    width: 190
+    width: 57*vw,
   },
   hairline: {
       backgroundColor: 'black',

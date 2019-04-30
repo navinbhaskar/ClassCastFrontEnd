@@ -68,131 +68,121 @@ class reviewTest extends Component {
 }
 
   updateQuestions() { 
-      //question = this.state.blocks[this.state.questionIndex].question;
-      //console.log("ADNDSKD: |"+question+"|")
     this.setState({n_questions:  (this.props.navigation.state.params.blocks).length});
-    this.setState({question: this.props.navigation.state.params.blocks[this.state.questionIndex].question});
-    this.setState({option1: this.props.navigation.state.params.blocks[this.state.questionIndex].option1});
-    this.setState({option2: this.props.navigation.state.params.blocks[this.state.questionIndex].option2});
-    this.setState({option3: this.props.navigation.state.params.blocks[this.state.questionIndex].option3});
-    this.setState({option4: this.props.navigation.state.params.blocks[this.state.questionIndex].option4});
+    this.setState({question: this.props.navigation.state.params.blocks[this.state.questionIndex]['fields'].question});
+    this.setState({option1: this.props.navigation.state.params.blocks[this.state.questionIndex]['fields'].option1});
+    this.setState({option2: this.props.navigation.state.params.blocks[this.state.questionIndex]['fields'].option2});
+    this.setState({option3: this.props.navigation.state.params.blocks[this.state.questionIndex]['fields'].option3});
+    this.setState({option4: this.props.navigation.state.params.blocks[this.state.questionIndex]['fields'].option4});
     try {
-      if(this.props.navigation.state.params.answer[this.state.questionIndex].option == 1) {
+      if(this.props.navigation.state.params.answer[this.state.questionIndex]['fields'].option == 1) {
         this.setState({backgroundColorOptionA: 'red'})
       }
-      else if(this.props.navigation.state.params.answer[this.state.questionIndex].option == 2) {
+      else if(this.props.navigation.state.params.answer[this.state.questionIndex]['fields'].option == 2) {
         this.setState({backgroundColorOptionB: 'red'})
       }
-      else if(this.props.navigation.state.params.answer[this.state.questionIndex].option == 3) {
+      else if(this.props.navigation.state.params.answer[this.state.questionIndex]['fields'].option == 3) {
         this.setState({backgroundColorOptionC: 'red'})
       }
-      else if(this.props.navigation.state.params.answer[this.state.questionIndex].option == 4) {
+      else if(this.props.navigation.state.params.answer[this.state.questionIndex]['fields'].option == 4) {
         this.setState({backgroundColorOptionD: 'red'})
       }
     }
      catch (e) {
-      console.log(e)
+      console.log('e')
      }
 
-    if(this.props.navigation.state.params.blocks[this.state.questionIndex].option1_iscorrect==1) {
+    if(this.props.navigation.state.params.blocks[this.state.questionIndex]['fields'].option1_iscorrect==1) {
       this.setState({backgroundColorOptionA: 'green'})
     }
-    else if(this.props.navigation.state.params.blocks[this.state.questionIndex].option2_iscorrect==1) {
+    else if(this.props.navigation.state.params.blocks[this.state.questionIndex]['fields'].option2_iscorrect==1) {
       this.setState({backgroundColorOptionB: 'green'})
     }
-    else if(this.props.navigation.state.params.blocks[this.state.questionIndex].option3_iscorrect==1) {
+    else if(this.props.navigation.state.params.blocks[this.state.questionIndex]['fields'].option3_iscorrect==1) {
       this.setState({backgroundColorOptionC: 'green'})
     }
-    else if(this.props.navigation.state.params.blocks[this.state.questionIndex].option4_iscorrect==1){
+    else if(this.props.navigation.state.params.blocks[this.state.questionIndex]['fields'].option4_iscorrect==1){
       this.setState({backgroundColorOptionD: 'green'})
     }
   }
 
   async updatePreviousQuestions() { 
-      //question = this.state.blocks[this.state.questionIndex].question;
-      //console.log("ADNDSKD: |"+question+"|")
     await this.setState({attempted: true});
-    //await this.setState({question: this.state.blocks[this.state.questionIndex+1].question});
-    //console.log("PPP: "+this.state.question);
-    this.setState({question: this.props.navigation.state.params.blocks[this.state.questionIndex-1].question});
-    this.setState({option1: this.props.navigation.state.params.blocks[this.state.questionIndex-1].option1});
-    this.setState({option2: this.props.navigation.state.params.blocks[this.state.questionIndex-1].option2});
-    this.setState({option3: this.props.navigation.state.params.blocks[this.state.questionIndex-1].option3});
-    this.setState({option4: this.props.navigation.state.params.blocks[this.state.questionIndex-1].option4});
+    this.setState({question: this.props.navigation.state.params.blocks[this.state.questionIndex-1]['fields'].question});
+    this.setState({option1: this.props.navigation.state.params.blocks[this.state.questionIndex-1]['fields'].option1});
+    this.setState({option2: this.props.navigation.state.params.blocks[this.state.questionIndex-1]['fields'].option2});
+    this.setState({option3: this.props.navigation.state.params.blocks[this.state.questionIndex-1]['fields'].option3});
+    this.setState({option4: this.props.navigation.state.params.blocks[this.state.questionIndex-1]['fields'].option4});
     try {
-      if(this.props.navigation.state.params.answer[this.state.questionIndex-1].option == 1) {
+      if(this.props.navigation.state.params.answer[this.state.questionIndex-1]['fields'].option == 1) {
         this.setState({backgroundColorOptionA: 'red'})
       }
-      else if(this.props.navigation.state.params.answer[this.state.questionIndex-1].option == 2) {
+      else if(this.props.navigation.state.params.answer[this.state.questionIndex-1]['fields'].option == 2) {
         this.setState({backgroundColorOptionB: 'red'})
       }
-      else if(this.props.navigation.state.params.answer[this.state.questionIndex-1].option == 3) {
+      else if(this.props.navigation.state.params.answer[this.state.questionIndex-1]['fields'].option == 3) {
         this.setState({backgroundColorOptionC: 'red'})
       }
-      else if(this.props.navigation.state.params.answer[this.state.questionIndex-1].option == 4) {
+      else if(this.props.navigation.state.params.answer[this.state.questionIndex-1]['fields'].option == 4) {
         this.setState({backgroundColorOptionD: 'red'})
       }
     }
     catch (e) {
-      console.log(e)
+      console.log('e')
     }
 
-    if(this.props.navigation.state.params.blocks[this.state.questionIndex-1].option1_iscorrect==1) {
+    if(this.props.navigation.state.params.blocks[this.state.questionIndex-1]['fields'].option1_iscorrect==1) {
       this.setState({backgroundColorOptionA: 'green'})
     }
-    else if(this.props.navigation.state.params.blocks[this.state.questionIndex-1].option2_iscorrect==1) {
+    else if(this.props.navigation.state.params.blocks[this.state.questionIndex-1]['fields'].option2_iscorrect==1) {
       this.setState({backgroundColorOptionB: 'green'})
     }
-    else if(this.props.navigation.state.params.blocks[this.state.questionIndex-1].option3_iscorrect==1) {
+    else if(this.props.navigation.state.params.blocks[this.state.questionIndex-1]['fields'].option3_iscorrect==1) {
       this.setState({backgroundColorOptionC: 'green'})
     }
-    else if(this.props.navigation.state.params.blocks[this.state.questionIndex-1].option4_iscorrect==1){
+    else if(this.props.navigation.state.params.blocks[this.state.questionIndex-1]['fields'].option4_iscorrect==1){
       this.setState({backgroundColorOptionD: 'green'})
     }
     this.setState({questionIndex: this.state.questionIndex-1});
   }
 
   async updateNextQuestions() { 
-      //question = this.state.blocks[this.state.questionIndex].question;
-      //console.log("ADNDSKD: |"+question+"|")
     await this.setState({attempted: false});
-    //await this.setState({question: this.state.blocks[this.state.questionIndex+1].question});
-    //console.log("PPP: "+this.state.question);
-    this.setState({question: this.props.navigation.state.params.blocks[this.state.questionIndex+1].question});
-    this.setState({option1: this.props.navigation.state.params.blocks[this.state.questionIndex+1].option1});
-    this.setState({option2: this.props.navigation.state.params.blocks[this.state.questionIndex+1].option2});
-    this.setState({option3: this.props.navigation.state.params.blocks[this.state.questionIndex+1].option3});
-    this.setState({option4: this.props.navigation.state.params.blocks[this.state.questionIndex+1].option4});
+    this.setState({question: this.props.navigation.state.params.blocks[this.state.questionIndex+1]['fields'].question});
+    this.setState({option1: this.props.navigation.state.params.blocks[this.state.questionIndex+1]['fields'].option1});
+    this.setState({option2: this.props.navigation.state.params.blocks[this.state.questionIndex+1]['fields'].option2});
+    this.setState({option3: this.props.navigation.state.params.blocks[this.state.questionIndex+1]['fields'].option3});
+    this.setState({option4: this.props.navigation.state.params.blocks[this.state.questionIndex+1]['fields'].option4});
     try {
-      if(this.props.navigation.state.params.answer[this.state.questionIndex+1].option == 1) {
+      if(this.props.navigation.state.params.answer[this.state.questionIndex+1]['fields'].option == 1) {
         this.setState({backgroundColorOptionA: 'red'})
       }
-      else if(this.props.navigation.state.params.answer[this.state.questionIndex+1].option == 2) {
+      else if(this.props.navigation.state.params.answer[this.state.questionIndex+1]['fields'].option == 2) {
         this.setState({backgroundColorOptionB: 'red'})
       }
-      else if(this.props.navigation.state.params.answer[this.state.questionIndex+1].option == 3) {
+      else if(this.props.navigation.state.params.answer[this.state.questionIndex+1]['fields'].option == 3) {
         this.setState({backgroundColorOptionC: 'red'})
       }
-      else if(this.props.navigation.state.params.answer[this.state.questionIndex+1].option == 4) {
+      else if(this.props.navigation.state.params.answer[this.state.questionIndex+1]['fields'].option == 4) {
         this.setState({backgroundColorOptionD: 'red'})
       }
     }
     catch (e) {
-      console.log(e)
+      console.log('e')
      }
     if(this.state.num_attempted < this.state.questionIndex + 1) {
       this.setState({num_attempted: this.state.questionIndex+1})
     }
-    if(this.props.navigation.state.params.blocks[this.state.questionIndex+1].option1_iscorrect==1) {
+    if(this.props.navigation.state.params.blocks[this.state.questionIndex+1]['fields'].option1_iscorrect==1) {
       this.setState({backgroundColorOptionA: 'green'})
     }
-    else if(this.props.navigation.state.params.blocks[this.state.questionIndex+1].option2_iscorrect==1) {
+    else if(this.props.navigation.state.params.blocks[this.state.questionIndex+1]['fields'].option2_iscorrect==1) {
       this.setState({backgroundColorOptionB: 'green'})
     }
-    else if(this.props.navigation.state.params.blocks[this.state.questionIndex+1].option3_iscorrect==1) {
+    else if(this.props.navigation.state.params.blocks[this.state.questionIndex+1]['fields'].option3_iscorrect==1) {
       this.setState({backgroundColorOptionC: 'green'})
     }
-    else if(this.props.navigation.state.params.blocks[this.state.questionIndex+1].option4_iscorrect==1){
+    else if(this.props.navigation.state.params.blocks[this.state.questionIndex+1]['fields'].option4_iscorrect==1){
       this.setState({backgroundColorOptionD: 'green'})
     }
 
@@ -201,8 +191,6 @@ class reviewTest extends Component {
   }
 
   render () {
-      console.log("PLKJUBN: "+JSON.stringify(this.props.navigation.state.params.blocks[0]));
-      console.log("PLKJUBN1: "+this.state.question)
       return (
 
         <View style={styles.container}>
@@ -405,8 +393,8 @@ class reviewTest extends Component {
                       }
                     if(this.state.questionIndex+1 == this.state.n_questions) {
                       Alert.alert(
-                        'sure???',
-                        'My Alert Msg',
+                        'Are you sure you want to exit?',
+                        '',
                         [
                           {
                             text: 'Cancel',
@@ -414,7 +402,7 @@ class reviewTest extends Component {
                             style: 'cancel',
                           },
                           {
-                            text: 'Submit', 
+                            text: 'Exit', 
                             onPress: () => {
                             const navigateAction = NavigationActions.navigate({
                             routeName: 'testPerformance',

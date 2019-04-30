@@ -36,14 +36,41 @@ class notifications extends Component {
       isModalVisible: false,
       challengeStartModal: false
     }
-    //this.openModal = this.openModal.bind(this);
+    this.resPress = this.resPress.bind(this);
   }
+
+  resPress(date) {
+
+  var seconds = Math.floor((new Date() - date) / 1000);
+
+  var interval = Math.floor(seconds / 31536000);
+
+  if (interval > 1) {
+    return interval + " years ago";
+  }
+  interval = Math.floor(seconds / 2592000);
+  if (interval > 1) {
+    return interval + " months ago";
+  }
+  interval = Math.floor(seconds / 86400);
+  if (interval > 1) {
+    return interval + " days ago";
+  }
+  interval = Math.floor(seconds / 3600);
+  if (interval > 1) {
+    return interval + " hours ago";
+  }
+  interval = Math.floor(seconds / 60);
+  if (interval > 1) {
+    return interval + " minutes ago";
+  }
+  return "few moments ago";
+};
 
   async componentDidMount() {
   	var currentUser = await firebase.auth().currentUser;
-  	console.log("AXABXJBJLL: "+currentUser['phoneNumber'].slice(3, 13));
   	this.setState({ username: currentUser['phoneNumber'].slice(3, 13) })
-  	console.log("AXABXJBJLL: "+this.state.username);
+  	
 
   	firebase.firestore()
      .collection("challenge").where("challenge_to", "==", this.state.username)
@@ -54,7 +81,7 @@ class notifications extends Component {
             let notifications = this.state.notifications;
 	        notifications.push(data);
 	        this.setState({notifications});
-            //console.log("XXXXXXXX: "+JSON.stringify(data));
+          
           })
         },
         
@@ -69,7 +96,7 @@ class notifications extends Component {
             let notifications = this.state.notifications;
 	        notifications.push(data);
 	        this.setState({notifications});
-            //console.log("XXXXXXXX: "+JSON.stringify(data));
+            
           })
         },
         
@@ -78,12 +105,12 @@ class notifications extends Component {
 
 
   render () {
-  	console.log("sdkjdfkjbfd: "+JSON.stringify(this.state.notifications))
+  	
     return (
     	<View style={{backgroundColor: 'black', width: '100%', height: '100%'}}>
 	    	<ScrollView contentContainerStyle={{paddingVertical: 20}}>
 	    		{ 
-		            this.state.notifications.sort((a, b) => a.timestamp < b.timestamp).map((notification, index) => (
+		            this.state.notifications.sort((a, b) => a.challenge_created_at < b.challenge_created_at).map((notification, index) => (
 		            	<TouchableNativeFeedback
 			                key={'notificationItem' + index}
 			                onPress={() => {
@@ -104,6 +131,7 @@ class notifications extends Component {
 		                    />
 		                    </View>
 		                    <View style={styles.notificationInfoContainer}>
+                        <Text style={[styles.notificationInfo, {color: '#07a7f9', textAlign: 'right', marginBottom: 0, fontSize: 3 * vw}]} key={'notification' + index}>{ this.resPress(new Date(notification.challenge_created_at)) }</Text>
 			                  {
 			                    <Text style={styles.notificationInfo} key={'notification' + index}>
 			                    {notification.challenge_by == this.state.username? "You": notification.challenge_by_name} challenged {notification.challenge_to == this.state.username ? "you": notification.challenge_to_name} in {notification.chapter}
@@ -302,7 +330,7 @@ const styles = StyleSheet.create({
   },
   notificationInfo: {
     fontSize: 4 * vw,
-    marginBottom: vh,
+    marginBottom: 1 * vh,
     color: 'white'
   },
   challengeModal: {
@@ -344,18 +372,18 @@ const styles = StyleSheet.create({
     borderRadius: 10 * vw,
   },
   userName: {
-    color: 'white',
+    color: 'black',
     fontSize: 4 * vw,
     marginTop: 1 * vh,
     textAlign: 'center',
   },
   focusText: {
     fontSize: 6 * vw,
-    color: 'white',
+    color: 'black',
   },
   notFocusText: {
     fontSize: 4 * vw,
-    color: 'white',
+    color: 'black',
     marginBottom: vw,
     marginLeft: 0.5 * vw,
   },

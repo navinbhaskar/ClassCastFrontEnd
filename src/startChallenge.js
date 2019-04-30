@@ -42,16 +42,15 @@ class startChallenge extends Component {
         "received": false
       })
       .then(res => {
-        console.log("kdnkdfnjKK: "+JSON.stringify(res.data.challenge_id));
+        
         this.setState({challenge_id: res.data.challenge_id});
-        console.log("AJASDBJD: "+JSON.stringify(res));
+        
         this.setState({ready: true});
       })
-      .catch(err => {console.log("AJASDBJD: "+err)})
+      .catch(err => {console.log('error')})
   }
 
   handleBackButton() {
-    console.log("workingjdh");
     this.props.navigation.navigate('chapter');
     return true;
   }
@@ -64,7 +63,6 @@ class startChallenge extends Component {
 
     BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
     await this.createChallenge();
-    console.log("kdnkdfnj: "+this.state.challenge_id);
     await firebase.firestore()
    .collection("challenge").where("challenge_id", "==", this.state.challenge_id)
    .onSnapshot(
@@ -72,10 +70,8 @@ class startChallenge extends Component {
 
           snapshot.docChanges.forEach(change => {
             const data = change.doc.data()
-            console.log("XXXXXXXX: "+change.type);
-            //console.log("XXXXXXXX: "+JSON.stringify(data));
+            
             if (change.type === 'modified') {
-              console.log("XXXXXXXX: "+JSON.stringify(data));
               if (data.started_by_receiver) {
                 const navigateAction = NavigationActions.navigate({
                       routeName: 'ongoingChallenge',
@@ -99,8 +95,7 @@ class startChallenge extends Component {
   }
 
    render() {
-    console.log("kdnkdfnjK: "+this.state.challenge_id);
-    console.log("KDnaaaa: "+JSON.stringify(this.props.navigation.state.params));
+    
     let {subjectsBg, subjectsIcon} = this.state;
     return (
       <View style={[styles.normalContainer, {top: 0, backgroundColor: 'black'}]}>
@@ -157,7 +152,7 @@ class startChallenge extends Component {
                       this.props.navigation.dispatch(navigateAction);
                     }
                     else {
-                      ToastAndroid.show('wait for loading to complete !', ToastAndroid.SHORT);
+                      ToastAndroid.show('Wait for test loading to complete', ToastAndroid.SHORT);
                     }
                     }}>
           <View style={styles.challengeButton}>

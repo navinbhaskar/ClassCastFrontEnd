@@ -4,9 +4,10 @@ import {
   StyleSheet,
   Text,
   View,
-  Image
+  Image,
+  TouchableNativeFeedback
 } from 'react-native';
-
+import {NavigationActions} from 'react-navigation';
 // Navigators
 import {createDrawerNavigator, createStackNavigator, createBottomTabNavigator, createAppContainer, createMaterialTopTabNavigator, createSwitchNavigator } from 'react-navigation';
 import SideMenu from './SideMenu';
@@ -152,12 +153,35 @@ export const Tabs = createBottomTabNavigator({
     }
 })
 
-export const TeacherHomeNavigator = createMaterialTopTabNavigator(
-  {
-    Courses: { screen: Courses },
-    Updates: { screen: ClassUpdates },
-    About : { screen: teacherAbout },
-  },{
+export const TeacherHomeNavigator = createMaterialTopTabNavigator({
+  Courses: { screen: Courses, navigationOptions: {
+    tabBarIcon: ({ tintColor }) =>(
+     
+      <View Style={{height: 5 * vh, width: 5 * vh, backgroundColor:'red', justifyContent: 'center', alignItems: 'center', marginLeft: 2 * vw}}>
+        <Text style={{fontSize: 4 * vw, fontFamily: 'Montserrat-Bold', color: tintColor,}}>Courses</Text>
+      </View>
+      //</TouchableNativeFeedback>
+      )
+  }},
+  Updates: { screen: ClassUpdates, navigationOptions: {
+    tabBarIcon: ({ tintColor }) => (
+      <View Style={{height: 5 * vh, width: 5 * vh, backgroundColor:'red', justifyContent: 'center', alignItems: 'center',}}>
+        
+        <Text style={{fontSize: 4 * vw, fontFamily: 'Montserrat-Bold', color: tintColor,}}>Updates</Text>
+      </View>
+      )
+  } },
+  About : { screen: teacherAbout, navigationOptions: {
+    tabBarIcon: ({ tintColor }) => (
+      <View Style={{height: 5 * vh, width: 5 * vh, backgroundColor:'red', justifyContent: 'center', alignItems: 'center',}}>
+                <Text style={{fontSize: 4 * vw, fontFamily: 'Montserrat-Bold', color: tintColor,}}>About</Text>
+      </View>
+      )
+  } },
+}, {
+  tabBarComponent: props => (
+  <CustomTabBar
+      {...props}/> ),
   tabBarOptions: {
     activeTintColor: "#ffffff",
     inactiveTintColor: "#aeadb2",
@@ -169,15 +193,6 @@ export const TeacherHomeNavigator = createMaterialTopTabNavigator(
   initialRouteName: 'Courses',
 })
 
-export const TeacherArea = createStackNavigator(
-  {
-    TeacherHome: {screen: TeacherHomeNavigator,},
-  }, {
-    initialRouteName: 'TeacherHome',
-    headerMode: 'none',
-  })
-
-
 
 export const HomeStack = createStackNavigator({
   Home: { screen: Tabs },
@@ -185,7 +200,14 @@ export const HomeStack = createStackNavigator({
                   navigationOptions: ({ navigation }) => ({
                   title: `${navigation.state.params.data.firstname} ${navigation.state.params.data.lastname}`,
                 }), },
-  CourseHome: {screen: CourseHome},
+  CourseHome: {screen: CourseHome,
+                  navigationOptions: ({ navigation }) => ({
+                  title: `${navigation.state.params.display_name}`,
+                }), },
+  accessCode: { screen: accessCode,
+              navigationOptions: ({ navigation }) => ({
+                  title: `Enter Access Code`,
+                }) },
   video: {screen: video},
   pdfViewer: { screen: pdfViewer },
   assignmentQuestions: { screen: assignmentQuestions },

@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import {Dimensions, Image, Text, TouchableWithoutFeedback, View, Button, TouchableNativeFeedback} from 'react-native'
+import {Dimensions, Image, Text, TouchableWithoutFeedback, View, Button, TouchableNativeFeedback, BackHandler} from 'react-native'
 import styles from './TestStyles';
 import SnapCarousel from 'react-native-snap-carousel';
 import {StackActions, NavigationActions} from 'react-navigation';
@@ -15,26 +15,38 @@ class gymPerformance extends Component {
 
   constructor() {
     super();
+    this.handleBackButton = this.handleBackButton.bind(this);
     this.state = {
     }
   }
 
+  handleBackButton() {
+    this.props.navigation.dispatch(StackActions.popToTop());
+    this.props.navigation.navigate('HomeStack', {}, NavigationActions.navigate({ routeName: 'Home' }));
+    return true;
+  }
+
+  componentWillUnmount() {
+    BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton);
+  }
+
   componentDidMount() {
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
     var data ={
       "points": this.props.navigation.state.params.correctlyAttempted * 4
     }
     axios.post(`https://classcast-198812.appspot.com/performance/store/`, data)
     .then((response) => 
               {
-                 console.log("API response" + JSON.stringify(response))
+                 console.log("API response")
               })
               .catch((error) => {
-                  console.log("API error" + error)
+                  console.log("API error")
               })
   }
 
   render() {
-    console.log("JSGHDBN: "+JSON.stringify(this.props.navigation.state.params.totalQuestions));
+    
     return (
       <View style={styles.container}>
         <Image

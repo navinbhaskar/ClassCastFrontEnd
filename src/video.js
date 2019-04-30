@@ -19,7 +19,6 @@ import VideoPlayer from 'react-native-video';
 import {Icon} from 'react-native-elements';
 import Carousel from 'react-native-snap-carousel';
 import { ProgressCircle }  from 'react-native-svg-charts';
-import axios from 'axios';
 import Orientation from 'react-native-orientation';
 
 class video extends Component {
@@ -41,7 +40,7 @@ class video extends Component {
   };
 
   onLoad = (data) => {
-    console.log("Buffering__onLoad");
+    
     this.setState({
       loaded: true,
       paused: false,
@@ -53,7 +52,7 @@ class video extends Component {
   };
 
   onProgress = (data) => {
-    console.log("Buffering1: "+data);
+    
     this.setState({
       currentTime: data.currentTime,
       playableDuration: this.state.duration,
@@ -68,9 +67,9 @@ class video extends Component {
   };
 
   onBuffer = (data) => {
-    this.setState({buffer: true});
-    currentTime: data.currentTime,
-    console.log("Buffering");
+    this.setState({buffer: true,
+      currentTime: data.currentTime});
+    
   };
 
   onAudioBecomingNoisy = () => {
@@ -121,7 +120,7 @@ class video extends Component {
         onProgress={this.onProgress}
         progressUpdateInterval={1000}
         onEnd={this.onEnd}
-        onError={(error) => {console.log('videoError: '+JSON.stringify(error)) }}
+        onError={(error) => {console.log('videoError:')}}
         onAudioBecomingNoisy={this.onAudioBecomingNoisy}
         onAudioFocusChanged={this.onAudioFocusChanged}
         repeat={false}
@@ -158,30 +157,18 @@ class video extends Component {
   componentWillMount() {
     Orientation.lockToLandscape();
     const initial = Orientation.getInitialOrientation();
-    if (initial === 'PORTRAIT') {
-      console.log("KKKKKKKKKKKKKKPortrait");
-    } else {
-      console.log("KKKKKKKKKKKKKKLandscape");
-    }
   }
   
 
   ComponentDidMount() {
     Orientation.lockToLandscape();
-    if(this.state.duration == 0){
-      this.setState({sliderValue: 0})
-    }
-    else {
-      this.setState({sliderValue: this.state.currentTime / this.state.duration})
-    }
   }
     
   componentWillUnmount() {
     Orientation.lockToPortrait();
-  }
+  } 
   
   render() {
-    console.log("working3: "+JSON.stringify(this.props.navigation.state.params.url))
     return (
       <View style={styles.container}>
         <StatusBar hidden={true}/>
@@ -245,7 +232,7 @@ class video extends Component {
               </TouchableNativeFeedback>
             }
             <View style={styles.trackingControls}>
-              <Text style={styles.timeLabelText}>{this.getTime(this.state.currentTime)}</Text>
+              <Text style={styles.timeLabelText}>{this.state.currentTime == undefined ? '00:00' : this.getTime(this.state.currentTime)}</Text>
               <Slider
                 style={styles.seek}
                 minimumTrackTintColor={'#5e4096'}
@@ -253,12 +240,10 @@ class video extends Component {
                 thumbTintColor={'#5e4096'}
                 value={this.state.sliderValue}
                 onValueChange={value => {
-
-                  this.setState({
-                    currentTime: value * this.state.duration
-                  });
-                  this.video.seek(value * this.state.duration)}}
-
+                  this.setState({ currentTime: value * this.state.duration });
+                  this.setState({sliderValue: value});
+                  this.video.seek(value * this.state.duration);
+                }}
               />
               <Text style={styles.timeLabelText}>{this.getTime(this.state.duration)}</Text>
             </View>

@@ -35,7 +35,6 @@ class testPerformance extends Component {
     wrong = 0;
     skipped = 0;
     this.props.navigation.state.params.answer.map((blocks, index) => {
-      console.log("sdnsadsk: "+JSON.stringify(blocks.score));
       totalScore += blocks.score;
       if(blocks.score == 4) {
         correct += 1
@@ -43,7 +42,6 @@ class testPerformance extends Component {
       else if(blocks.score == -1) {
         wrong += 1
       }
-      
     });
     this.setState({correct: correct});
     this.setState({wrong: wrong});
@@ -51,7 +49,7 @@ class testPerformance extends Component {
   }
 
   handleBackButton() {
-    console.log("workingjdh");
+    
     this.props.navigation.dispatch(StackActions.popToTop());
     this.props.navigation.navigate('HomeStack', {}, NavigationActions.navigate({ routeName: 'Home' }));
     return true;
@@ -64,23 +62,21 @@ class testPerformance extends Component {
   async componentDidMount() {
     BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
     await this.calculateScore();
-    console.log("LKHSCFSJS: "+this.state.correct);
+    
     var data ={
       "points": this.state.correct * 4
     }
     axios.post(`https://classcast-198812.appspot.com/performance/store/`, data)
     .then((response) => 
               {
-                 console.log("API response" + JSON.stringify(response))
+                 console.log("API response" )
               })
               .catch((error) => {
-                  console.log("API error" + error)
+                  console.log("API error")
               })
   }
 
   render() {
-    console.log("JHGDS: "+JSON.stringify(this.props.navigation.state.params.answer));
-    console.log("JHGDS: "+JSON.stringify(this.props.navigation.state.params.answer))
     return (
       <View style={styles.container}>
       <Image
@@ -105,7 +101,7 @@ class testPerformance extends Component {
             <Text style={[styles.rightSplitText], {fontSize: 2 * vh, color: 'white' }}>Correct</Text>
           </View>
           <View style={{ flexDirection: 'column', height: 10 * vh, width: 25*vw, marginLeft: 3 * vw, justifyContent: 'center', alignItems: 'center'}}>
-            <Text style={[styles.rightSplitText], {fontSize: 4 * vh, color: 'white' }}>{this.state.skipped}</Text>
+            <Text style={[styles.rightSplitText], {fontSize: 4 * vh, color: 'white' }}>{this.props.navigation.state.params.blocks.length-this.state.correct-this.state.wrong}</Text>
             <Text style={[styles.rightSplitText], {fontSize: 2 * vh, color: 'white' }}>Skipped</Text>
           </View>
           <View style={{ flexDirection: 'column', height: 10 * vh, width: 25*vw, marginLeft: 3 * vw, justifyContent: 'center', alignItems: 'center'}}>

@@ -10,12 +10,16 @@ import {
   Dimensions,
   Alert,
   TouchableHighlight,
+  ToastAndroid
 } from 'react-native';
 import { Input, Button, Icon } from 'react-native-elements';
 import { NavigationActions } from 'react-navigation';
 import Carousel from 'react-native-snap-carousel';
 import axios from 'axios';
-import courseListPlaceholder from "./courseListPlaceholder";
+import CourseListPlaceholder from "./courseListPlaceholder";
+import firebase from 'react-native-firebase';
+
+const db = firebase.firestore();
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
@@ -31,7 +35,8 @@ class Courses extends Component {
       isReady: false,
       modalVisible: false,
       isEnrolled: true,
-      enrollCode: ''
+      enrollCode: '',
+      username: ''
     }
     this.switchModal = this.switchModal.bind(this);
     this.tryenroll = this.tryenroll.bind(this);
@@ -55,7 +60,6 @@ class Courses extends Component {
     axios.post('https://classcast-198812.appspot.com/accesstoken/enroll/', data)
               .then((response) => 
               {
-                 console.log("API response" + JSON.stringify(response))
                   if(response.code == 201) {
                   Alert.alert('Badhai Ho!');
                  }
@@ -63,29 +67,33 @@ class Courses extends Component {
               })
               .catch((error) => {
                   Alert.alert('Wrong passcode, please try again or contact ClassCast team');
-                  console.log("API error" + JSON.stringify(error))
               })
 
 
   }
 
-   componentDidMount() {
-    console.log("skkslanlx: "+JSON.stringify(this.props.navigation.state.params.data.teacher_id));
+   async componentDidMount() {
+
       axios.get('https://classcast-198812.appspot.com/teachers/teachercoursedata/'+this.props.navigation.state.params.data.teacher_id+'/')
                 .then(function (response){
                   this.setState({courses: response.data.data});
                   this.setState({isEnrolled: response.data.teacher_enrolled});
                   this.setState({isReady: true});
-                  console.log("Navigation" + JSON.stringify(response));
                 }.bind(this))
                 .catch(function (error) {
-                  console.log(error);
+                  console.log('error');
                 });
+
+    var currentUser = await firebase.auth().currentUser;                 
+     await currentUser.getIdToken()
+                      .then(idToken => {
+                            this.setState({ username: currentUser['phoneNumber'].slice(3, 13) })
+                          });
   }
 
 
   _renderItem ({item, index}) {
-    console.log("hsbsahbhdas: "+JSON.stringify(item))
+    
     return (
             <View style={styles.courseCardContainer}>
               <Text style={styles.h2}>{item.display_name} </Text>
@@ -114,19 +122,27 @@ class Courses extends Component {
                     <Image source={{uri: item.display_image}} style={styles.courseImage}/>
                     <Button title="Resume"
                      onPress = {()=> {
-                      const navigateAction = NavigationActions.navigate({
-                      routeName: 'CourseHome',
-                      params: {
-                        course_id: item.block_id,
-                        display_name: item.display_name,
-                        number_of_videos: item.number_of_videos,
-                        number_of_assignment: item.number_of_assignment,
-                        number_of_pdf: item.number_of_pdf,
-                        percentage_completion: item.percentage_completion,
-                      },
-                    });
-                    this.props.navigation.dispatch(navigateAction);
-                     }}
+                      if(this.state.isReady){
+                        if(this.state.isEnrolled) {
+                          const navigateAction = NavigationActions.navigate({
+                          routeName: 'CourseHome',
+                          params: {
+                            course_id: item.block_id,
+                            display_name: item.display_name,
+                            number_of_videos: item.number_of_videos,
+                            number_of_assignment: item.number_of_assignment,
+                            number_of_pdf: item.number_of_pdf,
+                            percentage_completion: item.percentage_completion,
+                          },
+                        });
+                        this.props.navigation.dispatch(navigateAction);
+                         }
+                         else {
+                          ToastAndroid.show('Please enrol to view the course', ToastAndroid.SHORT);
+                         }
+                       }
+                     }
+                     }
                       //this.props.navigation.navigate('CourseHome')} 
                       />
                 </View>
@@ -139,12 +155,14 @@ class Courses extends Component {
   render () {
     return (
       <View style={styles.container}>
+      <CourseListPlaceholder onReady={this.state.isReady} animate="fade">
         <FlatList
           data={this.state.courses}
           showsVerticalScrollIndicator={false}
           renderItem={this._renderItem.bind(this) }
           keyExtractor={(item, index) => index.toString()}
         />
+        </CourseListPlaceholder>
         {(!this.state.isEnrolled && !this.state.modalVisible) &&
          <Button
                 containerStyle={{ marginVertical: 20, marginLeft: 20 }}
@@ -160,27 +178,33 @@ class Courses extends Component {
                   justifyContent: 'center',
                   alignItems: 'center',
                 }}
-                title="Enroll Now"
+                title="Enrol Now"
                 titleStyle={{
                   fontFamily: 'regular',
                   fontSize: 20,
                   color: 'white',
                   textAlign: 'center',
                 }}
-                onPress={() => {this.switchModal();}}
+                onPress={() => {
+                  const navigateAction = NavigationActions.navigate({
+                          routeName: 'accessCode'
+                        });
+                        this.props.navigation.dispatch(navigateAction);
+                }}
                 activeOpacity={0.5}
               />
             }
-          <Modal
+          <Modal backdropOpacity={0.6}
           animationType="fade"
           transparent={true}
           visible={this.state.modalVisible}
           onRequestClose={() => {
+            this.switchModal();
             Alert.alert('Modal has been closed.');
           }}>
 
-          <View style={{margin: 35, height: '60%' , width: '80%', backgroundColor: '#1e90ff', borderRadius: 10, elevation: 3, alignItems: 'center', justifyContent: 'center'}}>
-              <Text>Hello World!</Text>
+          <View style={{margin: 35, height: '50%' , width: '80%', marginTop: '40%', backgroundColor: '#1e90ff', borderRadius: 10, elevation: 3, alignItems: 'center', justifyContent: 'center'}}>
+              <Text style={styles.headerText}>Enter Access Code given by your teacher</Text>
               
                 <Input
                   onChangeText={enrollCode => this.setState({ enrollCode })}
@@ -199,10 +223,19 @@ class Courses extends Component {
                       color='red'
                       onPress = {()=> this.tryenroll()}
                     />
-    
+              <TouchableHighlight onPress={() => {
+                  firebase.firestore().collection('enrollment_requests').add({
+                    student: this.state.username,
+                    teacher: this.props.navigation.state.params.data.firstname + ' ' + this.props.navigation.state.params.data.lastname,
+                    status: false,
+                  })
+                  this.switchModal();}}>
+                <Text style={[styles.headerText, {color: 'red'}]}>Don't have any Access Code</Text>
+              </TouchableHighlight>
               <TouchableHighlight
-                onPress={() => {this.switchModal();}}>
-                <Text>Hide Modal</Text>
+                onPress={() => {
+                  this.switchModal();}}>
+                <Text style={styles.headerText}>Dismiss</Text>
               </TouchableHighlight>
           </View>
         </Modal>
@@ -217,51 +250,59 @@ export default Courses;
 const styles = StyleSheet.create({
   
   container:{
-      flex: 1,
-      alignItems: 'center',
-      backgroundColor: '#121212'
-    },
-    h2:{
-      fontSize: 25,
-      fontWeight: 'bold',
-      color: 'black'
-    },
-    videoCount: {
-      color: 'black'
-    },
-    h2Blue:{
-      fontSize: 20,
-      fontWeight: 'bold',
-      color: 'blue'
-    },
-    courseCardContainer:{
-      width: '100%',
-      borderRadius:5,
-      backgroundColor:'white',
-      elevation: 3,
-      marginTop: 10,
-      padding: 5
-    },
-    coursePreview:{
-      flex:1,
-      flexDirection:'row',
-    },
-    coursePreviewLeft:{
-      width:'60%',
-      margin: 2,
-    },
-    courseAbout:{
-      width: '100%',
-    },
-    courseImageContainer:{
-      width:'36%',
-      margin: 2,
-    },
-    courseImage:{
-      resizeMode:'contain',
-      height: 120,
-      width: 120
-    },
+     flex: 1,
+     alignItems: 'center',
+     backgroundColor: '#121212'
+   },
+   h2:{
+     fontSize: 3.2 * vh,
+     fontWeight: 'bold',
+     color: 'black'
+   },
+   videoCount: {
+     color: 'black'
+   },
+   h2Blue:{
+     fontSize: 3.0 *vh,
+     fontWeight: 'bold',
+     color: 'blue'
+   },
+   courseCardContainer:{
+     width: '100%',
+     borderRadius: 2 * vh,
+     backgroundColor:'white',
+     elevation: 3,
+     marginTop: 3 * vh,
+     padding: 1.5* vh
+   },
+   coursePreview:{
+     flex:1,
+     flexDirection:'row',
+   },
+   coursePreviewLeft:{
+     width:'60%',
+     margin: 0.5 * vh,
+   },
+   courseAbout:{
+     width: '100%',
+   },
+   courseImageContainer:{
+     width:'36%',
+     margin: 0.4 * vh,
+   },
+   courseImage:{
+     resizeMode:'contain',
+     height: 14 *vh,
+     width: 34 * vw
+   },
+    headerText: {
+    fontSize: 20,
+    color: 'white',
+    zIndex: 100,
+    paddingTop: 2 * vh,
+    paddingLeft: 3 * vw,
+    fontFamily: 'ProximaNova-Regular',
+  },
     videoTestCount:{
       flex:1,
       alignItems:'center',

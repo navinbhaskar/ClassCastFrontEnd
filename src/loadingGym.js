@@ -10,7 +10,8 @@ import {
   TouchableNativeFeedback,
   Platform,
   Alert,
-  ToastAndroid
+  ToastAndroid,
+  BackHandler
 } from 'react-native';
 import SnapCarousel from 'react-native-snap-carousel';
 import axios from 'axios';
@@ -18,16 +19,26 @@ import firebase from 'react-native-firebase';
 import MathJax from 'react-native-mathjax';
 import Modal from 'react-native-modal';
 import {NavigationActions} from 'react-navigation';
-//var currentUser = firebase.auth().currentUser;
-const Entities = require('html-entities').XmlEntities;
-var S = require('string');
-const entities = new Entities();
 
 const ques = '<p>Calculate the standard cell potentials of galvanic cell, $\xe2\x88\x86_r G^o$and equilibrium constant of the reactions if the reaction is <br/><img src="https://console.cloud.google.com/storage/browser/question_imgs/3889.png"/><br/></p>'
 
 const screen = Dimensions.get('window');
   vh = screen.height / 100;
   vw = screen.width / 100;
+
+const Toast = (props) => {
+  if (props.visible) {
+    ToastAndroid.showWithGravityAndOffset(
+      props.message,
+      ToastAndroid.LONG,
+      ToastAndroid.BOTTOM,
+      25,
+      50,
+    );
+    return null;
+  }
+  return null;
+};
 
 class loadingGym extends Component {
 
@@ -38,6 +49,7 @@ class loadingGym extends Component {
 
   constructor() {
     super();
+    this.handleBackButton = this.handleBackButton.bind(this);
     this.state = {
       timer: 0,
       ActiveSlide: 0,
@@ -69,6 +81,7 @@ class loadingGym extends Component {
       backgroundColorOptionD: 'white',
       loadingCompleted: false,
       showExplanation: false,
+      visible: false,
       subjects: [
         {
           name: 'PHYSICS',
@@ -88,13 +101,48 @@ class loadingGym extends Component {
     }
   }
 
+  handleBackButton() {
+    
+    Alert.alert(
+              'Are you sure you want to submit?',
+              '',
+              [
+                {
+                  text: 'Cancel',
+                  onPress: () => console.log('Cancel Pressed'),
+                  style: 'cancel',
+                },
+                {text: 'Submit', 
+                  onPress: () => {
+                    const navigateAction = NavigationActions.navigate({
+                      routeName: 'gymPerformance',
+                      params: {
+                        totalQuestions: this.state.totalQuestions,
+                        questionAttempted: this.state.questionAttempted,
+                        correctlyAttempted: this.state.correctlyAttempted,
+                        timer: this.state.timer
+                      },
+                    });
+                    this.props.navigation.dispatch(navigateAction);
+                }},
+              ],
+              {cancelable: false},
+            );
+    return true;
+  }
+
+  componentWillUnmount() {
+    BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton);
+  }
+
+
   async loadNewQestions() {
-    console.log("working2S: "+this.props.navigation.state.params.topic);
-    axios.get('https://classcast-198812.appspot.com/gym/gym/?chapterList='+this.props.navigation.state.params.topic)
+    //https://classcast-198812.appspot.com/gym/new_gym/?chapter=Integrals&chapter=Probability
+    this.setState({visible: true});
+    axios.get('https://classcast-198812.appspot.com/gym/new_gym/?'+this.props.navigation.state.params.topic.reduce((params, current) => params + `&chapter=${current}`, ''))
           .then(function (response){
-            console.log("suasddbas: "+JSON.stringify(response.data[0]));
+            this.setState({visible: false});
             this.setState({ blocks: response.data });
-            console.log("PP: "+JSON.stringify(this.state.blocks));
             this.setState({n_questions: this.state.blocks.length});
             this.setState({loadingCompleted: true});
             this.setState({questionIndex: 0});
@@ -102,12 +150,13 @@ class loadingGym extends Component {
           .then(res=>{
                   this.updateQuestions();
                 })
-          .catch(e => {console.log("juuuuuuuuuuuuuuuuuuuuuuuuu1234error: "+e)})
+          .catch(e => {console.log("error")})
   }
 
   async componentDidMount() {
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
     this.loadNewQestions();
-
+    ToastAndroid.show('Loading gym', ToastAndroid.SHORT);
     setInterval(() => {
             this.setState({timer: this.state.timer+1})
         }, 1000);
@@ -115,10 +164,8 @@ class loadingGym extends Component {
 
   updateQuestions() { 
       //question = this.state.blocks[this.state.questionIndex].question;
-    console.log("ADNDSSSKD: "+this.state.blocks[this.state.questionIndex]['fields'].question);
     this.setState({attempted: false});
     this.setState({question: this.state.blocks[this.state.questionIndex]['fields'].question});
-    //console.log("PPP: "+this.state.questionIndex+" || "+ this.state.blocks[this.state.questionIndex].question);
     this.setState({option1: this.state.blocks[this.state.questionIndex]['fields'].option1});
     this.setState({option2: this.state.blocks[this.state.questionIndex]['fields'].option2});
     this.setState({option3: this.state.blocks[this.state.questionIndex]['fields'].option3});
@@ -133,7 +180,7 @@ class loadingGym extends Component {
     catch (e) {
       this.setState({explanation: ''})
     }
-    console.log("oooiijj: "+this.state.questionIndex+"||"+this.state.question);
+    
     if(this.state.blocks[this.state.questionIndex]['fields'].option1_iscorrect==1) {
         this.setState({correctAnswer: 1})
       }
@@ -150,11 +197,8 @@ class loadingGym extends Component {
 
   updateNextQuestions() { 
       //question = this.state.blocks[this.state.questionIndex].question;
-      //console.log("ADNDSKD: |"+question+"|")
     this.setState({attempted: false});
-    //console.log("PLKHDFSG: "+JSON.stringify(this.state.blocks[this.state.questionIndex+1].explanation));
     this.setState({question: this.state.blocks[this.state.questionIndex+1]['fields'].question});
-    //console.log("PPP: "+this.state.questionIndex+" || "+ this.state.blocks[this.state.questionIndex].question);
     this.setState({option1: this.state.blocks[this.state.questionIndex+1]['fields'].option1});
     this.setState({option2: this.state.blocks[this.state.questionIndex+1]['fields'].option2});
     this.setState({option3: this.state.blocks[this.state.questionIndex+1]['fields'].option3});
@@ -170,7 +214,6 @@ class loadingGym extends Component {
     this.setState({option2_iscorrect: this.state.blocks[this.state.questionIndex+1]['fields'].option2_iscorrect});
     this.setState({option3_iscorrect: this.state.blocks[this.state.questionIndex+1]['fields'].option3_iscorrect});
     this.setState({option4_iscorrect: this.state.blocks[this.state.questionIndex+1]['fields'].option4_iscorrect});
-    console.log("oooiijj: "+this.state.questionIndex+"||"+this.state.question);
     if(this.state.blocks[this.state.questionIndex+1]['fields'].option1_iscorrect==1) {
         this.setState({correctAnswer: 1})
       }
@@ -187,20 +230,9 @@ class loadingGym extends Component {
   }
 
   render () {
-    //console.log("Response:: "+JSON.stringify(this.state.question));
     
-    //this.state.blocks.map(q => {
-    //  console.log("jdkjds: "+ JSON.stringify(q));
-    //  console.log("____________________")
-    //})
-    
-
-    console.log("JJJJJJJJJJJJJ: "+Object.keys(this.state.blocks));
-    console.log("JJJJJJJJJJJJJ: "+JSON.stringify(this.props));
-    console.log("JJJJJJJJJJJJJ: "+this.state.loadingCompleted);
-    console.log("oOOOOOOOOOOOOO: "+this.state.totalQuestions+"||"+this.state.questionAttempted+"||"+this.state.correctlyAttempted);
     if(!this.state.loadingCompleted) {
-      console.log("LLASNJNHADS: "+this.state.loadingCompleted)
+      
       return(
         <View style={styles.currentConfigContainer}>
           
@@ -210,13 +242,27 @@ class loadingGym extends Component {
             >
               <Image
                 style={styles.goalImage}
-                source={{uri: this.state.subjects[0].photo}}
+                source={{uri: this.state.subjects[this.props.navigation.state.params.subjectIndex].photo}}
                 resizeMode={'contain'}
               />
               <Text style={styles.goalName}>
-                {this.state.subjects[0].name}
+                {this.props.navigation.state.params.subject}
               </Text>
             </View>
+          </View>
+          <View style={{position: 'absolute', marginTop: 30 * vh, height: 70 * vh, width: 90 * vw}}>
+            <Text style={styles.loadingTopicsHeader}>Topics</Text>
+            <ScrollView>
+            {
+              this.props.navigation.state.params.topic.map((topic, index) => (
+                <View style={styles.topicListItem} key={'selectedTopic' + index}>
+                  <View style={styles.bullet}/>
+                  <Text>{topic}</Text>
+                </View>
+              ))
+            }
+
+          </ScrollView>
           </View>
         </View>
       )
@@ -225,6 +271,7 @@ class loadingGym extends Component {
       return (
 
         <View style={styles.container}>
+        <Toast visible={this.state.visible} message="Please wait" />
           <View style={styles.header}>
             <View style={styles.header1}>
               <Text style={styles.text}>Time: {Math.floor(this.state.timer/60)}:{(this.state.timer % 60) > 9 ? this.state.timer % 60 : '0'+ this.state.timer % 60}</Text>
@@ -233,8 +280,8 @@ class loadingGym extends Component {
             <TouchableNativeFeedback
                     onPress={() => {
                       Alert.alert(
-              'sure???',
-              'My Alert Msg',
+              'Are you sure you want to submit?',
+              '',
               [
                 {
                   text: 'Cancel',
@@ -277,7 +324,6 @@ class loadingGym extends Component {
             
           </View>
           <View style={styles.questionContainer}>
-          {console.log('HHH: '+this.state.question)}
           <MathJax
                   html={this.state.question.split('https://console.cloud.google.com/storage/browser').join('https://storage.googleapis.com').split('\\\\').join('\\')}
                   mathJaxOptions={{
@@ -288,7 +334,7 @@ class loadingGym extends Component {
                     },
                   }}
                   onHeightUpdated={height => {
-                    console.log("nkjnska: "+height)
+                    console.log("height")
                   }}
                   hasIframe={true}
                   style={{width: 0.9 * screen.width}}
@@ -547,7 +593,6 @@ class loadingGym extends Component {
           <View style={{flexDirection: 'row', marginBottom: 2 * vh}}>
             <TouchableNativeFeedback
                 onPress={() => {
-                  console.log("workinghgg");
                   if(this.state.attempted) {
                     this.setState({showExplanation: true});
                   }
@@ -565,10 +610,8 @@ class loadingGym extends Component {
                     onPress={() => {
 
                       this.setState({totalQuestions: this.state.totalQuestions+1});
-                      console.log("working3: "+this.state.questionIndex+"||"+this.state.n_questions);
                       if(this.state.questionIndex+1 < this.state.n_questions) {
                         this.setState({showExplanation: false});
-                        console.log("PPPPP: "+this.state.questionIndex);
                         this.updateNextQuestions();
                         this.setState({ backgroundColorOptionB: 'white'});
                         this.setState({ backgroundColorOptionC: 'white'});
@@ -576,7 +619,6 @@ class loadingGym extends Component {
                         this.setState({ backgroundColorOptionD: 'white'});
                       }
                     if(this.state.questionIndex+1 == this.state.n_questions) {
-                      console.log("working1");
                       this.setState({question: ''});
                       this.setState({option1: ''});
                       this.setState({option2: ''});
@@ -823,10 +865,8 @@ const styles = StyleSheet.create({
     top: 20,
   },
   goalCardWrapper: {
-    marginTop: 2.5 * vh,
+    marginBottom: 60 * vh,
     height: 24 * vh,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   goalCard: {
     height: 22 * vh,
@@ -838,14 +878,43 @@ const styles = StyleSheet.create({
     borderRadius: 2 * vw,
   },
   currentConfigContainer: {
-    flexDirection: 'row',
-    width: 90 * vw,
+    width: 100 * vw,
+    height: '100%',
     justifyContent: 'space-around',
+    alignItems: 'center',
   },
   goalImage: {
     height: 10 * vh,
     width: 10 * vh,
     // borderRadius: 5 * vh,
     marginBottom: 1 * vh,
+  },
+  loadingTopicsHeader: {
+    fontSize: 6 * vw,
+    fontFamily: 'Montserrat-Medium',
+    color: 'black',
+    marginTop: vh,
+    marginLeft: 5 * vw,
+    marginBottom: vh,
+  },
+  topicListItem: {
+    backgroundColor: 'white',
+    height: 7.5 * vh,
+    width: '100%',
+    flexDirection: 'row',
+    marginLeft: 5 * vw,
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(0,0,0,0.1)',
+    paddingLeft: 4 * vw,
+    elevation: 10,
+  },
+  bullet: {
+    width: 2.5 * vw,
+    height: 2.5 * vw,
+    borderRadius: 1.25 * vw,
+    borderWidth: 0.5 * vw,
+    borderColor: '#C596EC',
+    marginRight: 4 * vw,
   },
 })

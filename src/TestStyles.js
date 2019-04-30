@@ -40,6 +40,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  challengeAcceptText1: {
+    paddingLeft: 10 * vw,
+    paddingRight: 10 * vw,
+    flexDirection: 'row',
+    marginTop: 20 * vh,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   playerStats: {
     flex: 1,
     height: '100%',

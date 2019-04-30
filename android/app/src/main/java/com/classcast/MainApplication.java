@@ -3,6 +3,9 @@ package com.classcast;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import cl.json.RNSharePackage;
+import io.xogus.reactnative.versioncheck.RNVersionCheckPackage;
+import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import com.RNFetchBlob.RNFetchBlobPackage;
 import org.wonday.pdf.RCTPdfView;
 import org.devio.rn.splashscreen.SplashScreenReactPackage;
@@ -18,7 +21,6 @@ import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
-import com.rt2zz.reactnativecontacts.ReactNativeContacts;
 import io.invertase.firebase.firestore.RNFirebaseFirestorePackage;
 import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
 
@@ -37,6 +39,9 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNSharePackage(),
+            new RNVersionCheckPackage(),
+            new RNDeviceInfo(),
             new RNFetchBlobPackage(),
             new RCTPdfView(),
             new SplashScreenReactPackage(),
@@ -49,8 +54,7 @@ public class MainApplication extends Application implements ReactApplication {
             new RNFirebasePackage(),
             new RNFirebaseAuthPackage(),
             new RNFirebaseFirestorePackage(),
-            new RNFirebaseMessagingPackage(),
-            new ReactNativeContacts()
+            new RNFirebaseMessagingPackage()
       );
     }
 

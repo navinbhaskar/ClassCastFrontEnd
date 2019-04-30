@@ -10,26 +10,23 @@ import { Button, Icon } from 'react-native-elements';
 import axios from "axios";
 import firebase from 'react-native-firebase';
 import { DrawerActions } from 'react-navigation-drawer';
-
-const Teacher_Image = require('./images/user-hp.png');
-const data = [ 50, 10, 40, 95, -4, -24, 85, 91 ];
-
-
-
+import CourseListPlaceholder from "./courseListPlaceholder";
+import {NavigationActions} from 'react-navigation';
 
 class disover extends Component {
 
 
   constructor(props) {
     super(props);
+    this._renderItem = this._renderItem.bind(this);
     this.state = {
       username: '',
       n_teachers: 0,
       isReady: false,
-      availableTeachers: [
-        {
-        }
-        ]
+    availableTeachers: [
+      {
+      }
+      ]
     }
   }
 
@@ -37,8 +34,7 @@ class disover extends Component {
     var currentUser = await firebase.auth().currentUser;                 
      await currentUser.getIdToken()
                       .then(idToken => {
-                            console.log("AXABXJBJ: "+JSON.stringify(currentUser));
-                            console.log("AXABXJBJ: "+currentUser['phoneNumber'].slice(3, 13));
+                            
                             this.setState({ username: currentUser['phoneNumber'].slice(3, 13) })
                           });
 
@@ -49,8 +45,22 @@ class disover extends Component {
                 this.setState({isReady: true});
               }.bind(this))
               .catch(function (error) {
-                console.log(error);
+                console.log('error');
+                this.setState({isReady: true});
               });
+    this._navListener = this.props.navigation.addListener('didFocus', () => {
+      this.setState({isReady: false});
+      axios.get(`https://classcast-198812.appspot.com/teachers/availableTeachers/`+this.state.username)
+              .then(function (response){
+                this.setState({availableTeachers: response.data});
+                this.setState({n_teachers: response.data.length});
+                this.setState({isReady: true});
+              }.bind(this))
+              .catch(function (error) {
+                console.log('error');
+                this.setState({isReady: true});
+              });
+    })
   } 
 
 
@@ -60,7 +70,7 @@ class disover extends Component {
             <View style={styles.teacherCardContainer}>
               <View style={styles.teacherPreview}>
                 <View style={styles.teacherPreviewLeft}>
-                  <Text style={styles.h2}>{item.name} - {item.subject} </Text>
+                  <Text style={styles.h2}>{item.firstname} {item.lastname} - {item.subject} </Text>
                     <View style={styles.insituteName}>
                       <Icon
                           name='university'
@@ -95,7 +105,16 @@ class disover extends Component {
                 <View style= {styles.teacherImageContainer}>
                     <Image source={{uri: item.photo}} style={styles.teacherImage}/>
                 </View>
-                <Button title="View"  buttonStyle={{width:100}}/>
+                <Button title="View"  buttonStyle={{width:100}}
+                  onPress={() => {
+                    this.props.navigation.navigate('HomeStack', {}, NavigationActions.navigate({ 
+                          routeName: 'TeacherArea',
+                          params: {
+                            data: item
+                          },
+                        }));
+                  }
+                  }/>
                 </View>
               </View>
             </View>
@@ -107,7 +126,7 @@ class disover extends Component {
     return (
       <View style={styles.container}>
         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', height: 9 * vh}}>
-        <View style={{justifyContent:'flex-start', marginLeft:10}}>
+        <View style={{justifyContent:'flex-start', marginLeft: 3 * vw}}>
         <Icon           
           name='menu'
           color='white'
@@ -117,9 +136,9 @@ class disover extends Component {
           />
         </View>
         <View style={{marginLeft:0}}>
-          <Text style={{fontSize: 22, color: 'white', fontWeight: 'bold'}}> SEARCH TEACHERS </Text>
+          <Text style={{fontSize: 22, color: 'white', fontWeight: 'bold'}}> Discover Teachers</Text>
         </View>
-        <View style={{justifyContent:'flex-end', marginRight: 10}}>
+        <View style={{justifyContent:'flex-end', marginRight: 3 * vw}}>
         <Icon
           name='notifications'
           color='white'
@@ -130,9 +149,11 @@ class disover extends Component {
         </View>
 
       </View>
+
+      <CourseListPlaceholder onReady={this.state.isReady} animate="fade">
       { this.state.n_teachers == 0 && this.state.isReady &&
         <View style={{height: 5 * vh, width: 60 * vw, marginTop: 5 * vh}}>
-          <Text style={{fontSize: 20, color: 'white', textAlign: 'center'}}> No Updates </Text>
+          <Text style={{fontSize: 20, color: 'white', textAlign: 'center'}}> No available teachers </Text>
         </View>
       }
         <FlatList
@@ -141,6 +162,7 @@ class disover extends Component {
           renderItem={this._renderItem }
           keyExtractor={(item, index) => index.toString()}
         />
+      </CourseListPlaceholder>
         
       </View>
       )
@@ -154,33 +176,33 @@ const styles = StyleSheet.create({
   container:{
       flex: 1,
       alignItems: 'center',
-      backgroundColor: 'black'
+      backgroundColor: 'white',
+      backgroundColor: '#0F3651',
     },
     h2:{
-      fontSize: 18,
+      fontSize: 2.8 * vh,
       fontWeight: 'bold',
       color: 'black'
     },
     h3:{
-      fontSize: 16,
+      fontSize: 2.4 * vh,
       color: 'black'
     },
     videoCount: {
       color: 'black'
     },
     h2Blue:{
-      fontSize: 20,
+      fontSize: 3 * vh ,
       fontWeight: 'bold',
       color: 'blue'
     },
     teacherCardContainer:{
       width: '100%',
-      borderRadius:5,
-      borderWidth: 1,
+      borderRadius: 3 * vw,
       backgroundColor:'white',
       elevation: 3,
-      marginTop:5,
-      padding: 5
+      marginTop: 2* vh ,
+      padding: 2 * vh
     },
     teacherPreview:{
       flex:1,
@@ -188,36 +210,36 @@ const styles = StyleSheet.create({
     },
     teacherPreviewLeft:{
       width:'60%',
-      margin: 2,
+      margin: 0.5 * vh ,
     },
     teacherAbout:{
       width: '100%',
     },
     teacherImageContainer:{
-      margin: 5,
+      margin: 1 * vh,
       alignItems: 'center'
     },
     teacherCardRight:{
       width:'36%',
-      margin: 5,
+      margin: 0.5* vh ,
       alignItems: 'center'
 
     },
     teacherImage:{
       resizeMode:'contain',
-      height: 100,
-      width: 100
+      height: 25 * vw,
+      width: 25 * vw,
     },
     videoTestCount:{
       flex:1,
       alignItems:'center',
       flexDirection:'row',
-      margin: 2,
+      margin: 0.5 * vh,
     },
     insituteName:{
       flex:1,
       alignItems:'center',
       flexDirection:'row',
-      margin :2,
+      margin : 0.5 * vh,
     }
   });
