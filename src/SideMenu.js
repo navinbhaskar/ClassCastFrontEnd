@@ -41,6 +41,7 @@ class SideMenu extends Component {
 
             axios.get(url)
             .then(res => {
+              console.log("hsjsa: "+res.data.data.getUserInfo.standard);
               /*
               if(res.data.data.getUserInfo.gender == 'A_1') {
                 this.setState({gender: 'M'});
@@ -49,20 +50,23 @@ class SideMenu extends Component {
                 this.setState({gender: 'F'});
               }*/
 
-              if(res.data.data.getUserInfo.standard == 'A_4') {
-                this.setState({standard: 12});
+              if(res.data.data.getUserInfo.standard == 'A_13') {
+                this.setState({standard: '12+'});
               }
-              else if(res.data.data.getUserInfo.standard == 'A_3') {
-                this.setState({standard: 11}); 
+              else if(res.data.data.getUserInfo.standard == 'A_12') {
+                this.setState({standard: '12'}); 
               }
-              else if(res.data.data.getUserInfo.standard == 'A_2') {
-                this.setState({standard: 10}); 
+              else if(res.data.data.getUserInfo.standard == 'A_11') {
+                this.setState({standard: '11'}); 
               }
-              else if(res.data.data.getUserInfo.standard == 'A_1') {
-                this.setState({standard: 9}); 
+              else if(res.data.data.getUserInfo.standard == 'A_10') {
+                this.setState({standard: '10'}); 
+              }
+              else if(res.data.data.getUserInfo.standard == 'A_9') {
+                this.setState({standard: '9'}); 
               }
               else {
-                this.setState({standard: 12}); 
+                this.setState({standard: '12'}); 
               }
               this.setState({name: res.data.data.getUserInfo.firstname+' '+res.data.data.getUserInfo.lastname });
             })
@@ -125,7 +129,8 @@ class SideMenu extends Component {
             <View style={styles.navSectionStyle}>
               <Text style={styles.navItemStyle} onPress={()=>{
                 this.props.navigation.dispatch(DrawerActions.toggleDrawer());
-                this.navigateToScreen('Home')
+                this.props.navigation.dispatch(StackActions.popToTop());
+                this.props.navigation.navigate('HomeStack', {}, NavigationActions.navigate({ routeName: 'Home' }));
               }}>
                 Home
               </Text>

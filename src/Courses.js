@@ -36,8 +36,10 @@ class Courses extends Component {
       modalVisible: false,
       isEnrolled: true,
       enrollCode: '',
-      username: ''
+      username: '',
+      redirectCourse: ''
     }
+    this.firebaseLink = this.firebaseLink.bind(this);
     this.switchModal = this.switchModal.bind(this);
     this.tryenroll = this.tryenroll.bind(this);
   }
@@ -49,6 +51,16 @@ class Courses extends Component {
     else {
       this.setState({modalVisible: true});
     }
+  }
+
+  firebaseLink = () => {
+    console.log("hgguyguyfyfjkgkk");
+    firebase.links()
+    .getInitialLink()
+    .then((url) => {
+      console.log("hgguyguyfyfk: "+url.split('/')[5] );
+      this.setState({redirectCourse: url.split('/')[5]});
+    });
   }
 
   tryenroll(){
@@ -73,8 +85,8 @@ class Courses extends Component {
   }
 
    async componentDidMount() {
-
-      axios.get('https://classcast-198812.appspot.com/teachers/teachercoursedata/'+this.props.navigation.state.params.data.teacher_id+'/')
+      this.firebaseLink();
+      axios.get('https://classcast-198812.appspot.com/teachers/teachercoursedatanew/'+this.props.navigation.state.params.data.teacher_id+'/')
                 .then(function (response){
                   this.setState({courses: response.data.data});
                   this.setState({isEnrolled: response.data.teacher_enrolled});
@@ -86,14 +98,27 @@ class Courses extends Component {
 
     var currentUser = await firebase.auth().currentUser;                 
      await currentUser.getIdToken()
-                      .then(idToken => {
-                            this.setState({ username: currentUser['phoneNumber'].slice(3, 13) })
-                          });
+            .then(idToken => {
+                  this.setState({ username: currentUser['phoneNumber'].slice(3, 13) })
+                });
   }
 
-
   _renderItem ({item, index}) {
-    
+    console.log("djdsdijk: "+JSON.stringify(item));
+    if(item.block_id == this.state.redirectCourse) {
+      const navigateAction = NavigationActions.navigate({
+        routeName: 'CourseHome',
+        params: {
+          course_id: item.block_id,
+          display_name: item.display_name,
+          number_of_videos: item.number_of_videos,
+          number_of_assignment: item.number_of_assignment,
+          number_of_pdf: item.number_of_pdf,
+          percentage_completion: item.percentage_completion,
+        },
+      });
+      this.props.navigation.dispatch(navigateAction);
+    }
     return (
             <View style={styles.courseCardContainer}>
               <Text style={styles.h2}>{item.display_name} </Text>

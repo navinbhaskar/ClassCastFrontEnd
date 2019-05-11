@@ -10,7 +10,8 @@ import {
   TouchableNativeFeedback,
   FlatList,
   Linking,
-  Button
+  Button,
+  ToastAndroid
 } from 'react-native';
 import { AreaChart, LineChart, Grid, YAxis, XAxis } from 'react-native-svg-charts';
 import {Icon} from 'react-native-elements';
@@ -38,6 +39,7 @@ class TabB extends Component {
     super(props);
     this._renderItem = this._renderItem.bind(this);
     this.timeSince = this.timeSince.bind(this);
+    this.firebaseLink = this.firebaseLink.bind(this);
     this.state = {
       isReady: false,
       newChallengeModal: false,
@@ -52,37 +54,44 @@ class TabB extends Component {
       forceUpdate: false,
       selectedUpdate: [],
       performance: [
-      ]
+      ],
+      teacherFromDeepLink: -1,
+      redirectData: []
       }
   }
 
 
   timeSince(date) {
 
-    var seconds = Math.floor((new Date() - date) / 1000);
+    //ToastArndroid.show(date, ToastAndroid.SHORT);
+    var dif =  new Date() - date;
+    var seconds = Math.floor(parseFloat(dif / 1000));
+    
 
-    var interval = Math.floor(seconds / 31536000);
+    var interval = Math.floor(parseFloat(seconds / 31536000));
 
     if (interval > 1) {
         return interval + " years";
     }
-    interval = Math.floor(seconds / 2592000);
+    interval = Math.floor(parseFloat(seconds / 2592000));
     if (interval > 1) {
         return interval + " months";
     }
-    interval = Math.floor(seconds / 86400);
+    interval = Math.floor(parseFloat(seconds / 86400));
     if (interval > 1) {
         return interval + " days";
     }
-    interval = Math.floor(seconds / 3600);
+    interval = Math.floor(parseFloat(seconds / 3600));
     if (interval > 1) {
         return interval + " hours";
     }
-    interval = Math.floor(seconds / 60);
+    interval = Math.floor(parseFloat(seconds / 60));
     if (interval > 1) {
         return interval + " minutes";
     }
-    return Math.floor(seconds) + " seconds";
+    //ToastAndroid.show("auaaaa" + Math.floor(parseFloat(seconds))+ new Date() + typeof(Math.floor(parseFloat(seconds))) + typeof(seconds) + typeof(interval), ToastAndroid.SHORT);
+  
+    return Math.floor(parseFloat(seconds)) + " seconds";
 }
 
   async checkPermission() {
@@ -120,7 +129,12 @@ class TabB extends Component {
   }
 
   async componentDidMount() {
+
     
+      
+    //firebase.analytics().setCurrentScreen("HomePage");
+    this.firebaseLink();
+    //firebase.crashlytics().crash();
     Orientation.lockToPortrait();
     var currentUser = await firebase.auth().currentUser;                 
      await currentUser.getIdToken()
@@ -200,6 +214,9 @@ class TabB extends Component {
    
    this.checkPermission();
    this._navListener = this.props.navigation.addListener('didFocus', () => {
+    console.log("bhjbkhkj: "+JSON.stringify(this.props.navigation.state.params));
+    if(this.props.navigation.state.params !== undefined) {
+      
     this.setState({isReady: false});
     axios.get(`https://classcast-198812.appspot.com/teachers/myteachers/`)
                 .then(function (response){
@@ -227,6 +244,7 @@ class TabB extends Component {
               .catch(function(error){
                 console.log('error');
               });
+            }
    })
   } 
 
@@ -236,8 +254,30 @@ class TabB extends Component {
     header: null
   }
 
+  firebaseLink = () => {
+    console.log("JJJJJJJJJJJJJJJJJJJJJJQQll");
+    firebase.links()
+    .getInitialLink()
+    .then((url) => {
+      console.log("JJJJJJJJJJJJJJJJJJJJJJQQll: "+url );
+        if (url) {
+          if(url.split('/')[3] === 'newteacher'){
+            this.props.navigation.navigate('addTeachers', { title: "Add Teachers" });
+          }
+          if(url.split('/')[3] === 'newvideo') {
+            this.setState({ teacherFromDeepLink :url.split('/')[4]});
+          }
+        } else {
+           console.log("JJJJJJJJJJJJJJJJJJJJJJQQllerror");
+        }
+    });
+  }
+
   _renderUpdates ({item, index}) {
+    
     console.log("date: "+item.time);
+    console.log("date: "+new Date('Sat May 12 2019 12:32:38 GMT+0530'));
+    //ToastAndroid.show(item.time, ToastAndroid.SHORT);
     console.log("data: "+this.timeSince(new Date(item.time)));
 
     return (
@@ -271,7 +311,7 @@ class TabB extends Component {
     }
 
   _renderItem ({item, index}) {
-      
+
       if(item.type) {
         return (
               <TouchableOpacity onPress={() => this.props.navigation.navigate('addTeachers', { title: "Add Teachers" })}>
@@ -293,7 +333,11 @@ class TabB extends Component {
       }
 
       else {
-
+        console.log("snjks: "+JSON.stringify(item)+"nnjns "+this.state.teacherFromDeepLink);
+      if(item.teacher_id == this.state.teacherFromDeepLink) {
+        this.setState({teacherFromDeepLink: ''});
+        this.props.navigation.navigate('TeacherArea', { data: item, isEnrolled: true})
+      }
         return (
               <TouchableOpacity onPress={() => this.props.navigation.navigate('TeacherArea', { data: item, isEnrolled: true})}>
                 <View style={styles.teacherContainer}>

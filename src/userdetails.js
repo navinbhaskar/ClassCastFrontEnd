@@ -149,7 +149,7 @@ export default class UserDetails extends Component {
               "firstname": this.state.username,
               "lastname": this.state.lastname,
               "gender": genderValid,
-              "standard": 12,
+              "standard": classValid,
               "phone_number": this.state.phone,
               "username": this.state.phone,
               "email": this.state.phone + '' + '@gmail.com '

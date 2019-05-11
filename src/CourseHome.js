@@ -15,6 +15,7 @@ import {
   ToastAndroid,
   Dimensions
 } from 'react-native';
+import firebase from 'react-native-firebase';
 import {NavigationActions} from 'react-navigation';
 import {Icon} from 'react-native-elements';
 import Carousel from 'react-native-snap-carousel';
@@ -29,12 +30,14 @@ const screen = Dimensions.get('window'),
 
 class CourseHome extends Component {
 
-  navigateToScreen = (route, url) => {
-    
+  navigateToScreen = (route, url, block_id, course_id) => {
+    console.log("saklndlknA: "+route);
     const navigateAction = NavigationActions.navigate({
       routeName: route,
       params: {
         url: url,
+        block_id: block_id,
+        course_id: course_id
       },
     });
     this.props.navigation.dispatch(navigateAction);
@@ -42,10 +45,11 @@ class CourseHome extends Component {
 
   constructor(props) {
     super(props);
+    this.firebaseLink = this.firebaseLink.bind(this);
     this.state = {
-      startBuffering: false,
+      startBuffering: true,
       title: '',
-      completion: 0,
+      completion: 0.000,
       blocks: [
         {
          
@@ -58,14 +62,46 @@ class CourseHome extends Component {
     title: "course"
   })
 
+  firebaseLink = () => {
+    console.log("gkyyufyifkkkkk");
+    firebase.links()
+    .getInitialLink()
+    .then((url) => {
+      var startIndex = url.indexOf('///',1);
+      console.log("gkyyufyif: "+startIndex);
+      console.log("gkyyufyif: "+url.slice(startIndex+2,url.length));
+      this.setState({redirectCourse: url.slice(startIndex+2,url.length)});
+      axios.post(`https://classcast-198812.appspot.com/coursedata/generateSignedUrl`, {
+        "path": url.slice(startIndex+2,url.length)
+      })
+        .then( response => {
+          console.log("gkyyufyifSS: "+JSON.stringify(response.data));
+          this.setState({startBuffering: false});
+          this.navigateToScreen('video', response.data, data.block_id, this.props.navigation.state.params.course_id);
+          //this.navigateToScreen('video', response.data);
+        })
+        .catch(err => {
+          this.setState({startBuffering: false});
+          ToastAndroid.show('Something went wrong', ToastAndroid.SHORT);
+        })
+    });
+  }
 
-  componentDidMount() {
+  async componentDidMount() {
+    this.firebaseLink();
+    var currentUser = await firebase.auth().currentUser;                 
+    await currentUser.getIdToken()
+                      .then(idToken => {
+                            axios.defaults.headers.common['Authorization'] = idToken; 
+                            console.log("hhhhhh: "+idToken);
+                          });
     //this.setState({title: this.props.navigation.state.params.display_name});
-      this.setState({completion: this.props.navigation.state.params.percentage_completion});
+      //this.setState({completion: this.props.navigation.state.params.percentage_completion});
       axios.get('https://classcast-198812.appspot.com/coursedata/courseblocks/'+this.props.navigation.state.params.course_id+'/')
                 .then(function (response){
+                  console.log("sdabskj");
+                  this.setState({startBuffering: false});
                   this.setState({blocks: response.data.blocks});
-                  
                 }.bind(this))
                 .catch(function (error) {
                   console.log("error");
@@ -83,7 +119,7 @@ class CourseHome extends Component {
               backdropColor="black"
             >
 
-            <View style={{height: 20 * vh,width: 30 * vw, borderRadius: 1.5 * vw, marginTop: 34 * vh, marginLeft: 35 * vw, backgroundColor: 'white'}}>
+            <View style={{height: 20 * vh,width: 30 * vw, borderRadius: 1.5 * vw, marginTop: 34 * vh, marginLeft: 35 * vw }}>
               <MaterialIndicator/>
               </View>
             </Modal>
@@ -140,29 +176,21 @@ class CourseHome extends Component {
                       <View style={styles.sectionContent}>
                         {
                           blocks.data && blocks.data.map((data, index)=>{
-                            
+                            console.log("nkaskajxas: "+JSON.stringify(blocks.data));
                             if(data.block_type == 'video') {
                               return(
                                 <TouchableNativeFeedback
                                   onPress={() => {
                                     this.setState({startBuffering: true});
-                                    axios.post(`http://classcast-198812.appspot.com/coursedata/storestudentblockinteractions`, {
-                                      "course_id": this.props.navigation.state.params.course_id,
-                                      "block_id": data.block_id
-                                    })
-                                    .then(res=> {
-                                      if(res.data == 'Updated') {
-                                        this.setState({completion: this.state.completion + (100/this.props.navigation.state.params.number_of_videos)})
-                                      }
-                                    })
+                                    this.setState({completion: this.state.completion + (100/this.props.navigation.state.params.number_of_videos)})
                                     axios.post(`https://classcast-198812.appspot.com/coursedata/generateSignedUrl`, {
                                       "path": data.path
                                       //"path": "/classcast-198812.appspot.com/classcast_videos/Mathematics_CBSE/Anurag_Chauhan_Delhi/Class_12/Applications_of_Derivatives/Day%201%20Out%20-%20%20(1)-1.mp4"
                                     })
                                       .then( response => {
-                                        
+                                        console.log("nkaskajxasaa: "+JSON.stringify(response.data));
                                         this.setState({startBuffering: false});
-                                        this.navigateToScreen('video', response.data);
+                                        this.navigateToScreen('video', response.data, data.block_id, this.props.navigation.state.params.course_id);
                                       })
                                       .catch(err => {
                                         this.setState({startBuffering: false});
@@ -201,7 +229,8 @@ class CourseHome extends Component {
                                     })
                                       .then( response => {
                                         this.setState({startBuffering: false});
-                                        this.navigateToScreen('pdfViewer', response.data);
+                                        this.navigateToScreen('pdfViewer', response.data, data.block_id, this.props.navigation.state.params.course_id);
+                                        //this.navigateToScreen('pdfViewer', response.data);
                                       })
                                     }
                                 }
@@ -237,7 +266,8 @@ class CourseHome extends Component {
                                       .then( response => {
                                         
                                         this.setState({startBuffering: false});
-                                        this.navigateToScreen('assignmentQuestions', response.data);
+                                        this.navigateToScreen('assignmentQuestions', response.data, data.block_id, this.props.navigation.state.params.course_id);
+                                        //this.navigateToScreen('assignmentQuestions', response.data);
                                       })
                                       .catch(err=> {
                                         console.log("error")

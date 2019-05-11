@@ -106,7 +106,8 @@ export default class Signup extends Component {
             console.log('auto verify on android timed out');
             
             break;
-          case firebase.auth.PhoneAuthState.AUTO_VERIFIED: 
+          case firebase.auth.PhoneAuthState.AUTO_VERIFIED:
+            ToastAndroid.show('Auto Verified', ToastAndroid.SHORT);
             console.log('auto verified on android');
             
             // Example usage if handling here and not in optionalCompleteCb:
@@ -178,8 +179,9 @@ export default class Signup extends Component {
                                   }
                                 })
                                 .catch(err =>{
+                                  console.log("xsjkbsacjb: "+err);
                                   this.setState({isReady: true});
-                                  ToastAndroid.show('Something went wrong', ToastAndroid.SHORT);
+                                  //ToastAndroid.show('Something went wrong', ToastAndroid.SHORT);
                                 })
                               }
                             })
@@ -191,7 +193,8 @@ export default class Signup extends Component {
                             console.log("singon error");
                             this.setState({isModalVisible: false});
                             this.setState({isReady: true});
-                            ToastAndroid.show('Something went wrong', ToastAndroid.SHORT);
+                            console.log("xsjkbsacjbb: "+error);
+                            //ToastAndroid.show('Something went wrong', ToastAndroid.SHORT);
                           });
 
   }

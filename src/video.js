@@ -15,6 +15,7 @@ import {
   StatusBar
 } from 'react-native';
 import styles from './VideoStyles';
+import axios from 'axios';
 import VideoPlayer from 'react-native-video';
 import {Icon} from 'react-native-elements';
 import Carousel from 'react-native-snap-carousel';
@@ -26,7 +27,7 @@ class video extends Component {
 
   static navigationOptions = {
     title: 'video',
-    header: null
+    header: null,
   };
 
 
@@ -52,7 +53,22 @@ class video extends Component {
   };
 
   onProgress = (data) => {
-    
+    console.log("jdidb:Cb "+data.currentTime/data.seekableDuration);
+    if(data.currentTime/data.seekableDuration > 0.7 && !this.state.apiHit) {
+      this.setState({apiHit: true});
+      console.log("jdidb");
+      axios.post(`https://classcast-198812.appspot.com/coursedata/storepointsfromcourseblocks`, {
+        "course_id": this.props.navigation.state.params.course_id,
+        "block_id": this.props.navigation.state.params.block_id,
+        "points": 3
+      })
+      .then( response => {
+          console.log("gkyyufyifSS: "+JSON.stringify(response));
+        })
+        .catch(err => {
+          console.loG("gkyyufyifSSerror: "+err);
+        })
+    }
     this.setState({
       currentTime: data.currentTime,
       playableDuration: this.state.duration,
@@ -62,11 +78,12 @@ class video extends Component {
     });
   };
   onEnd = () => {
-    setTimeout(() => this.props.learnNext(), 100);
+    //setTimeout(() => this.props.learnNext(), 100);
     this.setState({paused: true});
   };
 
   onBuffer = (data) => {
+    console.log("jdidb:C "+JSON.stringify(data));
     this.setState({buffer: true,
       currentTime: data.currentTime});
     
@@ -150,6 +167,7 @@ class video extends Component {
       buffer: false,
       videoUrl: 0,
       sliderValue: 0,
+      apiHit: false,
     };
   }
 
@@ -162,13 +180,16 @@ class video extends Component {
 
   ComponentDidMount() {
     Orientation.lockToLandscape();
+    console.log("working");
   }
     
   componentWillUnmount() {
     Orientation.lockToPortrait();
+    console.log("working2: "+JSON.stringify(this.props.navigation));
   } 
   
   render() {
+    console.log("working1: "+JSON.stringify(this.props.navigation));
     return (
       <View style={styles.container}>
         <StatusBar hidden={true}/>

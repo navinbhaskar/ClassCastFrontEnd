@@ -17,6 +17,7 @@ import { Input, Button, ButtonGroup } from 'react-native-elements';
 import {Icon} from 'react-native-elements';
 import axios from "axios";
 import firebase from 'react-native-firebase';
+import {NavigationActions} from 'react-navigation';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
@@ -68,7 +69,14 @@ class accessCode extends Component {
             axios.post('https://classcast-198812.appspot.com/accesstoken/enroll/', data)
               .then((response) => 
               {
-                this.props.navigation.navigate("Home");
+                //this.props.navigation.navigate("Home");
+                const navigateAction = NavigationActions.navigate({
+                    routeName: 'Home',
+                    params: {
+                     reload: true
+                    },
+                  });
+                  this.props.navigation.dispatch(navigateAction);
               })
               .catch((error) => {
                   ToastAndroid.show('Invalid code', ToastAndroid.SHORT);
