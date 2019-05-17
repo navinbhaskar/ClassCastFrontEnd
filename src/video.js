@@ -179,7 +179,6 @@ class video extends Component {
   
 
   ComponentDidMount() {
-    Orientation.lockToLandscape();
     console.log("working");
   }
     
@@ -189,6 +188,7 @@ class video extends Component {
   } 
   
   render() {
+    console.log("samskalas: "+this.state.showControls);
     console.log("working1: "+JSON.stringify(this.props.navigation));
     return (
       <View style={styles.container}>

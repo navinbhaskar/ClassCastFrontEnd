@@ -94,6 +94,7 @@ class SideMenu extends Component {
   signOutUser = async () => {
     console.log("logout");
     try {
+      this.props.navigation.dispatch(DrawerActions.toggleDrawer());
         this.props.navigation.dispatch(StackActions.popToTop());
         this.props.navigation.navigate('Login1', {}, NavigationActions.navigate({ routeName: 'Login' }));
         await firebase.auth().signOut();
@@ -108,25 +109,24 @@ class SideMenu extends Component {
         <ScrollView>
           <View>
             <View style={styles.aboutUserSection}>
+            <View style={styles.userImageContainer}>
               <Image 
                 source={ this.state.gender == 'M' ? USER_DP_MALE: USER_DP_FEMALE}
                 style={styles.userImage}/>
+            </View>
               <View>
               <Text style={styles.userName}>
               {this.state.name}
               </Text>
-              <Badge value={'Class: '+this.state.standard} status="success" />
+              <Text style={styles.class}>{'Class: '+this.state.standard}</Text>
               </View>
             </View>
           </View>
           <View style={{alignItems:'center'}}>
-          <Divider style={{ backgroundColor: 'blue', width: '90%' }} />
+          
           </View>
-          <View>
-            <Text style={styles.sectionHeadingStyle}>
-              Classrooms
-            </Text>
-            <View style={styles.navSectionStyle}>
+          <View style={{marginTop: 2 * vh}}>
+            
               <Text style={styles.navItemStyle} onPress={()=>{
                 this.props.navigation.dispatch(DrawerActions.toggleDrawer());
                 this.props.navigation.dispatch(StackActions.popToTop());
@@ -134,65 +134,51 @@ class SideMenu extends Component {
               }}>
                 Home
               </Text>
-              <Divider style={{ backgroundColor: 'black', width: '30%' }} />
+              
               <Text style={styles.navItemStyle} onPress={this.navigateToScreen('TabA')}>
                 Discover Teachers
               </Text>
             </View>
-          </View>
+          
           
           <View>
-            <Text style={styles.sectionHeadingStyle}>
-              Playground
-            </Text>
-            <View style={styles.navSectionStyle}>
               <Text style={styles.navItemStyle} onPress={() => {
                 this.props.navigation.navigate('Playground', {}, NavigationActions.navigate({ routeName: 'gym' }));
               }}>
                 Concept Gym
               </Text>
-              <Divider style={{ backgroundColor: 'black', width: '30%' }} />
+              
               <Text style={styles.navItemStyle} onPress={() => {
                 this.props.navigation.navigate('Playground', {}, NavigationActions.navigate({ routeName: 'test' }));
               }}>
                 Test Yourself
               </Text>
-              <Divider style={{ backgroundColor: 'black', width: '30%' }} />
+              
               <Text style={styles.navItemStyle} onPress={() => {
                 this.props.navigation.navigate('Playground', {}, NavigationActions.navigate({ routeName: 'challenge' }));
               }}>
                 Challenge A Friend
               </Text>
             </View>
-          </View>
           <View>
-            <Text style={styles.sectionHeadingStyle}>
-              Account
-            </Text>
-            <View style={styles.navSectionStyle}>
+            
               <Text style={styles.navItemStyle} onPress={()=> {
                 Linking.openURL('whatsapp://send?text=Hello%20Deepak%2C%20I%27m%20'+ this.state.name+ '&phone=919555579357')
               }}>
                 Talk to Us
               </Text>
-              <Divider style={{ backgroundColor: 'black', width: '30%' }} />
+              
               <Text style={styles.navItemStyle} onPress={()=> {
                 this.setState({tncModalVisible: true})
               }}>
                 Terms of Use
               </Text>
-              <Divider style={{ backgroundColor: 'black', width: '30%' }} />
-              <Text style={styles.navItemStyle} onPress={()=> {
-                this.signOutUser()
-              }}>
-                Logout
-              </Text>
+              
             </View>
-          </View>
 
         </ScrollView>
         <View style={styles.footerContainer}>
-          <Text style={{color: 'white'}}>Built with love by team ClassCast</Text>
+          <Text style={{color: 'white', fontSize: 1 * vh, textAlign: 'right'}}>Built with love by team ClassCast  </Text>
         </View>
         {
           <Modal backdropOpacity={0.6}

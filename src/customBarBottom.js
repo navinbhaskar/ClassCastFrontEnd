@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 
 const S = StyleSheet.create({
-  container: { flexDirection: "row", height: 60, elevation: 2, backgroundColor: '#222126', },
+  container: { flexDirection: "row", height: 60, elevation: 2, backgroundColor: '#ffffff', },
   tabButton: { flex: 1, justifyContent: "center", alignItems: "center" }
 });
 

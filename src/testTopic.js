@@ -78,7 +78,7 @@ class testTopic extends Component {
           </View>
         }
         <View style={styles.topicListWrapper}>
-          <ScrollView style={{width: '100%', marginTop: '7%'}}>
+          <ScrollView style={{width: '100%', marginTop: '7%', marginBottom: 7 * vh}}>
             {
               topics.map((topic, index) => {
                 return (
@@ -116,6 +116,7 @@ class testTopic extends Component {
         </View>
         <TouchableNativeFeedback
           onPress={() => {
+            if(this.state.topics.filter(topic => topic.selected).map(topic => topic.name).length > 0 ) {
             const navigateAction = NavigationActions.navigate({
               routeName: 'loading',
               params: {
@@ -126,7 +127,8 @@ class testTopic extends Component {
                 subjectIndex: this.props.navigation.state.params.subjectIndex,
               },
             });
-            this.props.navigation.dispatch(navigateAction);        
+            this.props.navigation.dispatch(navigateAction);  
+          }      
           }}
         >
           <View style={[styles.nextPage, {

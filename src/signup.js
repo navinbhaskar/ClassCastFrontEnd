@@ -13,6 +13,7 @@ import {
   AsyncStorage,
   TextInput,
   ToastAndroid,
+  TouchableNativeFeedback
 } from 'react-native';
 import { Input, Button } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/SimpleLineIcons';
@@ -341,7 +342,8 @@ export default class Signup extends Component {
             <Text style={styles.signUpText}>{this.state.isReady ? 'Start your journey': ''}</Text>
           }
           <Text style={styles.whoAreYouText}>What is you dial number?</Text>
-          
+          <View style={{flexDirection: 'row', flex: 1, justifyContent: 'center', alignItems: 'center',}}>
+            <View style={{width: '75%'}}>
             <FormInput
               refInput={input => (this.phoneInput = input)}
               icon="phone"
@@ -358,18 +360,22 @@ export default class Signup extends Component {
                 this.validatePhone();
               }}
             />
-            
+            </View>
            { this.state.isReady &&
-            <Button
-              title="Continue"
-              containerStyle={{ flex: -1 }}
-              buttonStyle={styles.signUpButton}
-              titleStyle={styles.signUpButtonText}
-              onPress={
-                this.auth
-              }
+           <TouchableNativeFeedback
+            onPress={() => {
+              this.auth();
+            }}
+          >
+           <View style={{marginLeft: .02 * SCREEN_WIDTH ,height: 0.14 * SCREEN_WIDTH, width: 0.14 * SCREEN_WIDTH, borderRadius: .07 * SCREEN_WIDTH, backgroundColor: '#749391', justifyContent: 'center', alignItems: 'center',}}>
+           <Image
+              style={{height: '60%', width: '60%'}}
+              source={{uri: 'data:image/png;base64,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'}}
             />
+            </View>
+            </TouchableNativeFeedback>
             }
+            </View>
       </ScrollView>
     );
   }
@@ -432,21 +438,24 @@ const styles = StyleSheet.create({
   },
   signUpText: {
     color: 'white',
-    fontSize: 28,
+    fontSize: .05 * SCREEN_WIDTH,
     fontFamily: 'light',
     textAlign: 'center',
     paddingBottom: 20,
     marginTop: .2 * SCREEN_HEIGHT,
     marginBottom: .4 * SCREEN_HEIGHT,
+    fontFamily: 'Montserrat-SemiBold',
   },
   whoAreYouText: {
     marginTop: .1 * SCREEN_HEIGHT,
     color: '#7384B4',
     textAlign: 'center',
     fontFamily: 'bold',
-    fontSize: 14,
+    fontSize: .035 * SCREEN_WIDTH,
+    marginBottom: .01 * SCREEN_HEIGHT,
     alignItems: 'center',
     justifyContent: 'center',
+    fontFamily: 'Montserrat-SemiBold',
   },
   nextPage: {
     marginTop: .02 * SCREEN_HEIGHT,
@@ -484,7 +493,6 @@ const styles = StyleSheet.create({
     width: 110,
   },
   userTypeLabel: {
-    color: 'yellow',
     fontFamily: 'bold',
     fontSize: 11,
   },
@@ -496,14 +504,11 @@ const styles = StyleSheet.create({
     color: brandColor
   },
   inputContainer: {
-    paddingLeft: .06 * SCREEN_WIDTH,
     borderRadius: 40,
     borderWidth: 1,
     borderColor: 'rgba(110, 120, 170, 1)',
     height: .07 * SCREEN_HEIGHT,
     marginVertical: 10,
-    marginLeft: .05 * SCREEN_WIDTH,
-    marginRight: .05 * SCREEN_WIDTH,
   },
 
   OTPinputContainer: {
@@ -519,7 +524,8 @@ const styles = StyleSheet.create({
     marginLeft: .02 * SCREEN_WIDTH,
     color: '#7384B4',
     fontFamily: 'light',
-    fontSize: .04 * SCREEN_WIDTH,
+    fontSize: .033 * SCREEN_WIDTH,
+    fontFamily: 'Montserrat-SemiBold',
   },
   OTPinputStyle: {
     color: 'black',

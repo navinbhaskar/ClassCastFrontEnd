@@ -109,8 +109,8 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         multiDexEnabled true
-        versionCode 26
-        versionName "Qutub_Minar_3.0.3"
+        versionCode 28
+        versionName "Qutub_Minar_3.0.5"
     }
 
     packagingOptions {

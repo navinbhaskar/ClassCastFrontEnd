@@ -20,10 +20,11 @@ class notifications extends Component {
   static navigationOptions = ({ navigation }) => ({
     title: 'Notification',
     headerStyle: {
-      backgroundColor: '#222126',
+      backgroundColor: '#8c48cd',
     },
     style: {
-      backgroundColor: '#222126',
+      backgroundColor: '#8c48cd',
+      height: 8 * vh
     },
     headerTintColor: '#fff'
   })
@@ -107,7 +108,7 @@ class notifications extends Component {
   render () {
   	
     return (
-    	<View style={{backgroundColor: 'black', width: '100%', height: '100%'}}>
+    	<View style={{backgroundColor: '#ffffff', width: '100%', height: '100%'}}>
 	    	<ScrollView contentContainerStyle={{paddingVertical: 20}}>
 	    		{ 
 		            this.state.notifications.sort((a, b) => a.challenge_created_at < b.challenge_created_at).map((notification, index) => (
@@ -131,12 +132,15 @@ class notifications extends Component {
 		                    />
 		                    </View>
 		                    <View style={styles.notificationInfoContainer}>
-                        <Text style={[styles.notificationInfo, {color: '#07a7f9', textAlign: 'right', marginBottom: 0, fontSize: 3 * vw}]} key={'notification' + index}>{ this.resPress(new Date(notification.challenge_created_at)) }</Text>
+                        
 			                  {
 			                    <Text style={styles.notificationInfo} key={'notification' + index}>
 			                    {notification.challenge_by == this.state.username? "You": notification.challenge_by_name} challenged {notification.challenge_to == this.state.username ? "you": notification.challenge_to_name} in {notification.chapter}
 			                    </Text>
-			                  }
+                        }
+                        {
+                          <Text style={[styles.notificationInfo, {color: '#07a7f9', textAlign: 'left', marginBottom: 0, fontSize: 3 * vw}]} key={'notification' + index}>{ this.resPress(new Date(notification.challenge_created_at)) }</Text>
+                        }
 			                 
 		                  </View>
 		            	</View>
@@ -309,7 +313,8 @@ const styles = StyleSheet.create({
     paddingRight: 7.5 * vw,
     marginBottom: 1 * vh,
     flexDirection: 'row',
-    backgroundColor: '#222126'
+    backgroundColor: '#ffffff',
+    elevation: 3
   },
   notificationUserIcon: {
     width: 15 * vw,
@@ -326,12 +331,12 @@ const styles = StyleSheet.create({
   notificationInfoContainer: {
     flex: 1,
     height: '90%',
-    marginTop: 1 * vh
+    marginTop: 1 * vh,
   },
   notificationInfo: {
     fontSize: 4 * vw,
     marginBottom: 1 * vh,
-    color: 'white'
+    color: 'black'
   },
   challengeModal: {
     height: 70 * vh,

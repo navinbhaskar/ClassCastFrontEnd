@@ -205,8 +205,11 @@ const styles = StyleSheet.create({
     borderRadius: 2 * vh,
   },
   selectedCardIcon: {
-    height: 2.5 * vh,
-    width: 2.5 * vh,
+    height: 3 * vh,
+    width: 3 * vh,
+    backgroundColor: 'green',
+    borderRadius: 1.5 * vh
+
   },
   goalImage: {
     height: 10 * vh,
@@ -506,6 +509,7 @@ const styles = StyleSheet.create({
     height: 10 * vh,
     alignItems: 'center',
     paddingLeft: 2.5 * vh,
+    
   },
   bullet: {
     width: 2.5 * vw,

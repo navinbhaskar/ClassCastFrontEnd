@@ -84,7 +84,7 @@ class disover extends Component {
                       <Icon
                           name='university'
                           type='font-awesome'
-                          color='#262f46'
+                          color='#6003bb'
                           size={20}
                         />
                       <Text style={styles.h3}> {item.coaching_name} </Text>
@@ -94,7 +94,7 @@ class disover extends Component {
                       <Icon
                           name='compass'
                           type='font-awesome'
-                          color='#262f46'
+                          color='#6003bb'
                           size={20}
                         />
                       <Text style={styles.h3}> {item.area} </Text>
@@ -106,7 +106,7 @@ class disover extends Component {
                       name='play-circle-outline'
                       type='material'
                       size={20}
-                      color='#262f46'
+                      color='#6003bb'
                     />
                     <Text style={styles.videoCount}> {item.number_of_courses} Courses </Text>
 
@@ -129,7 +129,7 @@ class disover extends Component {
                       name='chevron-right'
                       type='font-awesome'
                       size={20}
-                      color='white'
+                      color='#6003bb'
                     />
                   </View>
               </View>
@@ -141,23 +141,23 @@ class disover extends Component {
   render () {
     return (
       <View style={styles.container}>
-        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', height: 9 * vh}}>
+        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', height: 8 * vh, backgroundColor: '#ffffff'}}>
         <View style={{justifyContent:'flex-start', marginLeft: 3 * vw}}>
         <Icon           
           name='menu'
-          color='white'
+          color='#7741cd'
           type='material'
           size= {35} 
           onPress={() => this.props.navigation.dispatch(DrawerActions.toggleDrawer())}
           />
         </View>
         <View style={{marginLeft:0}}>
-          <Text style={{fontSize: 22, color: 'white', fontWeight: 'bold'}}> Discover Teachers</Text>
+          <Text style={{fontFamily: 'Montserrat-SemiBold', fontSize: 3 * vh, color: '#7741cd',}}> Discover Teachers</Text>
         </View>
         <View style={{justifyContent:'flex-end', marginRight: 3 * vw}}>
         <Icon
           name='notifications'
-          color='white'
+          color='#7741cd'
           type='material'
           size= {35} 
           onPress={() => this.props.navigation.navigate('notification', { title: "Notification" })}
@@ -174,7 +174,7 @@ class disover extends Component {
       }
         <FlatList
           style={{width:'100%'}}
-          data={this.state.availableTeachers}
+          data={this.state.availableTeachers.reverse()}
           showsVerticalScrollIndicator={false}
           renderItem={this._renderItem }
           initialScrollIndex={this.state.activeTeacher}
@@ -194,36 +194,40 @@ const styles = StyleSheet.create({
   container:{
       flex: 1,
       alignItems: 'center',
-      backgroundColor: '#dcdcdc',
+      backgroundColor: '#ffffff',
     },
     h2:{
-      fontSize: 2.5 * vh,
-      fontWeight: 'bold',
-      color: '#dcdcdc'
+      fontSize: 2.2 * vh,
+      fontFamily: 'Montserrat-Bold',
+      color: '#5e5e5e'
     },
     h3:{
-      fontSize: 2 * vh,
-      color: '#dcdcdc',
-      marginLeft: .5 * vw,
+      marginLeft: 1 * vw,
+      fontFamily: 'Montserrat-SemiBold',
+      fontSize: 1.8 * vh,
+      color: '#5e5e5e',
 
     },
     videoCount: {
-      marginLeft: .5 * vw,
-      color: '#dcdcdc'
+      marginLeft: 1 * vw,
+      fontFamily: 'Montserrat-SemiBold',
+      fontSize: 1.8 * vh,      
+      color: '#5e5e5e'
     },
     h2Blue:{
       fontSize: 2 * vh ,
       fontWeight: 'bold',
-      color: '#dcdcdc'
+      color: '#262f46'
     },
     teacherCardContainer:{
-      flex:1,
+      width: '98%',
+      alignSelf: 'center',
       borderRadius: 2 * vw,
-      backgroundColor:'#0989f5',
+      backgroundColor:'#ffffff',
       elevation: 3,
       marginTop: 2* vh ,
       padding: 0.5 * vh,
-      elevation: 5
+      elevation: 5,
     },
     teacherPreview:{
       flex:1,
@@ -237,16 +241,20 @@ const styles = StyleSheet.create({
       width: '100%',
     },
     teacherImageContainer:{
-      margin: 1 * vh,
-      alignItems: 'center'
+      height: 27 * vw,
+      width: 27 * vw,
+      alignItems: 'center',
+      padding: 1 * vw,
+      backgroundColor: '#ff7816',
+      borderRadius: 15 * vw
     },
     teacherCardRight:{
       width:'36%',
       margin: 0.5* vh ,
       alignItems: 'center',
-
     },
     teacherImage:{
+      alignSelf: 'center',
       resizeMode:'contain',
       height: 25 * vw,
       width: 25 * vw,

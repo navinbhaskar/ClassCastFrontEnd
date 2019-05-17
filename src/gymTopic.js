@@ -70,7 +70,7 @@ class gymTopic extends Component {
           </View>
         }
         <View style={styles.topicListWrapper}>
-          <ScrollView style={{width: '100%', marginTop: '7%'}}>
+          <ScrollView style={{width: '100%', marginTop: '7%', marginBottom: 7 * vh}}>
             {
               topics.map((topic, index) => {
                 return (
@@ -108,16 +108,19 @@ class gymTopic extends Component {
         </View>
         <TouchableNativeFeedback
           onPress={() => {
+            console.log("kjzsbkjdbc: "+this.state.topics.filter(topic => topic.selected).map(topic => topic.name).length);
             console.log("sakmsalkmsa: "+this.state.topics.filter(topic => topic.selected).map(topic => topic.name).reduce((params, current) => params + `&chapter=${current}`, ''));
-            const navigateAction = NavigationActions.navigate({
-              routeName: 'loadingGym',
-              params: {
-                topic: this.state.topics.filter(topic => topic.selected).map(topic => topic.name),
-                subject: this.props.navigation.state.params.subject,
-                subjectIndex: this.props.navigation.state.params.subjectIndex
-              },
-            });
-            this.props.navigation.dispatch(navigateAction);        
+            if(this.state.topics.filter(topic => topic.selected).map(topic => topic.name).length > 0 ) {
+              const navigateAction = NavigationActions.navigate({
+                routeName: 'loadingGym',
+                params: {
+                  topic: this.state.topics.filter(topic => topic.selected).map(topic => topic.name),
+                  subject: this.props.navigation.state.params.subject,
+                  subjectIndex: this.props.navigation.state.params.subjectIndex
+                },
+              });
+              this.props.navigation.dispatch(navigateAction);
+            }
           }}
         >
           <View style={[styles.nextPage, {

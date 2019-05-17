@@ -85,6 +85,7 @@ class Courses extends Component {
   }
 
    async componentDidMount() {
+     console.log('znjdnd: '+this.props.navigation.state.params.data.firstname+ ' '+this.props.navigation.state.params.data.lastname);
       this.firebaseLink();
       axios.get('https://classcast-198812.appspot.com/teachers/teachercoursedatanew/'+this.props.navigation.state.params.data.teacher_id+'/')
                 .then(function (response){
@@ -111,6 +112,7 @@ class Courses extends Component {
         params: {
           course_id: item.block_id,
           display_name: item.display_name,
+          teacher_name: this.props.navigation.state.params.data.firstname+ ' '+this.props.navigation.state.params.data.lastname,
           number_of_videos: item.number_of_videos,
           number_of_assignment: item.number_of_assignment,
           number_of_pdf: item.number_of_pdf,
@@ -125,7 +127,7 @@ class Courses extends Component {
               <View style={styles.coursePreview}>
                 <View style={styles.coursePreviewLeft}>
                   <View style={styles.courseAbout}>
-                    <Text>{item.course_info}</Text>
+                    <Text style={{textAlign: 'justify', fontFamily: 'ProximaNova-Regular',}}>{item.course_info}</Text>
                   </View>
                  <View style={styles.videoTestCount}>
                     <Icon
@@ -154,6 +156,7 @@ class Courses extends Component {
                           params: {
                             course_id: item.block_id,
                             display_name: item.display_name,
+                            teacher_name: this.props.navigation.state.params.data.firstname+ ' '+this.props.navigation.state.params.data.lastname,
                             number_of_videos: item.number_of_videos,
                             number_of_assignment: item.number_of_assignment,
                             number_of_pdf: item.number_of_pdf,
@@ -277,14 +280,16 @@ const styles = StyleSheet.create({
   container:{
      flex: 1,
      alignItems: 'center',
-     backgroundColor: '#121212'
+     backgroundColor: '#ffffff'
    },
    h2:{
+    fontFamily: 'ProximaNova-Bold',
+    paddingLeft: 1 * vw,
      fontSize: 3.2 * vh,
-     fontWeight: 'bold',
      color: 'black'
    },
    videoCount: {
+    fontFamily: 'ProximaNova-Regular',
      color: 'black'
    },
    h2Blue:{
@@ -293,32 +298,39 @@ const styles = StyleSheet.create({
      color: 'blue'
    },
    courseCardContainer:{
-     width: '100%',
-     borderRadius: 2 * vh,
-     backgroundColor:'white',
-     elevation: 3,
-     marginTop: 3 * vh,
-     padding: 1.5* vh
+     width: '98%',
+     borderRadius: 2 * vw,
+     backgroundColor:'#ffffff',
+     elevation: 10,
+     marginTop: 1 * vh,
+     padding: 1.5* vh,
+     marginBottom: 1 * vh,
+     alignSelf: 'center',
    },
    coursePreview:{
      flex:1,
      flexDirection:'row',
    },
    coursePreviewLeft:{
-     width:'60%',
+     width:'70%',
      margin: 0.5 * vh,
    },
    courseAbout:{
+     padding: 1 * vw,
      width: '100%',
    },
    courseImageContainer:{
-     width:'36%',
+     width:'28%',
      margin: 0.4 * vh,
+     alignSelf: 'center',
    },
    courseImage:{
      resizeMode:'contain',
-     height: 14 *vh,
-     width: 34 * vw
+     alignItems: 'flex-end',
+     height: 10 * vh,
+     width: 10 * vh,
+     marginBottom: 0.5 * vh,
+     alignSelf: 'center',
    },
     headerText: {
     fontSize: 20,

@@ -7,12 +7,15 @@ const screen = Dimensions.get('window'),
 export default {
  container: {
    paddingTop: 2.5 * vh,
-   flex: 1
+   flex: 1,
+   backgroundColor: '#f0f3fa'
  },
  navItemStyle: {
    padding: 2 * vh,
    paddingHorizontal: 8 * vw,
-   color: 'white'
+   color: '#211482',
+   fontSize: 3.5 * vw,
+   fontFamily: 'Montserrat-SemiBold',
  },
  navSectionStyle: {
    backgroundColor: '#262f46'
@@ -26,25 +29,38 @@ export default {
  },
  footerContainer: {
    padding: 0.4 * vh,
-   backgroundColor: '#0F3651'
+   backgroundColor: '#1d136b'
  },
   userImage: {
-   marginRight:20,
-   marginLeft: 5,
-   height: 20 * vw,
-   width: 20 * vw,
-
+  
+   height: '100%',
+   width: '100%',
+   alignSelf: 'center'
+ },
+ userImageContainer: {
+  height: 30 * vw,
+  width: 30 * vw,
+  borderRadius: 15 * vw,
+  padding: 0.6 * vw,
+  backgroundColor: '#29206f'
  },
   userName: {
-   fontSize: 3 * vh,
+   fontSize: 3.5 * vh,
    margin: 1 * vh,
-
+   color: '#7165cb',
+   fontFamily: 'ProximaNova-Regular',
  },
+ class: {
+  fontSize: 2.5 * vh,
+  color: '#7165cb',
+  marginLeft: 1 * vh,
+  fontFamily: 'ProximaNova-Regular',
+},
  aboutUserSection:{
    marginTop: 2 * vh,
-   height: 13 * vh,
-   flex:2,
-   flexDirection: 'row'
+   height: 25 * vh,
+   marginLeft: 5 * vw,
+   marginBottom: 2 * vh
  },
  tncModal: {
    height: 80 * vh,

@@ -61,23 +61,23 @@ class ItemList extends Component {
     return (
       <View style={styles.container}>
 
-      <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', height: 5 * vh}}>
+      <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', height: 8 * vh, backgroundColor: '#ffffff'}}>
         <View style={{justifyContent:'flex-start', marginLeft:10}}>
         <Icon           
           name='menu'
-          color='white'
+          color='#7741cd'
           type='material'
           size= {35} 
           onPress={() => this.props.navigation.dispatch(DrawerActions.toggleDrawer())}
           />
         </View>
         <View style={{marginLeft:0}}>
-          <Text style={{fontSize: 22, color: 'white', fontWeight: 'bold'}}> PLAYGROUND </Text>
+          <Text style={{fontFamily: 'Montserrat-SemiBold', fontSize: 3 * vh, color: '#7741cd'}}> Playground </Text>
         </View>
         <View style={{justifyContent:'flex-end', marginRight: 10}}>
         <Icon
           name='notifications'
-          color='white'
+          color='#7741cd'
           type='material'
           size= {35} 
           onPress={() => this.props.navigation.navigate('notification', { title: "Notification" })}
@@ -96,7 +96,7 @@ class ItemList extends Component {
                 }
 
                >
-              <View style={{flexDirection: 'row'}}>
+              <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', alignSelf: 'center', elevation: 2, marginBottom: 4 * vh, borderRadius: 2 * vw, padding: 2 * vw}}>
                 <View style={[styles.largeButton]}>
                   <Image
                     style={{
@@ -131,11 +131,10 @@ export default ItemList
 const styles = StyleSheet.create({
   container: {
     height: 100 * vh,
-    width: 100 * vw,
+    width: '100%',
     paddingBottom: 20,
-    paddingTop: 20,
     flexDirection: 'column',
-    backgroundColor: '#262f46',
+    backgroundColor: '#ffffff',
     alignItems: 'center',
   },
   header: {
@@ -147,13 +146,12 @@ const styles = StyleSheet.create({
   },
   body: {
     height: 70 * vh,
-    width: 100 * vw,
-    marginTop: 10 * vh,
-    marginLeft: 5 * vw
+    width: '100%',
+    marginTop: 8 * vh,
   },
   headerText: {
     fontFamily: 'Proxima Nova Extrabold',
-    color: 'white',
+    color: 'black',
     fontSize: 20,
     paddingTop: 1 * vh,
     zIndex: 100,
@@ -161,9 +159,10 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontFamily: 'Proxima Nova Extrabold',
-    color: 'white',
+    color: 'black',
     fontSize: 20,
-    paddingTop: 1 * vh
+    paddingTop: 1 * vh,
+    textAlign: 'justify'
   },
   largeButtonText: {
     fontFamily: 'Proxima Nova Extrabold',
@@ -174,11 +173,11 @@ const styles = StyleSheet.create({
   aboutTextContainer: {
     height: 17.5 * vh,
     width: 60 * vw,
-    marginLeft: 2 * vw
+    padding: 2 * vw,
   },
   aboutText: {
     fontSize: 15,
-    color: 'white',
+    color: 'black',
     zIndex: 100,
     paddingTop: 1 * vh,
     paddingLeft: 3 * vw,
@@ -189,16 +188,16 @@ const styles = StyleSheet.create({
     color: 'black'
   },
   largeButton: {
-    width: 17.5 * vh,
-    height: 17.5 * vh,
+    width: 17 * vh,
+    height: 17 * vh,
     borderRadius: 2.5 * vw,
     overflow: 'hidden',
-    marginBottom: 4 * vh,
+    padding: 3 * vw,
     justifyContent: 'center',
     alignItems: 'center',
   },
   text: {
-    color: 'white',
+    color: 'black',
     fontSize: 40,
     fontWeight: 'bold',
   },
@@ -206,7 +205,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   itemText: {
-    color: 'white',
+    color: 'black',
     fontSize: 20,
   }
 })

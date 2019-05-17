@@ -29,7 +29,7 @@ class addTeachers extends Component {
     username: '',
     n_teachers: 0,
     isReady: false,
-    activeTeacher: 1,
+    activeTeacher: 0,
     teacherFromDeepLink: 1,
     availableTeachers: [
       {
@@ -158,7 +158,7 @@ class addTeachers extends Component {
       }
         <FlatList
           style={{width:'100%'}}
-          data={this.state.availableTeachers}
+          data={this.state.availableTeachers.reverse()}
           showsVerticalScrollIndicator={false}
           renderItem={this._renderItem }
           initialScrollIndex={this.state.activeTeacher}
@@ -181,19 +181,22 @@ const styles = StyleSheet.create({
       backgroundColor: '#dcdcdc',
     },
     h2:{
-      fontSize: 2.5 * vh,
-      fontWeight: 'bold',
-      color: '#dcdcdc'
+      fontSize: 2.2 * vh,
+      fontFamily: 'Montserrat-Bold',
+      color: '#262f46'
     },
     h3:{
-      fontSize: 2 * vh,
-      color: '#dcdcdc',
+      fontFamily: 'Montserrat-SemiBold',
+      fontSize: 1.8 * vh,
+      color: '#262f46',
       marginLeft: .5 * vw,
 
     },
     videoCount: {
+      fontSize: 1.8 * vh,
+      fontFamily: 'Montserrat-SemiBold',
       marginLeft: .5 * vw,
-      color: '#dcdcdc'
+      color: '#262f46'
     },
     h2Blue:{
       fontSize: 2 * vh ,
@@ -201,13 +204,14 @@ const styles = StyleSheet.create({
       color: '#dcdcdc'
     },
     teacherCardContainer:{
-      flex:1,
+      width: '98%',
+      alignSelf: 'center',
       borderRadius: 2 * vw,
-      backgroundColor:'#0989f5',
+      backgroundColor:'#ffffff',
       elevation: 3,
       marginTop: 2* vh ,
       padding: 0.5 * vh,
-      elevation: 5
+      elevation: 5,
     },
     teacherPreview:{
       flex:1,
@@ -221,16 +225,20 @@ const styles = StyleSheet.create({
       width: '100%',
     },
     teacherImageContainer:{
-      margin: 1 * vh,
-      alignItems: 'center'
+      height: 27 * vw,
+      width: 27 * vw,
+      alignItems: 'center',
+      padding: 1 * vw,
+      backgroundColor: '#3b0da6',
+      borderRadius: 15 * vw
     },
     teacherCardRight:{
       width:'36%',
       margin: 0.5* vh ,
       alignItems: 'center',
-
     },
     teacherImage:{
+      alignSelf: 'center',
       resizeMode:'contain',
       height: 25 * vw,
       width: 25 * vw,
