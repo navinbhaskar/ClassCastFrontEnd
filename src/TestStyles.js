@@ -560,7 +560,6 @@ const styles = StyleSheet.create({
   },
   rightSplitText: {
     marginBottom: 0.075 * vh,
-    marginLeft: 0.5 * vw,
     fontFamily: 'Roboto',
   },
   rightSplitTextBottom: {

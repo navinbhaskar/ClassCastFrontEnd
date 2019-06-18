@@ -3,6 +3,8 @@ package com.classcast;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.iou90.autoheightwebview.AutoHeightWebViewPackage;
+import com.reactnativecommunity.webview.RNCWebViewPackage;
 import cl.json.RNSharePackage;
 import io.xogus.reactnative.versioncheck.RNVersionCheckPackage;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
@@ -24,9 +26,11 @@ import com.facebook.soloader.SoLoader;
 import io.invertase.firebase.firestore.RNFirebaseFirestorePackage;
 import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
 import io.invertase.firebase.links.RNFirebaseLinksPackage;
+import io.invertase.firebase.instanceid.RNFirebaseInstanceIdPackage;
 import android.support.multidex.MultiDexApplication;
 import java.util.Arrays;
 import java.util.List;
+
 
 public class MainApplication extends MultiDexApplication implements ReactApplication {
 
@@ -40,6 +44,8 @@ public class MainApplication extends MultiDexApplication implements ReactApplica
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new AutoHeightWebViewPackage(),
+            new RNCWebViewPackage(),
             new RNSharePackage(),
             new RNVersionCheckPackage(),
             new RNDeviceInfo(),
@@ -56,9 +62,11 @@ public class MainApplication extends MultiDexApplication implements ReactApplica
             new RNFirebaseAuthPackage(),
             new RNFirebaseFirestorePackage(),
             new RNFirebaseMessagingPackage(),
-            new RNFirebaseLinksPackage() 
+            new RNFirebaseLinksPackage(),
+            new RNFirebaseInstanceIdPackage()
       );
     }
+
 
     @Override
     protected String getJSMainModuleName() {

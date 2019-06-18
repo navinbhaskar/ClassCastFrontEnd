@@ -324,14 +324,14 @@ class ongoingChallenge extends Component {
                     { item == this.state.opponent_answer.length &&
                       <View style={styles.activeQuestion}>
                         <Text style={styles.activeSnapText}>
-                          {item}
+                          {Number(item)+1}
                         </Text>
                       </View>
                     }
                     { item != this.state.opponent_answer.length &&
                       <View style={[styles.inActiveQuestion, {backgroundColor: this.state.opponent_answer[item]== 4 ? 'green': this.state.opponent_answer[item]== -1? 'red': 'white'}]}>
                       <Text style={styles.inactiveSnapText}>
-                        {item}
+                        {Number(item)+1}
                       </Text>
                       </View>
                     }
@@ -355,14 +355,14 @@ class ongoingChallenge extends Component {
                     { this.state.ActiveSlide == item &&
                       <View style={styles.activeQuestion}>
                         <Text style={styles.activeSnapText}>
-                          {this.state.ActiveSlide}
+                          {this.state.ActiveSlide+1}
                         </Text>
                       </View>
                     }
                     { this.state.ActiveSlide != item &&
                       <View style={[styles.inActiveQuestion, {backgroundColor: this.state.answer[item]==4 ? 'green': this.state.answer[item]== -1 ? 'red': 'white'}]}>
                       <Text style={styles.inactiveSnapText}>
-                        {item}
+                        {Number(item)+1}
                       </Text>
                       </View>
                     }

@@ -10,7 +10,8 @@ import {
   TouchableNativeFeedback,
   Platform,
   Alert,
-  FlatList
+  FlatList,
+  BackHandler  
 } from 'react-native';
 import SnapCarousel from 'react-native-snap-carousel';
 import axios from 'axios';
@@ -32,6 +33,8 @@ class reviewTest extends Component {
 
   constructor() {
     super();
+    this.optionColor = this.optionColor.bind(this);
+    this.handleBackButton = this.handleBackButton.bind(this);
     this.state = {
       timer: 600,
       ActiveSlide: 0,
@@ -63,138 +66,101 @@ class reviewTest extends Component {
     }
   }
 
+  handleBackButton() {
+    
+    Alert.alert(
+          'Are you sure you want to exit?',
+              '',
+              [
+                {
+                  text: 'Cancel',
+                  onPress: () => console.log('Cancel Pressed'),
+                  style: 'cancel',
+                },
+                {text: 'Submit', 
+                  onPress: () => {
+                    const navigateAction = NavigationActions.navigate({
+                      routeName: 'testPerformance',
+                      params: {
+
+                      },
+                    });
+                    this.setState({timer: 0});
+                    this.props.navigation.dispatch(navigateAction); 
+                }},
+              ],
+              {cancelable: false},
+            );
+    return true;
+  }
+
+  componentWillUnmount() {
+    BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton);
+  }
+
   async componentDidMount() {
-    this.updateQuestions();
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
+    console.log('snmdvkdvn: '+JSON.stringify(this.props.navigation.state.params.answer));
+    this.setState({n_questions:  (this.props.navigation.state.params.blocks).length});
+    //this.updateQuestions();
 }
 
-  updateQuestions() { 
-    this.setState({n_questions:  (this.props.navigation.state.params.blocks).length});
-    this.setState({question: this.props.navigation.state.params.blocks[this.state.questionIndex]['fields'].question});
-    this.setState({option1: this.props.navigation.state.params.blocks[this.state.questionIndex]['fields'].option1});
-    this.setState({option2: this.props.navigation.state.params.blocks[this.state.questionIndex]['fields'].option2});
-    this.setState({option3: this.props.navigation.state.params.blocks[this.state.questionIndex]['fields'].option3});
-    this.setState({option4: this.props.navigation.state.params.blocks[this.state.questionIndex]['fields'].option4});
+  optionColor = (option_index) => {
     try {
-      if(this.props.navigation.state.params.answer[this.state.questionIndex]['fields'].option == 1) {
-        this.setState({backgroundColorOptionA: 'red'})
-      }
-      else if(this.props.navigation.state.params.answer[this.state.questionIndex]['fields'].option == 2) {
-        this.setState({backgroundColorOptionB: 'red'})
-      }
-      else if(this.props.navigation.state.params.answer[this.state.questionIndex]['fields'].option == 3) {
-        this.setState({backgroundColorOptionC: 'red'})
-      }
-      else if(this.props.navigation.state.params.answer[this.state.questionIndex]['fields'].option == 4) {
-        this.setState({backgroundColorOptionD: 'red'})
-      }
-    }
-     catch (e) {
-      console.log('e')
-     }
-
-    if(this.props.navigation.state.params.blocks[this.state.questionIndex]['fields'].option1_iscorrect==1) {
-      this.setState({backgroundColorOptionA: 'green'})
-    }
-    else if(this.props.navigation.state.params.blocks[this.state.questionIndex]['fields'].option2_iscorrect==1) {
-      this.setState({backgroundColorOptionB: 'green'})
-    }
-    else if(this.props.navigation.state.params.blocks[this.state.questionIndex]['fields'].option3_iscorrect==1) {
-      this.setState({backgroundColorOptionC: 'green'})
-    }
-    else if(this.props.navigation.state.params.blocks[this.state.questionIndex]['fields'].option4_iscorrect==1){
-      this.setState({backgroundColorOptionD: 'green'})
-    }
-  }
-
-  async updatePreviousQuestions() { 
-    await this.setState({attempted: true});
-    this.setState({question: this.props.navigation.state.params.blocks[this.state.questionIndex-1]['fields'].question});
-    this.setState({option1: this.props.navigation.state.params.blocks[this.state.questionIndex-1]['fields'].option1});
-    this.setState({option2: this.props.navigation.state.params.blocks[this.state.questionIndex-1]['fields'].option2});
-    this.setState({option3: this.props.navigation.state.params.blocks[this.state.questionIndex-1]['fields'].option3});
-    this.setState({option4: this.props.navigation.state.params.blocks[this.state.questionIndex-1]['fields'].option4});
-    try {
-      if(this.props.navigation.state.params.answer[this.state.questionIndex-1]['fields'].option == 1) {
-        this.setState({backgroundColorOptionA: 'red'})
-      }
-      else if(this.props.navigation.state.params.answer[this.state.questionIndex-1]['fields'].option == 2) {
-        this.setState({backgroundColorOptionB: 'red'})
-      }
-      else if(this.props.navigation.state.params.answer[this.state.questionIndex-1]['fields'].option == 3) {
-        this.setState({backgroundColorOptionC: 'red'})
-      }
-      else if(this.props.navigation.state.params.answer[this.state.questionIndex-1]['fields'].option == 4) {
-        this.setState({backgroundColorOptionD: 'red'})
-      }
+    if(this.props.navigation.state.params.answer[this.state.questionIndex]['option']==option_index)
+      return 'red'
     }
     catch (e) {
-      console.log('e')
-    }
-
-    if(this.props.navigation.state.params.blocks[this.state.questionIndex-1]['fields'].option1_iscorrect==1) {
-      this.setState({backgroundColorOptionA: 'green'})
-    }
-    else if(this.props.navigation.state.params.blocks[this.state.questionIndex-1]['fields'].option2_iscorrect==1) {
-      this.setState({backgroundColorOptionB: 'green'})
-    }
-    else if(this.props.navigation.state.params.blocks[this.state.questionIndex-1]['fields'].option3_iscorrect==1) {
-      this.setState({backgroundColorOptionC: 'green'})
-    }
-    else if(this.props.navigation.state.params.blocks[this.state.questionIndex-1]['fields'].option4_iscorrect==1){
-      this.setState({backgroundColorOptionD: 'green'})
-    }
-    this.setState({questionIndex: this.state.questionIndex-1});
-  }
-
-  async updateNextQuestions() { 
-    await this.setState({attempted: false});
-    this.setState({question: this.props.navigation.state.params.blocks[this.state.questionIndex+1]['fields'].question});
-    this.setState({option1: this.props.navigation.state.params.blocks[this.state.questionIndex+1]['fields'].option1});
-    this.setState({option2: this.props.navigation.state.params.blocks[this.state.questionIndex+1]['fields'].option2});
-    this.setState({option3: this.props.navigation.state.params.blocks[this.state.questionIndex+1]['fields'].option3});
-    this.setState({option4: this.props.navigation.state.params.blocks[this.state.questionIndex+1]['fields'].option4});
-    try {
-      if(this.props.navigation.state.params.answer[this.state.questionIndex+1]['fields'].option == 1) {
-        this.setState({backgroundColorOptionA: 'red'})
-      }
-      else if(this.props.navigation.state.params.answer[this.state.questionIndex+1]['fields'].option == 2) {
-        this.setState({backgroundColorOptionB: 'red'})
-      }
-      else if(this.props.navigation.state.params.answer[this.state.questionIndex+1]['fields'].option == 3) {
-        this.setState({backgroundColorOptionC: 'red'})
-      }
-      else if(this.props.navigation.state.params.answer[this.state.questionIndex+1]['fields'].option == 4) {
-        this.setState({backgroundColorOptionD: 'red'})
-      }
-    }
-    catch (e) {
-      console.log('e')
+      return 'white'
      }
-    if(this.state.num_attempted < this.state.questionIndex + 1) {
-      this.setState({num_attempted: this.state.questionIndex+1})
-    }
-    if(this.props.navigation.state.params.blocks[this.state.questionIndex+1]['fields'].option1_iscorrect==1) {
-      this.setState({backgroundColorOptionA: 'green'})
-    }
-    else if(this.props.navigation.state.params.blocks[this.state.questionIndex+1]['fields'].option2_iscorrect==1) {
-      this.setState({backgroundColorOptionB: 'green'})
-    }
-    else if(this.props.navigation.state.params.blocks[this.state.questionIndex+1]['fields'].option3_iscorrect==1) {
-      this.setState({backgroundColorOptionC: 'green'})
-    }
-    else if(this.props.navigation.state.params.blocks[this.state.questionIndex+1]['fields'].option4_iscorrect==1){
-      this.setState({backgroundColorOptionD: 'green'})
-    }
-
-    this.setState({questionIndex: this.state.questionIndex+1});
-
+     return 'white'
   }
-
   render () {
+    console.log("asnsklasds: "+this.optionColor(1));
       return (
 
         <View style={styles.container}>
-          
+           <View style={styles.header}>
+            <View style={styles.header1}>
+              
+            </View>
+            <View style={styles.header2}>
+            <TouchableNativeFeedback
+                    onPress={() => {
+                      Alert.alert(
+                  'Are you sure you want to exit?',
+              '',
+              [
+                {
+                  text: 'Cancel',
+                  onPress: () => console.log('Cancel Pressed'),
+                  style: 'cancel',
+                },
+                {text: 'Submit', 
+                  onPress: () => {
+                    const navigateAction = NavigationActions.navigate({
+                      routeName: 'testPerformance',
+                      params: {
+
+                      },
+                    });
+                    this.setState({timer: 0});
+                    this.props.navigation.dispatch(navigateAction); 
+                }},
+              ],
+              {cancelable: false},
+            );
+                      
+                    }
+                }
+
+               >
+              <View style={styles.submitButton}>
+                <Text style={styles.activeSnapText}>Exit</Text>
+              </View>
+            </TouchableNativeFeedback>
+            </View>
+          </View>
           <ScrollView style={{width: '100%'}}>
           <View style={{marginLeft: 2 * vw,marginTop: 0.02 * screen.height, marginBottom: 0.02 * screen.height, width: '95%'}}>
                 
@@ -239,7 +205,7 @@ class reviewTest extends Component {
           <View style={styles.questionContainer}>
              
           <MathJax
-                  html={this.state.question.split('\\\\').join('\\')}
+                  html={this.props.navigation.state.params.blocks[this.state.questionIndex]['fields'].question.split('https://console.cloud.google.com/storage/browser').join('https://storage.googleapis.com').split('\\\\').join('\\')}
                   mathJaxOptions={{
                     tex2jax: {
                       inlineMath: [['{tex}', '{/tex}'], ['\\(', '\\)']],
@@ -263,9 +229,9 @@ class reviewTest extends Component {
                 </Text>
               </View>
           
-            <View style={[styles.optionContainer, { borderColor:  this.state.backgroundColorOptionA }]}>
+            <View style={[styles.optionContainer, { borderColor:this.props.navigation.state.params.blocks[this.state.questionIndex]['fields'].option1_iscorrect ? 'green' :  this.optionColor(1) }]}>
           <MathJax
-                    html={this.state.option1.split('\\\\').join('\\')}
+                    html={this.props.navigation.state.params.blocks[this.state.questionIndex]['fields'].option1.split('https://console.cloud.google.com/storage/browser').join('https://storage.googleapis.com').split('\\\\').join('\\')}
                     mathJaxOptions={{
                       tex2jax: {
                         inlineMath: [['{tex}', '{/tex}'], ['\\(', '\\)']],
@@ -289,9 +255,9 @@ class reviewTest extends Component {
                 </Text>
               </View>
             
-            <View style={[styles.optionContainer, { borderColor:  this.state.backgroundColorOptionB }]}>
+            <View style={[styles.optionContainer, { borderColor:this.props.navigation.state.params.blocks[this.state.questionIndex]['fields'].option2_iscorrect ? 'green' :  this.optionColor(2) }]}>
           <MathJax
-                    html={this.state.option2.split('\\\\').join('\\')}
+                    html={this.props.navigation.state.params.blocks[this.state.questionIndex]['fields'].option2.split('https://console.cloud.google.com/storage/browser').join('https://storage.googleapis.com').split('\\\\').join('\\')}
                     mathJaxOptions={{
                       tex2jax: {
                         inlineMath: [['{tex}', '{/tex}'], ['\\(', '\\)']],
@@ -315,9 +281,9 @@ class reviewTest extends Component {
                 </Text>
               </View>
               
-            <View style={[styles.optionContainer, { borderColor:  this.state.backgroundColorOptionC }]}>
+            <View style={[styles.optionContainer, { borderColor:this.props.navigation.state.params.blocks[this.state.questionIndex]['fields'].option3_iscorrect ? 'green' :  this.optionColor(3) }]}>
           <MathJax
-                    html={this.state.option3.split('\\\\').join('\\')}
+                    html={this.props.navigation.state.params.blocks[this.state.questionIndex]['fields'].option3.split('https://console.cloud.google.com/storage/browser').join('https://storage.googleapis.com').split('\\\\').join('\\')}
                     mathJaxOptions={{
                       tex2jax: {
                         inlineMath: [['{tex}', '{/tex}'], ['\\(', '\\)']],
@@ -341,9 +307,9 @@ class reviewTest extends Component {
                 </Text>
               </View>
           
-            <View style={[styles.optionContainer, { borderColor:  this.state.backgroundColorOptionD }]}>
+            <View style={[styles.optionContainer, { borderColor:this.props.navigation.state.params.blocks[this.state.questionIndex]['fields'].option4_iscorrect ? 'green' :  this.optionColor(4) }]}>
           <MathJax
-                    html={this.state.option4.split('\\\\').join('\\')}
+                    html={this.props.navigation.state.params.blocks[this.state.questionIndex]['fields'].option4.split('https://console.cloud.google.com/storage/browser').join('https://storage.googleapis.com').split('\\\\').join('\\')}
                     backgroundColor={'yellow'}
                     mathJaxOptions={{
                       tex2jax: {
@@ -365,8 +331,9 @@ class reviewTest extends Component {
           <TouchableNativeFeedback
                     onPress={() => {
                       if(this.state.questionIndex > 0) {
+                        this.setState({questionIndex: this.state.questionIndex - 1});
                         this.setState({ActiveSlide: this.state.ActiveSlide -1});
-                        this.updatePreviousQuestions();
+                        //this.updatePreviousQuestions();
                         this.setState({ backgroundColorOptionB: 'white'});
                         this.setState({ backgroundColorOptionC: 'white'});
                         this.setState({ backgroundColorOptionA: 'white'});
@@ -382,10 +349,13 @@ class reviewTest extends Component {
             </TouchableNativeFeedback>
             <TouchableNativeFeedback
                     onPress={() => {
+                      console.log("dsjksff: ");
                       if(this.state.questionIndex+1 < this.state.n_questions) {
-                        this.updateNextQuestions();
+                        console.log("dsjksff: ");
+                        //this.updateNextQuestions();
+                        this.setState({questionIndex: this.state.questionIndex + 1});
                         this.setState({ActiveSlide: this.state.ActiveSlide +1});
-                        this.updateQuestions();
+                        //this.updateQuestions();
                         this.setState({ backgroundColorOptionB: 'white'});
                         this.setState({ backgroundColorOptionC: 'white'});
                         this.setState({ backgroundColorOptionA: 'white'});

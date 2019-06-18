@@ -37,38 +37,22 @@ class SideMenu extends Component {
       .then(idToken => {
             this.setState({ username: currentUser['phoneNumber'].slice(3, 13) })
 
-            const url = 'http://classcast-198812.appspot.com/graphql?query=query {getUserInfo(username:"'+currentUser['phoneNumber'].slice(3, 13)+'"){firstname lastname standard}}'
-
-            axios.get(url)
+            axios.get('https://classcast-198812.appspot.com/users/user_data')
             .then(res => {
-              console.log("hsjsa: "+res.data.data.getUserInfo.standard);
-              /*
-              if(res.data.data.getUserInfo.gender == 'A_1') {
-                this.setState({gender: 'M'});
+              console.log("hsjsa: "+JSON.stringify(res.data));
+              this.setState({name: res.data.name});
+              if(res.data.standard == '13'){
+                this.setState({standard: '12+'})
               }
               else {
-                this.setState({gender: 'F'});
-              }*/
-
-              if(res.data.data.getUserInfo.standard == 'A_13') {
-                this.setState({standard: '12+'});
+                this.setState({standard: res.data.standard})
               }
-              else if(res.data.data.getUserInfo.standard == 'A_12') {
-                this.setState({standard: '12'}); 
-              }
-              else if(res.data.data.getUserInfo.standard == 'A_11') {
-                this.setState({standard: '11'}); 
-              }
-              else if(res.data.data.getUserInfo.standard == 'A_10') {
-                this.setState({standard: '10'}); 
-              }
-              else if(res.data.data.getUserInfo.standard == 'A_9') {
-                this.setState({standard: '9'}); 
+              if(res.data.gender == '2') {
+                this.setState({gender: 'F'})
               }
               else {
-                this.setState({standard: '12'}); 
+                this.setState({gender: 'M'})
               }
-              this.setState({name: res.data.data.getUserInfo.firstname+' '+res.data.data.getUserInfo.lastname });
             })
             .catch((error) => {
                 console.log("error")
@@ -135,8 +119,10 @@ class SideMenu extends Component {
                 Home
               </Text>
               
-              <Text style={styles.navItemStyle} onPress={this.navigateToScreen('TabA')}>
-                Discover Teachers
+              <Text style={styles.navItemStyle} onPress={() => {
+                this.props.navigation.navigate('HomeStack', {}, NavigationActions.navigate({ routeName: 'accessCode' }));
+              }}>
+                Add Classrooms
               </Text>
             </View>
           

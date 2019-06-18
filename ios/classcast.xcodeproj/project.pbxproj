@@ -71,6 +71,11 @@
 		C8ECE1918C7A490A8FF38E27 /* libRNDeviceInfo-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CE0DE3A38F7C439FA0C4C34A /* libRNDeviceInfo-tvOS.a */; };
 		427B30F832004371A5156FC8 /* libRNVersionCheck.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6B250DDEB48340C1AF77A754 /* libRNVersionCheck.a */; };
 		A8740EC252DD40349D1A5CA8 /* libRNShare.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4473FABCAB94462DAADF21F3 /* libRNShare.a */; };
+		B6A3175E0E394E78BB257ECB /* libRNCWebView.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BF3D83DD4D33424A9A5872DE /* libRNCWebView.a */; };
+		534373074819466D943FD6FB /* demo.app in Resources */ = {isa = PBXBuildFile; fileRef = A85434F202EA4F16AA1C153A /* demo.app */; };
+		88FB321B7F5E4519BE8FA5E4 /* demoTests.xctest in Resources */ = {isa = PBXBuildFile; fileRef = E241342F95DA446B90F3DAB9 /* demoTests.xctest */; };
+		74D785FD04004AE2B89078D6 /* demo-tvOS.app in Resources */ = {isa = PBXBuildFile; fileRef = 58A4CB80D6274BF1B8C6ECE9 /* demo-tvOS.app */; };
+		6FCF8E3D4DE14D8DB5E6A0EC /* demo-tvOSTests.xctest in Resources */ = {isa = PBXBuildFile; fileRef = 581A10ECF2CD4BCAA41BDA2F /* demo-tvOSTests.xctest */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -424,6 +429,13 @@
 		6B250DDEB48340C1AF77A754 /* libRNVersionCheck.a */ = {isa = PBXFileReference; name = "libRNVersionCheck.a"; path = "libRNVersionCheck.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 		D337436F48EB4232959469D0 /* RNShare.xcodeproj */ = {isa = PBXFileReference; name = "RNShare.xcodeproj"; path = "../node_modules/react-native-share/ios/RNShare.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
 		4473FABCAB94462DAADF21F3 /* libRNShare.a */ = {isa = PBXFileReference; name = "libRNShare.a"; path = "libRNShare.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		C4D8801574D843FCA638BB74 /* RNCWebView.xcodeproj */ = {isa = PBXFileReference; name = "RNCWebView.xcodeproj"; path = "../node_modules/react-native-webview/ios/RNCWebView.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		BF3D83DD4D33424A9A5872DE /* libRNCWebView.a */ = {isa = PBXFileReference; name = "libRNCWebView.a"; path = "libRNCWebView.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		CB93B1F3F15D4915A5ADAF40 /* demo.xcodeproj */ = {isa = PBXFileReference; name = "demo.xcodeproj"; path = "../node_modules/react-native-autoheight-webview/demo/ios/demo.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		A85434F202EA4F16AA1C153A /* demo.app */ = {isa = PBXFileReference; name = "demo.app"; path = "demo.app"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.application; explicitFileType = undefined; includeInIndex = 0; };
+		E241342F95DA446B90F3DAB9 /* demoTests.xctest */ = {isa = PBXFileReference; name = "demoTests.xctest"; path = "demoTests.xctest"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.cfbundle; explicitFileType = undefined; includeInIndex = 0; };
+		58A4CB80D6274BF1B8C6ECE9 /* demo-tvOS.app */ = {isa = PBXFileReference; name = "demo-tvOS.app"; path = "demo-tvOS.app"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.application; explicitFileType = undefined; includeInIndex = 0; };
+		581A10ECF2CD4BCAA41BDA2F /* demo-tvOSTests.xctest */ = {isa = PBXFileReference; name = "demo-tvOSTests.xctest"; path = "demo-tvOSTests.xctest"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.cfbundle; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -466,6 +478,9 @@
 				E50E93B30B054FDB8C598A1D /* libRNDeviceInfo.a in Frameworks */,
 				427B30F832004371A5156FC8 /* libRNVersionCheck.a in Frameworks */,
 				A8740EC252DD40349D1A5CA8 /* libRNShare.a in Frameworks */,
+				B6A3175E0E394E78BB257ECB /* libRNCWebView.a in Frameworks */,
+				534373074819466D943FD6FB /* demo.app in Resources */,
+				88FB321B7F5E4519BE8FA5E4 /* demoTests.xctest in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -485,6 +500,8 @@
 				1DB033EAD9FC40D38877FD03 /* libRNSVG-tvOS.a in Frameworks */,
 				0598A52E577F4D6F81E3622F /* libRNVectorIcons-tvOS.a in Frameworks */,
 				C8ECE1918C7A490A8FF38E27 /* libRNDeviceInfo-tvOS.a in Frameworks */,
+				74D785FD04004AE2B89078D6 /* demo-tvOS.app in Resources */,
+				6FCF8E3D4DE14D8DB5E6A0EC /* demo-tvOSTests.xctest in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -672,6 +689,8 @@
 				9695C44DCCF6474080187AC1 /* RNDeviceInfo.xcodeproj */,
 				F0FF01F335D14C26A4B22057 /* RNVersionCheck.xcodeproj */,
 				D337436F48EB4232959469D0 /* RNShare.xcodeproj */,
+				C4D8801574D843FCA638BB74 /* RNCWebView.xcodeproj */,
+				CB93B1F3F15D4915A5ADAF40 /* demo.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -1355,6 +1374,11 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1372,6 +1396,8 @@
 					"$(SRCROOT)\..\node_modules\react-native-device-info\ios\RNDeviceInfo",
 					"$(SRCROOT)\..\node_modules\react-native-version-check\ios",
 					"$(SRCROOT)\..\node_modules\react-native-share\ios",
+					"$(SRCROOT)\..\node_modules\react-native-webview\ios",
+					"$(SRCROOT)\..\node_modules\react-native-autoheight-webview\demo\ios\demo",
 				);
 			};
 			name = Debug;
@@ -1410,6 +1436,11 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1427,6 +1458,8 @@
 					"$(SRCROOT)\..\node_modules\react-native-device-info\ios\RNDeviceInfo",
 					"$(SRCROOT)\..\node_modules\react-native-version-check\ios",
 					"$(SRCROOT)\..\node_modules\react-native-share\ios",
+					"$(SRCROOT)\..\node_modules\react-native-webview\ios",
+					"$(SRCROOT)\..\node_modules\react-native-autoheight-webview\demo\ios\demo",
 				);
 			};
 			name = Release;
@@ -1463,6 +1496,8 @@
 					"$(SRCROOT)\..\node_modules\react-native-device-info\ios\RNDeviceInfo",
 					"$(SRCROOT)\..\node_modules\react-native-version-check\ios",
 					"$(SRCROOT)\..\node_modules\react-native-share\ios",
+					"$(SRCROOT)\..\node_modules\react-native-webview\ios",
+					"$(SRCROOT)\..\node_modules\react-native-autoheight-webview\demo\ios\demo",
 				);
 			};
 			name = Debug;
@@ -1498,6 +1533,8 @@
 					"$(SRCROOT)\..\node_modules\react-native-device-info\ios\RNDeviceInfo",
 					"$(SRCROOT)\..\node_modules\react-native-version-check\ios",
 					"$(SRCROOT)\..\node_modules\react-native-share\ios",
+					"$(SRCROOT)\..\node_modules\react-native-webview\ios",
+					"$(SRCROOT)\..\node_modules\react-native-autoheight-webview\demo\ios\demo",
 				);
 			};
 			name = Release;
@@ -1544,6 +1581,11 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1561,6 +1603,8 @@
 					"$(SRCROOT)\..\node_modules\react-native-device-info\ios\RNDeviceInfo",
 					"$(SRCROOT)\..\node_modules\react-native-version-check\ios",
 					"$(SRCROOT)\..\node_modules\react-native-share\ios",
+					"$(SRCROOT)\..\node_modules\react-native-webview\ios",
+					"$(SRCROOT)\..\node_modules\react-native-autoheight-webview\demo\ios\demo",
 				);
 			};
 			name = Debug;
@@ -1607,6 +1651,11 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1624,6 +1673,8 @@
 					"$(SRCROOT)\..\node_modules\react-native-device-info\ios\RNDeviceInfo",
 					"$(SRCROOT)\..\node_modules\react-native-version-check\ios",
 					"$(SRCROOT)\..\node_modules\react-native-share\ios",
+					"$(SRCROOT)\..\node_modules\react-native-webview\ios",
+					"$(SRCROOT)\..\node_modules\react-native-autoheight-webview\demo\ios\demo",
 				);
 			};
 			name = Release;
@@ -1669,6 +1720,11 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1686,6 +1742,8 @@
 					"$(SRCROOT)\..\node_modules\react-native-device-info\ios\RNDeviceInfo",
 					"$(SRCROOT)\..\node_modules\react-native-version-check\ios",
 					"$(SRCROOT)\..\node_modules\react-native-share\ios",
+					"$(SRCROOT)\..\node_modules\react-native-webview\ios",
+					"$(SRCROOT)\..\node_modules\react-native-autoheight-webview\demo\ios\demo",
 				);
 			};
 			name = Debug;
@@ -1731,6 +1789,11 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1748,6 +1811,8 @@
 					"$(SRCROOT)\..\node_modules\react-native-device-info\ios\RNDeviceInfo",
 					"$(SRCROOT)\..\node_modules\react-native-version-check\ios",
 					"$(SRCROOT)\..\node_modules\react-native-share\ios",
+					"$(SRCROOT)\..\node_modules\react-native-webview\ios",
+					"$(SRCROOT)\..\node_modules\react-native-autoheight-webview\demo\ios\demo",
 				);
 			};
 			name = Release;

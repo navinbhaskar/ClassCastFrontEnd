@@ -13,13 +13,12 @@ import {
   ActivityIndicator,
   Modal,
   ToastAndroid,
-  Dimensions
+  Dimensions,
+  BackHandler
 } from 'react-native';
 import Orientation from 'react-native-orientation';
 import firebase from 'react-native-firebase';
 import {NavigationActions} from 'react-navigation';
-import {Icon} from 'react-native-elements';
-import Carousel from 'react-native-snap-carousel';
 import { ProgressCircle }  from 'react-native-svg-charts';
 import axios from 'axios';
 import {MaterialIndicator} from 'react-native-indicators';
@@ -46,6 +45,7 @@ class CourseHome extends Component {
 
   constructor(props) {
     super(props);
+    this.handleBackButton = this.handleBackButton.bind(this);
     this.firebaseLink = this.firebaseLink.bind(this);
     this.state = {
       startBuffering: true,
@@ -59,9 +59,19 @@ class CourseHome extends Component {
     }
   }
 
+  handleBackButton = () => {
+    //this.props.navigation.navigate('HomeStack', {}, NavigationActions.navigate({ routeName: 'Home' }));
+    this.props.navigation.goBack(null);
+    return true;
+  }
+
   componentWillMount() {
     Orientation.lockToPortrait();
     const initial = Orientation.getInitialOrientation();
+  }
+
+  componentWillUnmount() {
+    BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton);
   }
 
   static navigationOptions = ({ navigation }) => ({
@@ -70,6 +80,7 @@ class CourseHome extends Component {
 
   firebaseLink = () => {
     console.log("gkyyufyifkkkkk");
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
     firebase.links()
     .getInitialLink()
     .then((url) => {

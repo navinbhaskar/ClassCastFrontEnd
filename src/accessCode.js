@@ -12,25 +12,80 @@ import {
   AsyncStorage,
   ToastAndroid,
   TouchableWithoutFeedback,
+  BackHandler,
+  Keyboard
 } from 'react-native';
 import { Input, Button, ButtonGroup } from 'react-native-elements';
 import {Icon} from 'react-native-elements';
 import axios from "axios";
 import firebase from 'react-native-firebase';
-import {NavigationActions} from 'react-navigation';
+import {NavigationActions, StackActions} from 'react-navigation';
+//import AddShortcut from 'react-native-add-shortcut';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 
 
 class accessCode extends Component {
+
+  static navigationOptions = ({ navigation }) => ({
+    title: 'Add Classrooms',
+    headerStyle: {
+      backgroundColor: '#8c48cd',
+    },
+    style: {
+      backgroundColor: '#8c48cd',
+      height: 8 * vh
+    },
+    headerTintColor: '#fff'
+  })
+
   constructor(props) {
     super(props);
+    this._keyboardDidShow = this._keyboardDidShow.bind(this);
+    this._keyboardDidHide = this._keyboardDidHide.bind(this);
+    this.handleBackButton = this.handleBackButton.bind(this);
     this.state = {
       access_code: '',
-      username: ''
+      showKeypad: true,
+      username: '',
+      exitWarning: false
   };
   //this.updateClassesIndex = this.updateClassesIndex.bind(this);
+  }
+
+  handleBackButton = () => {
+    if (this.state.showKeypad) {
+      Keyboard.dismiss;
+      this.setState({showKeypad: false});
+    }
+    else {
+      const popAction = StackActions.pop({n: 1});
+      this.props.navigation.dispatch(popAction);
+      return true;
+    }
+  return false;
+};
+
+  handleBackButton() {
+    //this.props.navigation.popToTop();
+    //Keyboard.dismiss;
+    const popAction = StackActions.pop({n: 1});
+    this.props.navigation.dispatch(popAction);
+  }
+
+  componentWillUnmount() {
+    BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton);
+    this.keyboardDidShowListener.remove();
+    this.keyboardDidHideListener.remove();
+  }
+
+  _keyboardDidShow() {
+    this.setState({showKeypad: true});
+  }
+
+  _keyboardDidHide() {
+    this.setState({showKeypad: false});
   }
 
   async componentDidMount() {
@@ -39,6 +94,15 @@ class accessCode extends Component {
                       .then(idToken => {
                             this.setState({ username: currentUser['phoneNumber'].slice(3, 13) })
                           });
+      BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
+      this.keyboardDidShowListener = Keyboard.addListener(
+        'keyboardDidShow',
+        this._keyboardDidShow,
+      );
+      this.keyboardDidHideListener = Keyboard.addListener(
+        'keyboardDidHide',
+        this._keyboardDidHide,
+      );
   }
 
   render() {
@@ -69,6 +133,16 @@ class accessCode extends Component {
             axios.post('https://classcast-198812.appspot.com/accesstoken/enroll/', data)
               .then((response) => 
               {
+                console.log("bkjbkjb: "+JSON.stringify(response.data));
+                /*
+                if(response.data.status == 'OK') {
+                  AddShortcut.setPinnedShortcuts({
+                    name: response.data.teacher_firstname+ ' '+ response.data.teacher_lastname+' Class',
+                    imageUrl: response.data.teacher_image,
+                    deepLink: 'classcastapp://classcast/'+response.data.batch_id+"/"+response.data.teacher+"/"+response.data.teacher_firstname+"/"+response.data.teacher_lastname+"/"+response.data.teacher_coaching_name+"/"+response.data.teacher_area+"/"+response.data.teacher_subject+"/"+response.data.teacher_goal+"/"+response.data.teacher_courses+"/"+response.data.teacher_image
+                  });
+                }*/
+                
                 //this.props.navigation.navigate("Home");
                 const navigateAction = NavigationActions.navigate({
                     routeName: 'Home',
@@ -133,17 +207,17 @@ const styles = StyleSheet.create({
     flex: 1,
     width: SCREEN_WIDTH,
     height: SCREEN_HEIGHT,
-    backgroundColor: 'black',
+    backgroundColor: 'white',
     alignItems: 'center',
     justifyContent: 'center',
   },
   headerText: {
-    fontSize: 20,
-    color: 'white',
     zIndex: 100,
     paddingTop: 5 * vh,
     paddingLeft: 3 * vw,
-    fontFamily: 'ProximaNova-Regular',
+    color: '#211482',
+   fontSize: 3.5 * vw,
+   fontFamily: 'Montserrat-SemiBold',
   },
   nextPageIcon: {
     height: '100%',
@@ -206,9 +280,10 @@ const styles = StyleSheet.create({
   inputStyle: {
     flex: 1,
     marginLeft: 10,
-    color: 'white',
     fontFamily: 'light',
-    fontSize: 16,
+    color: '#211482',
+   fontSize: 3.5 * vw,
+   fontFamily: 'Montserrat-SemiBold',
   },
   errorInputStyle: {
     marginTop: 0,

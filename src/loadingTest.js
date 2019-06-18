@@ -25,10 +25,6 @@ const screen = Dimensions.get('window');
   vh = screen.height / 100;
   vw = screen.width / 100;
 
-const option1 = '<html><body><p>\xe2\x80\x93N=N\xe2\x80\x93 bond</p></body></html>'
-const option2 = '<html><body><p>2.46 X 102 min_ \xe2\x80\x93 1</p></body></html>'
-const option3 = '<html><body><p>\xe2\x80\x930.32 V</p></body></html>'
-
 class loadingTest extends Component {
 
 
@@ -134,6 +130,7 @@ class loadingTest extends Component {
   }
 
   async componentDidMount() {
+    console.log("vhjvjh: "+this.state.question);
     BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
     var count = 0;
     this.setState({timer: this.props.navigation.state.params.duration * 60});
@@ -154,14 +151,15 @@ class loadingTest extends Component {
           }
         }, 1000);
     
-    await axios.get(`https://classcast-198812.appspot.com/test/newtest/?goal=`+this.props.navigation.state.params.goal+`&n_questions=`+this.props.navigation.state.params.duration/2+this.props.navigation.state.params.topic.reduce((params, current) => params + `&chapter=${current}`, ''))
+    await axios.get(`https://classcast-198812.appspot.com/test/updated_test_function/?goal=`+this.props.navigation.state.params.goal+`&n_questions=`+this.props.navigation.state.params.duration/2+this.props.navigation.state.params.topic.reduce((params, current) => params + `&chapter=${current}`, ''))
                 .then(function (response){
+                  console.log("vhjvjl: "+JSON.stringify(response.data));
                   this.setState({blocks: response.data  });
                   
                   this.setState({n_questions: this.state.blocks.length});
-                  this.updateQuestions();
-                
-                  this.setState({loadingCompleted: true});
+                  
+                  //this.updateQuestions();
+                  
                 }.bind(this))
                 .then(res=>{
                   this.setState({loadingCompleted: true});
@@ -169,86 +167,6 @@ class loadingTest extends Component {
                 .catch(function (error) {
                   console.log("error");
                 });
-
-  }
-
-
-  updateQuestions() { 
-    this.setState({question: this.state.blocks[this.state.questionIndex]['fields'].question});
-    this.setState({option1: this.state.blocks[this.state.questionIndex]['fields'].option1});
-    this.setState({option2: this.state.blocks[this.state.questionIndex]['fields'].option2});
-    this.setState({option3: this.state.blocks[this.state.questionIndex]['fields'].option3});
-    this.setState({option4: this.state.blocks[this.state.questionIndex]['fields'].option4});
-    
-    if(this.state.blocks[this.state.questionIndex]['fields'].option1_iscorrect==1) {
-        this.setState({correctAnswer: 1})
-      }
-      else if(this.state.blocks[this.state.questionIndex]['fields'].option2_iscorrect==1) {
-        this.setState({correctAnswer: 2})
-      }
-      else if(this.state.blocks[this.state.questionIndex]['fields'].option3_iscorrect==1) {
-        this.setState({correctAnswer: 3})
-      }
-      else {
-        this.setState({correctAnswer: 4})
-      }
-  }
-
-  async updatePreviousQuestions() { 
-    await this.setState({attempted: true});
-    this.setState({question: this.state.blocks[this.state.questionIndex-1]['fields'].question});
-    this.setState({option1: this.state.blocks[this.state.questionIndex-1]['fields'].option1});
-    this.setState({option2: this.state.blocks[this.state.questionIndex-1]['fields'].option2});
-    this.setState({option3: this.state.blocks[this.state.questionIndex-1]['fields'].option3});
-    this.setState({option4: this.state.blocks[this.state.questionIndex-1]['fields'].option4});
-    this.setState({option1_iscorrect: this.state.blocks[this.state.questionIndex-1]['fields'].option1_iscorrect});
-    this.setState({option2_iscorrect: this.state.blocks[this.state.questionIndex-1]['fields'].option2_iscorrect});
-    this.setState({option3_iscorrect: this.state.blocks[this.state.questionIndex-1]['fields'].option3_iscorrect});
-    this.setState({option4_iscorrect: this.state.blocks[this.state.questionIndex-1]['fields'].option4_iscorrect});
-    if(this.state.blocks[this.state.questionIndex-1]['fields'].option1_iscorrect==1) {
-        this.setState({correctAnswer: 1})
-      }
-      else if(this.state.blocks[this.state.questionIndex-1]['fields'].option2_iscorrect==1) {
-        this.setState({correctAnswer: 2})
-      }
-      else if(this.state.blocks[this.state.questionIndex-1]['fields'].option3_iscorrect==1) {
-        this.setState({correctAnswer: 3})
-      }
-      else {
-        this.setState({correctAnswer: 4})
-      }
-      this.setState({questionIndex: this.state.questionIndex-1});
-  }
-
-  async updateNextQuestions() { 
-      //question = this.state.blocks[this.state.questionIndex].question;
-    await this.setState({attempted: false});
-    //await this.setState({question: this.state.blocks[this.state.questionIndex+1].question});
-    this.setState({question: this.state.blocks[this.state.questionIndex+1]['fields'].question});
-    this.setState({option1: this.state.blocks[this.state.questionIndex+1]['fields'].option1});
-    this.setState({option2: this.state.blocks[this.state.questionIndex+1]['fields'].option2});
-    this.setState({option3: this.state.blocks[this.state.questionIndex+1]['fields'].option3});
-    this.setState({option4: this.state.blocks[this.state.questionIndex+1]['fields'].option4});
-    this.setState({option1_iscorrect: this.state.blocks[this.state.questionIndex+1]['fields'].option1_iscorrect});
-    this.setState({option2_iscorrect: this.state.blocks[this.state.questionIndex+1]['fields'].option2_iscorrect});
-    this.setState({option3_iscorrect: this.state.blocks[this.state.questionIndex+1]['fields'].option3_iscorrect});
-    this.setState({option4_iscorrect: this.state.blocks[this.state.questionIndex+1]['fields'].option4_iscorrect});
-    if(this.state.blocks[this.state.questionIndex+1]['fields'].option1_iscorrect==1) {
-        this.setState({correctAnswer: 1})
-      }
-      else if(this.state.blocks[this.state.questionIndex+1]['fields'].option2_iscorrect==1) {
-        this.setState({correctAnswer: 2})
-      }
-      else if(this.state.blocks[this.state.questionIndex+1]['fields'].option3_iscorrect==1) {
-        this.setState({correctAnswer: 3})
-      }
-      else {
-        this.setState({correctAnswer: 4})
-      }
-      if(this.state.num_attempted < this.state.questionIndex + 1) {
-        this.setState({num_attempted: this.state.questionIndex+1})
-      }
-      this.setState({questionIndex: this.state.questionIndex+1});
 
   }
 
@@ -311,6 +229,7 @@ class loadingTest extends Component {
       )
     }
     else {
+      if(this.state.n_questions> 0){
       return (
 
         <View style={styles.container}>
@@ -373,14 +292,14 @@ class loadingTest extends Component {
                   { this.state.ActiveSlide == item &&
                     <View style={styles.activeQuestion}>
                       <Text style={styles.activeSnapText}>
-                        {this.state.ActiveSlide}
+                        {this.state.ActiveSlide+1}
                       </Text>
                     </View>
                   }
                   { this.state.ActiveSlide != item &&
                     <View style={styles.inActiveQuestion}>
                     <Text style={styles.inactiveSnapText}>
-                      {item}
+                      {Number(item)+1}
                     </Text>
                     </View>
                   }
@@ -401,12 +320,8 @@ class loadingTest extends Component {
             </View>
           </View>
           <View style={styles.questionContainer}>
-          {console.log("question: "+this.state.question)}
-          {console.log("option1: "+this.state.option1)}
-          {console.log("option2: "+this.state.option2)}
-          {console.log("option3: "+this.state.option3)}
           <MathJax
-                  html={this.state.question.split('https://console.cloud.google.com/storage/browser').join('https://storage.googleapis.com').split('\\\\').join('\\')}
+                  html={this.state.blocks[this.state.questionIndex]['fields'].question.split('https://console.cloud.google.com/storage/browser').join('https://storage.googleapis.com').split('\\\\').join('\\')}
                   mathJaxOptions={{
                     tex2jax: {
                       inlineMath: [['{tex}', '{/tex}'], ['\\(', '\\)']],
@@ -414,7 +329,7 @@ class loadingTest extends Component {
                       processEscapes: true,
                     },
                   }}
-                  onHeightUpdated={height => {
+                  onHeightUpdated={() => {
                     console.log("height");
                   }}
                   hasIframe={true}
@@ -433,7 +348,7 @@ class loadingTest extends Component {
               </View>
           <TouchableNativeFeedback
                     onPress={() => {
-                      if(this.state.correctAnswer== 1) {
+                      if(this.state.blocks[this.state.questionIndex]['fields'].option1_iscorrect) {
                         score = 4
                       }
                       else {
@@ -452,7 +367,7 @@ class loadingTest extends Component {
                >
             <View style={[styles.optionContainer, { borderColor:  this.state.backgroundColorOptionA }]}>
           <MathJax
-                    html={this.state.option1.split('https://console.cloud.google.com/storage/browser').join('https://storage.googleapis.com').split('\\\\').join('\\')}
+                    html={this.state.blocks[this.state.questionIndex]['fields'].option1.split('https://console.cloud.google.com/storage/browser').join('https://storage.googleapis.com').split('\\\\').join('\\')}
                     mathJaxOptions={{
                       tex2jax: {
                         inlineMath: [['{tex}', '{/tex}'], ['\\(', '\\)']],
@@ -478,7 +393,7 @@ class loadingTest extends Component {
               </View>
              <TouchableNativeFeedback
                     onPress={() => {
-                      if(this.state.correctAnswer== 2) {
+                      if(this.state.blocks[this.state.questionIndex]['fields'].option2_iscorrect) {
                         score = 4
                       }
                       else {
@@ -497,7 +412,7 @@ class loadingTest extends Component {
                >
             <View style={[styles.optionContainer, { borderColor:  this.state.backgroundColorOptionB }]}>
           <MathJax
-                    html={this.state.option2.split('https://console.cloud.google.com/storage/browser').join('https://storage.googleapis.com').split('\\\\').join('\\')}
+                    html={this.state.blocks[this.state.questionIndex]['fields'].option2.split('https://console.cloud.google.com/storage/browser').join('https://storage.googleapis.com').split('\\\\').join('\\')}
                     mathJaxOptions={{
                       tex2jax: {
                         inlineMath: [['{tex}', '{/tex}'], ['\\(', '\\)']],
@@ -523,7 +438,7 @@ class loadingTest extends Component {
               </View>
               <TouchableNativeFeedback
                     onPress={() => {
-                      if(this.state.correctAnswer== 3) {
+                      if(this.state.blocks[this.state.questionIndex]['fields'].option3_iscorrect) {
                         score = 4
                       }
                       else {
@@ -542,7 +457,7 @@ class loadingTest extends Component {
                >
             <View style={[styles.optionContainer, { borderColor:  this.state.backgroundColorOptionC }]}>
           <MathJax
-                    html={this.state.option3.split('https://console.cloud.google.com/storage/browser').join('https://storage.googleapis.com').split('\\\\').join('\\')}
+                    html={this.state.blocks[this.state.questionIndex]['fields'].option3.split('https://console.cloud.google.com/storage/browser').join('https://storage.googleapis.com').split('\\\\').join('\\')}
                     mathJaxOptions={{
                       tex2jax: {
                         inlineMath: [['{tex}', '{/tex}'], ['\\(', '\\)']],
@@ -569,7 +484,7 @@ class loadingTest extends Component {
           <TouchableNativeFeedback
               background={TouchableNativeFeedback.SelectableBackground()}
                     onPress={() => {
-                      if(this.state.correctAnswer== 4) {
+                      if(this.state.blocks[this.state.questionIndex]['fields'].option4_iscorrect) {
                         score = 4
                       }
                       else {
@@ -588,7 +503,7 @@ class loadingTest extends Component {
                >
             <View style={[styles.optionContainer, { borderColor:  this.state.backgroundColorOptionD }]}>
           <MathJax
-                    html={this.state.option4.split('https://console.cloud.google.com/storage/browser').join('https://storage.googleapis.com').split('\\\\').join('\\')}
+                    html={this.state.blocks[this.state.questionIndex]['fields'].option4.split('https://console.cloud.google.com/storage/browser').join('https://storage.googleapis.com').split('\\\\').join('\\')}
                     backgroundColor={'yellow'}
                     mathJaxOptions={{
                       tex2jax: {
@@ -611,8 +526,9 @@ class loadingTest extends Component {
           <TouchableNativeFeedback
                     onPress={() => {
                       if(this.state.questionIndex > 0) {
+                        this.setState({questionIndex: this.state.questionIndex - 1});
                         this.setState({ActiveSlide: this.state.ActiveSlide -1});
-                        this.updatePreviousQuestions();
+                        //this.updatePreviousQuestions();
                         this.flatListRef.scrollToIndex({animated: true, index: this.state.ActiveSlide-1});
                         //this._carousel.snapToPrev();
                         this.setState({ backgroundColorOptionB: 'white'});
@@ -632,9 +548,10 @@ class loadingTest extends Component {
                     onPress={() => {
                       
                       if(this.state.questionIndex+1 < this.state.n_questions) {
-                        this.updateNextQuestions();
+
+                        this.setState({questionIndex: this.state.questionIndex + 1});
+                        //this.updateNextQuestions();
                         this.setState({ActiveSlide: this.state.ActiveSlide +1});
-                        this.updateQuestions();
                         //this._carousel.snapToNext();
                         //this.setState({attempted: this.state.attempted + 1});
                         this.setState({ backgroundColorOptionB: 'white'});
@@ -708,6 +625,14 @@ class loadingTest extends Component {
         </View>
         )
   }
+  else{
+    return(
+      <View style={styles.container}>
+
+      </View>
+    )
+  }
+}
   }
 }
 

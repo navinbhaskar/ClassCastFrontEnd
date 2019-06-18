@@ -4,25 +4,52 @@ import {
   LayoutAnimation,
   View,
   Text,
-  Image
+	Image,
+	Linking
 } from 'react-native';
 import axios from "axios";
 import firebase from 'react-native-firebase';
 import {DotIndicator} from 'react-native-indicators';
+//import AddShortcut from 'react-native-add-shortcut';
 
 class AuthCheck extends Component {
 
 	constructor(props) {
     super(props);
-  
+		this.state = {
+			deepLink: false,
+			data: [],
+			deepLink_teacher_id: null,
+			deepLink_teacher_lastname: null,
+			deepLink_teacher_firstname: null
+  };
 	}
 
 	componentWillUnmount() {
         this.unsubscribe();
     }
 
-	componentWillMount() {
-		
+	async componentWillMount() {
+		await Linking.getInitialURL().then((url) => {
+			if (url) {
+				console.log('Initialurlis: ' + url);
+				console.log('Initialurlis: ' + url.split('/')[3]);
+				console.log('Initialurlis: ' + url.split('/')[4]);
+				console.log('Initialurlis: ' + url.split('/')[5]);
+				console.log('Initialurlis: ' + url.split('/')[6]);
+				console.log('Initialurlis: ' + url.split('/')[7]);
+				console.log('Initialurlis: ' + url.split('/')[8]);
+				console.log('Initialurlis: ' + url.split('/')[9]);
+				console.log('Initialurlis: ' + url.split('/')[10]);
+				console.log('Initialurlis: ' + url.split('/').slice(11, url.split('/').length).join('/'));
+				this.setState({deepLink_teacher_id: url.split('/')[3]});
+				this.setState({deepLink_teacher_firstname: url.split('/')[4]});
+				this.setState({deepLink_teacher_lastname: url.split('/')[5]});
+				this.setState({data: {"batch_id": url.split('/')[3], "teacher_id":  url.split('/')[4], "firstname": url.split('/')[5], "lastname": url.split('/')[6], "coaching_name": url.split('/')[7], "area": url.split('/')[8], "subject": url.split('/')[9], "goal": url.split('/')[10], "courses": url.split('/')[11], "photo": url.split('/').slice(12, url.split('/').length).join('/')}});
+				console.log("smaaskld: "+JSON.stringify(this.state.data));
+				this.setState({deepLink: true});
+			}
+		}).catch(err => console.error('An error occurred', err));
 
 		this.unsubscribe = firebase.auth().onAuthStateChanged(user => {
 			console.log("jkgjggj1: "+JSON.stringify(user));
@@ -44,13 +71,22 @@ class AuthCheck extends Component {
 													console.log("jkaskjbksdb: "+JSON.stringify(res.data));
 													if(res.data == 'authorized') {
 														console.log("jkaskjbksdbworking");
-														this.props.navigation.navigate("Drawer");
+														if(this.state.deepLink){
+															console.log("jkaskjbksdbworking1");
+															this.props.navigation.navigate('TeacherArea', { data: this.state.data, isEnrolled: true});
+														}
+														else {
+															console.log("jkaskjbksdbworking2");
+															this.props.navigation.navigate("Drawer");
+														}
 													}
 													else {
+														console.log("jkaskjbksdbworking3");
 														this.props.navigation.navigate('Login2');
 													}
 												})
 												.catch(err=> {
+													console.log("jkaskjbksdbworking4");
 													console.log("jkaskjbksdberr: "+err);
 													this.props.navigation.navigate('Login2');
 												})

@@ -26,10 +26,9 @@ class startChallenge extends Component {
   }
 
   async createChallenge() {
-    await axios.post('https://classcast-198812.appspot.com/challenge/createChallenge', {
+    await axios.post('https://classcast-198812.appspot.com/challenge/updated_createChallenge', {
         "challenge_to": this.props.navigation.state.params.username,
         "challenge_to_name": this.props.navigation.state.params.name,
-        "standard": 12,
         "subject": this.props.navigation.state.params.subject,
         "chapter": this.props.navigation.state.params.chapter,
         "question_count": 10,
@@ -47,7 +46,7 @@ class startChallenge extends Component {
         
         this.setState({ready: true});
       })
-      .catch(err => {console.log('error')})
+      .catch(err => {console.log('error'+err)})
   }
 
   handleBackButton() {

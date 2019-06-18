@@ -19,6 +19,9 @@ vw = screen.width / 100;
 class notifications extends Component {
   static navigationOptions = ({ navigation }) => ({
     title: 'Notification',
+    headerTitleStyle: {
+      fontFamily: 'Montserrat-SemiBold', fontSize: 3 * vh, color: 'white'
+    },
     headerStyle: {
       backgroundColor: '#8c48cd',
     },

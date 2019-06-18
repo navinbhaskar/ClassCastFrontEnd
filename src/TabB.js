@@ -13,7 +13,9 @@ import {
   Button,
   ToastAndroid,
   Animated,
-  Platform 
+  Platform,
+  BackHandler,
+  Keyboard
 } from 'react-native';
 import { AreaChart, LineChart, Grid, YAxis, XAxis } from 'react-native-svg-charts';
 import {Icon} from 'react-native-elements';
@@ -48,6 +50,7 @@ class TabB extends Component {
     this.onUserChanged = this.onUserChanged.bind(this);
     this.firebaseLink = this.firebaseLink.bind(this);
     this.getHour = this.getHour.bind(this);
+    this.handleBackButton = this.handleBackButton.bind(this);
     this.state = {
       isReady: false,
       newChallengeModal: false,
@@ -70,6 +73,7 @@ class TabB extends Component {
       rank: '',
       score: '',
       video_count: '',
+      exitWarning: false
       }
   }
 
@@ -126,6 +130,7 @@ class TabB extends Component {
 
   async getToken() {
     fcmToken = await firebase.messaging().getToken();
+    
     axios.post('https://classcast-198812.appspot.com/token/save_fcm_token/', {
      username: this.state.username,
      fcmToken: fcmToken
@@ -143,6 +148,25 @@ class TabB extends Component {
     }
   }
 
+  handleBackButton = () => {
+      if (this.state.exitWarning) {
+        BackHandler.exitApp();
+      }
+      else {
+        ToastAndroid.show('Press back again to exit the app', ToastAndroid.SHORT);
+        this.setState({exitWarning: true});
+        setTimeout(() => {
+          this.setState({exitWarning: false})
+        }, 1000);
+        return true;
+      }
+    return false;
+  };
+
+  componentWillUnmount() {
+    BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton);
+  }
+
   componentWillMount() {
     Orientation.lockToPortrait();
     const initial = Orientation.getInitialOrientation();
@@ -155,9 +179,11 @@ class TabB extends Component {
   }
 
   async componentDidMount() {
-
+    a = await firebase.iid().get();
+    console.log("ssajksa: "+JSON.stringify(a));
     this.unsubscribe = firebase.auth().onUserChanged(this.onUserChanged);
-      
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
+    Keyboard.dismiss;
     //firebase.analytics().setCurrentScreen("HomePage");
     this.firebaseLink();
     //firebase.crashlytics().crash();
@@ -337,9 +363,11 @@ class TabB extends Component {
       console.log("JJJJJJJJJJJJJJJJJJJJJJQQll: "+url );
         if (url) {
           if(url.split('/')[3] === 'newteacher'){
+            BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton);
             this.props.navigation.navigate('addTeachers', { title: "Add Teachers" });
           }
           if(url.split('/')[3] === 'newvideo') {
+
             this.setState({ teacherFromDeepLink :url.split('/')[4]});
           }
         } else {
@@ -389,7 +417,9 @@ class TabB extends Component {
 
       if(item.type) {
         return (
-              <TouchableOpacity onPress={() => this.props.navigation.navigate('addTeachers', { title: "Add Teachers" })}>
+              <TouchableOpacity onPress={() => {
+                BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton);
+                this.props.navigation.navigate("accessCode")}}>
                 <View style={styles.teacherContainer}>
                   <View style={styles.teacherImageContainer}>
                     <Icon
@@ -411,10 +441,13 @@ class TabB extends Component {
         console.log("snjks: "+JSON.stringify(item)+"nnjns "+this.state.teacherFromDeepLink);
       if(item.teacher_id == this.state.teacherFromDeepLink) {
         this.setState({teacherFromDeepLink: ''});
+        BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton);
         this.props.navigation.navigate('TeacherArea', { data: item, isEnrolled: true})
       }
         return (
-              <TouchableOpacity onPress={() => this.props.navigation.navigate('TeacherArea', { data: item, isEnrolled: true})}>
+              <TouchableOpacity onPress={() => {
+                BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton);
+                this.props.navigation.navigate('TeacherArea', { data: item, isEnrolled: true})}}>
                 <View style={styles.teacherContainer}>
                   <View style={styles.teacherImageContainer}>
                     <Image
@@ -522,6 +555,7 @@ class TabB extends Component {
               <View style={styles.buttons}>
               <TouchableNativeFeedback
                        onPress={()=> {
+                        BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton);
                         this.props.navigation.navigate('Playground', {}, NavigationActions.navigate({ 
                           routeName: 'ongoingChallenge',
                           params: {
@@ -577,11 +611,14 @@ class TabB extends Component {
           color='white'
           type='material'
           size= {30} 
-          onPress={() => this.props.navigation.navigate('notification', { title: "Notification" })}
+          onPress={() => {
+            BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton);
+            this.props.navigation.navigate('notification', { title: "Notification" })}}
           />
         </View>
       </View>
       <ScrollView 
+      keyboardShouldPersistTaps='handled'
       scrollEventThrottle = { 16 }
 
         style ={{zIndex: 1, marginTop: 8 * vh, width: '100%'}}
@@ -649,7 +686,9 @@ class TabB extends Component {
           </CustomPlaceholder>
           { this.state.n_teachers == 1 && this.state.isReady &&
             <View style={{height: 12 * vh, width: 60 * vw, alignSelf:'center', paddingRight: 10* vw}}>
-            <TouchableOpacity style={{alignSelf:'center'}} onPress={() => this.props.navigation.navigate('addTeachers', { title: "Add Teachers" })}>
+            <TouchableOpacity style={{alignSelf:'center'}} onPress={() => {
+              BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton);
+              this.props.navigation.navigate('addTeachers', { title: "Add Teachers" })}}>
               <Text style={{fontSize: 2 * vh, color: 'black', textAlign: 'center', fontFamily: 'Montserrat-SemiBold'}}>You are not enrolled in any Classroom, Please add 
                 atleast one teacher </Text>
             </TouchableOpacity>

@@ -32,7 +32,6 @@ export default {
    backgroundColor: '#1d136b'
  },
   userImage: {
-  
    height: '100%',
    width: '100%',
    alignSelf: 'center'

@@ -103,19 +103,7 @@ export const Playground = createStackNavigator({
 
 
 export const Tabs = createBottomTabNavigator({
-  TabA: { screen: TabA, navigationOptions: {
-    tabBarIcon: ({ tintColor }) =>(
-      <View Style={{height: 5 * vh, width: 5 * vh, justifyContent: 'center', alignItems: 'center', marginLeft: 2 * vw}}>
-        <Icon
-          name='compass'
-          type='font-awesome'
-          size={ tintColor == '#6044f0' ? 8 * vw: 6 * vw}
-          color= {tintColor}
-        />
-        <Text style={{fontSize: 2.8 * vw, fontFamily: 'Montserrat-Bold', color: tintColor,}}>Explore</Text>
-      </View>
-      )
-  }},
+  
   Home: { screen: TabB, navigationOptions: {
     tabBarIcon: ({ tintColor }) => (
       <View Style={{height: 5 * vh, width: 5 * vh, justifyContent: 'center', alignItems: 'center',}}>
@@ -156,31 +144,35 @@ export const Tabs = createBottomTabNavigator({
     }
 })
 
-export const TeacherHomeNavigator = createMaterialTopTabNavigator({
+export const TeacherHomeNavigator = createBottomTabNavigator({
   Courses: { screen: Courses, navigationOptions: {
-    tabBarIcon: ({ tintColor }) =>(
-     
-      <View Style={{height: 5 * vh, width: 5 * vh, backgroundColor:'red', justifyContent: 'center', alignItems: 'center', marginLeft: 2 * vw}}>
-        <Text style={{fontSize: 4 * vw, fontFamily: 'Montserrat-Bold', color: tintColor,}}>Courses</Text>
+    tabBarIcon: ({ tintColor }) => (
+      <View Style={{height: 5 * vh, width: 5 * vh, justifyContent: 'center', alignItems: 'center', elevation: 3}}>
+        
+        <Icon
+          name='book'
+          type='font-awesome'
+          size={ tintColor == '#6044f0' ? 8 * vw: 6 * vw}
+          color= {tintColor}
+        />
+        <Text style={{fontSize: 2.8 * vw, fontFamily: 'Montserrat-Bold', color: tintColor,}}>Courses</Text>
       </View>
-      //</TouchableNativeFeedback>
       )
-  }},
+  } },
   Updates: { screen: ClassUpdates, navigationOptions: {
     tabBarIcon: ({ tintColor }) => (
-      <View Style={{height: 5 * vh, width: 5 * vh, backgroundColor:'red', justifyContent: 'center', alignItems: 'center',}}>
-        
-        <Text style={{fontSize: 4 * vw, fontFamily: 'Montserrat-Bold', color: tintColor,}}>Updates</Text>
+      <View Style={{height: 5 * vh, width: 5 * vh,  justifyContent: 'center', alignItems: 'center',}}>
+        <Icon
+          name='comment'
+          type='font-awesome'
+          size={ tintColor == '#6044f0' ? 8 * vw: 6 * vw}
+          color= {tintColor}
+        />
+        <Text style={{fontSize: 2.8 * vw, fontFamily: 'Montserrat-Bold', color: tintColor,}}>Updates</Text>
       </View>
       )
   } },
-  About : { screen: teacherAbout, navigationOptions: {
-    tabBarIcon: ({ tintColor }) => (
-      <View Style={{height: 5 * vh, width: 5 * vh, backgroundColor:'red', justifyContent: 'center', alignItems: 'center',}}>
-                <Text style={{fontSize: 4 * vw, fontFamily: 'Montserrat-Bold', color: tintColor,}}>About</Text>
-      </View>
-      )
-  } },
+  
 }, {
   tabBarComponent: props => (
   <CustomTabBar
@@ -202,7 +194,12 @@ export const HomeStack = createStackNavigator({
   Home: { screen: Tabs },
   TeacherArea: { screen: TeacherHomeNavigator,
                   navigationOptions: ({ navigation }) => ({
-                  title: `${navigation.state.params.data.firstname} ${navigation.state.params.data.lastname}`,
+                    headerTitle: <Text style={{fontFamily: 'Montserrat-SemiBold', fontSize: 3 * vh, color: 'white'}}>{navigation.state.params.data.firstname+ ' '+navigation.state.params.data.lastname+ ' Sir'}</Text> ,
+                    headerStyle: {
+                      backgroundColor: '#874acf',
+                    },
+                    headerTitleStyle: { color: 'white' },
+                    headerTintColor: 'white',
                 }), },
   CourseHome: {screen: CourseHome,
                   navigationOptions: ({ navigation }) => ({
@@ -218,14 +215,19 @@ export const HomeStack = createStackNavigator({
                   },
                 }), },
   accessCode: { screen: accessCode,
-              navigationOptions: ({ navigation }) => ({
-                  title: `Enter Access Code`,
-                }) },
+    navigationOptions: { 
+      headerTitle: <Text style={{fontFamily: 'Montserrat-SemiBold', fontSize: 3 * vh, color: 'white'}}>Add Classrooms</Text>  
+      } 
+            },
   video: {screen: video},
   pdfViewer: { screen: pdfViewer },
   assignmentQuestions: { screen: assignmentQuestions },
   addTeachers: { screen: addTeachers},
-  notification: { screen: notifications }
+  notification: { screen: notifications,
+    navigationOptions: { 
+      headerTitle: <Text style={{fontFamily: 'Montserrat-SemiBold', fontSize: 3 * vh, color: 'white'}}>Notification</Text>  
+      }
+   }
 }, {
   initialRouteName: 'Home',
   transitionConfig: () => fromRight(),
